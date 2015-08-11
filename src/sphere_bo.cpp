@@ -7,7 +7,7 @@ using namespace std;
 vertex3d sphere_vbo_data[200];
 short int sphere_ibo_data[200][4];
 
-void gen_sphere() {
+void init_sphere() {
     int cnt = 0;
     for (double i = -M_PI; i < M_PI; i += M_PI / 10) {
         for (double j = 0; j < M_PI; j += M_PI / 10) {

@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
-//#include <sys/types.h>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -59,26 +58,28 @@ float delta() {
 } while (0)
 
 int init_resources(void) {
+    init_sphere();
     mat_m = make_mat4();
     mat_v = make_mat4();
     mat_p = make_mat4();
     id_mat4(mat_m);
     id_mat4(mat_v);
-    persp_mat(1.5, 1366.0 / 768.0, .0001, 1000, mat_p);
+    id_mat4(mat_p);
+/*    persp_mat(1.5, 1366.0 / 768.0, .0001, 1000, mat_p);
     pos = make_vec3(0, 0, 0);
 
     pos[0] = -5;
     pos[2] = -5;
     trans_mat(pos, mat_m);
     pos[2] = 0;
-
-    unsigned int vs = create_shader("shaders/light_vertex.glsl", GL_VERTEX_SHADER);
+*/
+    unsigned int vs = create_shader("shaders/dummy_vertex.glsl", GL_VERTEX_SHADER);
     if (vs == -1U) {
         printl(LOG_E, "Error while initializing resources: cannot compile vertex shader.\n");
         return -1;
     }
 
-    unsigned int fs = create_shader("shaders/light_fragment.glsl", GL_FRAGMENT_SHADER);
+    unsigned int fs = create_shader("shaders/dummy_fragment.glsl", GL_FRAGMENT_SHADER);
     if (fs == -1U) {
         printl(LOG_E, "Error while initializing resources: cannot compile fragment shader.\n");
         return -1;
@@ -99,7 +100,6 @@ int init_resources(void) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(sphere_ibo_data), sphere_ibo_data, GL_STATIC_DRAW);
 
     INIT_ATTR(v_coord);
-    INIT_ATTR(v_normal);
 
     INIT_UNIF(v_mat_m);
     INIT_UNIF(v_mat_v);
@@ -125,25 +125,20 @@ void on_display(void) {
     glUniformMatrix4fv(unif_v_mat_p, 1, GL_FALSE, mat_p);
 
     glEnableVertexAttribArray(attr_v_coord);
-    glEnableVertexAttribArray(attr_v_normal);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glVertexAttribPointer(attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
-    glVertexAttribPointer(attr_v_normal, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, normal));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
-    glDrawElements(GL_QUADS, sizeof(sphere_ibo_data) / sizeof(short int), GL_UNSIGNED_SHORT, sphere_ibo_data);
+    glDrawElements(GL_QUADS, sizeof(sphere_ibo_data) / sizeof(short int), GL_UNSIGNED_SHORT, (void *) (uintptr_t) ibo);
 
     glDisableVertexAttribArray(attr_v_coord);
-    glDisableVertexAttribArray(attr_v_normal);
 
     glutSwapBuffers();
 }
 
 void on_idle() {
-    pos[0] = delta();
-    itrans_mat(pos, mat_m);
     glutPostRedisplay();
 }
 
@@ -165,7 +160,7 @@ int main(int argc, char** argv) {
     glutInitContextVersion(2, 0);
     glutInitDisplayMode(GLUT_RGBA | GLUT_ALPHA | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(1366, 768);
-    glutCreateWindow("cube");
+    glutCreateWindow("sphere");
 
     GLenum glew_status = glewInit();
     if (glew_status != GLEW_OK) {
