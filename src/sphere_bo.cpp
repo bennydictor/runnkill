@@ -6,6 +6,7 @@ using namespace std;
 
 vertex3d sphere_vbo_data[200];
 short int sphere_ibo_data[200][4];
+short int sphere_lines_ibo_data[200][4][2];
 
 void init_sphere() {
     int cnt = 0;
@@ -32,6 +33,14 @@ void init_sphere() {
                 sphere_ibo_data[cnt][2] = (((i + 1) % 20) * 20 + j + 1);
                 sphere_ibo_data[cnt][3] = (((i + 1) % 20) * 20 + j);
             }
+            sphere_lines_ibo_data[cnt][0][0] = sphere_ibo_data[cnt][0];
+            sphere_lines_ibo_data[cnt][0][1] = sphere_ibo_data[cnt][1];
+            sphere_lines_ibo_data[cnt][1][0] = sphere_ibo_data[cnt][1];
+            sphere_lines_ibo_data[cnt][1][1] = sphere_ibo_data[cnt][2];
+            sphere_lines_ibo_data[cnt][2][0] = sphere_ibo_data[cnt][2];
+            sphere_lines_ibo_data[cnt][2][1] = sphere_ibo_data[cnt][3];
+            sphere_lines_ibo_data[cnt][3][0] = sphere_ibo_data[cnt][3];
+            sphere_lines_ibo_data[cnt][3][1] = sphere_ibo_data[cnt][0];
             cnt++;
         }
     }

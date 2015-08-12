@@ -17,13 +17,15 @@
 #endif
 
 unsigned int prog;
-unsigned int vbo, ibo;
+unsigned int vbo, ibo, vbo_lines, ibo_lines;
 mat4 mat_m, mat_v, mat_p;
 
 unsigned int unif_v_mat_m, unif_v_mat_v, unif_v_mat_p;
+unsigned int unif_f_color;
 unsigned int attr_v_coord, attr_v_normal;
 
 vec3 pos;
+float angle;
 
 unsigned int prev_time;
 unsigned int fps;
@@ -65,14 +67,10 @@ int init_resources(void) {
     id_mat4(mat_m);
     id_mat4(mat_v);
     id_mat4(mat_p);
-/*    persp_mat(1.5, 1366.0 / 768.0, .0001, 1000, mat_p);
-    pos = make_vec3(0, 0, 0);
+    persp_mat(1, 1366.0 / 768.0, .0001, 1000, mat_p);
+    pos = make_vec3(0, 0, -5);
+    trans_mat(pos, mat_v);
 
-    pos[0] = -5;
-    pos[2] = -5;
-    trans_mat(pos, mat_m);
-    pos[2] = 0;
-*/
     unsigned int vs = create_shader("shaders/dummy_vertex.glsl", GL_VERTEX_SHADER);
     if (vs == -1U) {
         printl(LOG_E, "Error while initializing resources: cannot compile vertex shader.\n");
@@ -99,8 +97,17 @@ int init_resources(void) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(sphere_ibo_data), sphere_ibo_data, GL_STATIC_DRAW);
 
+    glGenBuffers(1, &vbo_lines);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_lines);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sphere_vbo_data), sphere_vbo_data, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &ibo_lines);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_lines);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(sphere_lines_ibo_data), sphere_lines_ibo_data, GL_STATIC_DRAW);
+
     INIT_ATTR(v_coord);
 
+    INIT_UNIF(f_color);
     INIT_UNIF(v_mat_m);
     INIT_UNIF(v_mat_v);
     INIT_UNIF(v_mat_p);
@@ -128,10 +135,19 @@ void on_display(void) {
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glVertexAttribPointer(attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
-
+    
+    glUniform3f(unif_f_color, 1, 1, 1);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-
     glDrawElements(GL_QUADS, sizeof(sphere_ibo_data) / sizeof(short int), GL_UNSIGNED_SHORT, (void *) (uintptr_t) ibo);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glVertexAttribPointer(attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
+
+    glUniform3f(unif_f_color, 0, 1, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_lines);
+    glDrawElements(GL_LINES, sizeof(sphere_lines_ibo_data) / sizeof(short int), GL_UNSIGNED_SHORT, (void *) (uintptr_t) ibo_lines);
 
     glDisableVertexAttribArray(attr_v_coord);
 
@@ -139,6 +155,8 @@ void on_display(void) {
 }
 
 void on_idle() {
+    angle = delta();
+    irot_x_mat(angle, mat_m);
     glutPostRedisplay();
 }
 
@@ -146,6 +164,8 @@ void free_resources(void) {
     glDeleteProgram(prog);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ibo);
+    glDeleteBuffers(1, &vbo_lines);
+    glDeleteBuffers(1, &ibo_lines);
     free(mat_m);
     free(mat_v);
     free(mat_p);
