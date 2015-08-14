@@ -14,5 +14,5 @@ map<string, int> init_hp;
 map<string, map<string, int>> init_params;
 
 long long count_score(int lv1, int lv2) {
-
+    return lv2 - lv1;
 }

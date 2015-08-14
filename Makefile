@@ -18,6 +18,7 @@ LD=g++
 LDFLAGS=$(if $(DEBUG),$(DEBUGOPTS),$(RELEASEOPTS)) $(addprefix -l,$(LIBS))
 
 SRCS=$(foreach subd,$(SUBDIRS),$(foreach suf,$(SUFFIXES),$(wildcard $(subd)/*$(suf))))
+HEADERS=$(foreach subd,$(INCLUDEDIRS),$(wildcard $(subd)/*.h))
 OBJS=$(foreach subd,$(SUBDIRS),$(foreach suf,$(SUFFIXES),$(subst $(SRCDIR),$(OBJDIR),$(subst $(suf),.o,$(wildcard $(subd)/*$(suf))))))
 
 
@@ -26,10 +27,10 @@ all: $(APP)
 $(APP): $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o $@
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c Makefile | $(OBJSUBDIRS)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS) Makefile | $(OBJSUBDIRS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp Makefile | $(OBJSUBDIRS)
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS) Makefile | $(OBJSUBDIRS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.s Makefile | $(OBJSUBDIRS)
