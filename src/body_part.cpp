@@ -1,11 +1,11 @@
 #include <body_part.h>
-
+#include <common.h>
 
 using namespace std;
 
 body_part::body_part(string _name) {
     name = _name;
-    hp = init_hp[_name];
+    hp = bp_init_hp[to_idx[_name]];
     item = NULL;
 }
 

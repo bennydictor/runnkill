@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
+#include <sphere.h>
+
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -172,7 +174,7 @@ void free_resources(void) {
     lclose();
 }
 
-int main(int argc, char** argv) {
+int draw_sphere(int argc, char** argv) {
     lopen("/dev/stderr");
     min_log_level = LOG_D;
 
