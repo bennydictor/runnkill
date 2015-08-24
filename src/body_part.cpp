@@ -1,19 +1,11 @@
 #include <body_part.h>
-<<<<<<< HEAD
 #include <common.h>
-=======
-
->>>>>>> benny
 
 using namespace std;
 
 body_part::body_part(string _name) {
     name = _name;
-<<<<<<< HEAD
     hp = bp_init_hp[to_idx[_name]];
-=======
-    hp = init_hp[_name];
->>>>>>> benny
     item = NULL;
 }
 
