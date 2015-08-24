@@ -3,6 +3,10 @@
 
 
 #include <vector>
+<<<<<<< HEAD
+=======
+#include <iostream>
+>>>>>>> benny
 
 template <typename T>
 struct vec2 {
