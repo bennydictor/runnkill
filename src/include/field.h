@@ -1,11 +1,6 @@
 #ifndef FIELD_H
 #define FIELD_H
 
-<<<<<<< HEAD
-=======
-
-#include <cstdlib>
->>>>>>> benny
 #include <vec2.h>
 
 void render_line(vec2<int> p1, vec2<int> p2, bool **buf, bool val);

@@ -3,7 +3,6 @@
 
 
 #include <string>
-<<<<<<< HEAD
 #include <mod_type.h>
 
 class effect {
@@ -17,13 +16,4 @@ public:
 };
 
 
-=======
-
-class effect; {
-    std::string name;
-
-    effect(std::string _name) : name(_name) {}
-};
-
->>>>>>> benny
 #endif // EFFECT_H
