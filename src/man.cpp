@@ -1,4 +1,5 @@
 #include <man.h>
+#include <common.h>
 
 using namespace std;
 man::man(string _name, int cl) {
@@ -6,29 +7,29 @@ man::man(string _name, int cl) {
     cls = cl;
     def_mod = atk_mod = 1; 
     for (size_t i = 0; i < BP_AMOUNT; i++) {
-        body_parts.push_back(bp_names[i]);
+        body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
-    init_values(hp, mn, agility, strength, intellect, speed, cl);
+    init_values(hp, mn, agility, strength, intellect, abs_speed, cl);
     exp = level = 0;
 }
 
-man::set_speed(vec2 spd) {
+void man::set_speed(vec2<float> spd) {
     speed = spd;
 }
 
-man::get_effect(mod_t res) {
+void man::get_effect(mod_t res) {
     hp += res.hp;
     mn += res.mn;
-    agility *= res.agi;
-    strength *= res.str;
+    agility *= res.agility;
+    strength *= res.strength;
     intellect *= res.intellect;
-    speed *= res.speed;
+    speed = res.speed * speed;
     def_mod *= res.def_mod;
     atk_mod *= res.atk_mod;
 }
 
-man::move(float curr_time) {
-    coords += speed * (curr_time - time);
+void man::move(float curr_time) {
+    coords = coords + (float)(curr_time - time) * speed ;
     for (size_t i = 0; i < effects.size(); i++)
     {
         mod_t res = effects[i].tic(curr_time - time);

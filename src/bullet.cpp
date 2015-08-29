@@ -2,6 +2,6 @@
 
 using namespace std;
 
-bullet::in_time(float time) {
-    return coords + speed * time;
+vec2<float> bullet::in_time(float time) {
+    return coords + time * speed;
 }

@@ -13,7 +13,7 @@ string bp_names[] = {"left up front", "left up back", "left down front", "left d
                      "right up front", "right up back", "right down front", "right down back"};
 
 map<string, string> item_bp;
-int bp_init_mods[] = {
+float bp_init_mods[] = {
     10, 10, 10, 10,
     10, 10, 10, 10,
 };
