@@ -2,7 +2,7 @@
 #define MOD_T
 
 struct mod_t {
-    float int_mod, def_mod, atk_mod, spd_mod, hp_mod, frt_mod, agi_mod;
+    float intellect, def_mod, atk_mod, speed, hp, mn, strength, agility;
     mod_t tic(float t);
 };
 

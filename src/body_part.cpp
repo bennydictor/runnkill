@@ -3,9 +3,9 @@
 
 using namespace std;
 
-body_part::body_part(string _name) {
+body_part::body_part(string _name, float _mod) {
     name = _name;
-    hp = bp_init_hp[to_idx[_name]];
+    mod = _mod;
     item = NULL;
 }
 

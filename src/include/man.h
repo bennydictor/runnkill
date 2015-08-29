@@ -16,11 +16,15 @@ public:
     std::string name;
     int cls;
     int level, exp;
+    float def_mod, atk_mod;
+    double curr_time;
     std::vector<item_t> bag;
     std::vector<body_part> body_parts;
     std::vector<effect> effects;
     std::vector<skill_t> skills;
     int hp, mn, agility, strength, intellect, speed, attack, deffense;
     man(std::string _name, int cl);
+    void move(float curr_time);
+    void set_speed(vec2 spd);
 };
 #endif // MAN

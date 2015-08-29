@@ -2,19 +2,20 @@
 
 using namespace std;
 
-string bp_names[] = {"head", "face", "body", "right_leg", "left_leg", "right_foot", "left_foot", // 7
+/*
+sring bp_names[] = {"head", "face", "body", "right_leg", "left_leg", "right_foot", "left_foot", // 7
             "right_arm", "left_arm", "right_hand", "left_hand", "neck", "back",                  // 6
             "right_finger_1", "right_finger_2", "right_finger_3", "right_finger_4",              // 4
             "left_finger_1",  "left_finger_2",  "left_finger_3",  "left_finger_4",               // 4
             "right_big_finger", "left_big_finger"};                                              // 2
+*/
+string bp_names[] = {"left up front", "left up back", "left down front", "left down back",
+                     "right up front", "right up back", "right down front", "right down back"};
 
 map<string, string> item_bp;
-int bp_init_hp[] = {
-    10, 10, 10, 10, 10, // 5
-    10, 10, 10, 10, 10, // 5
-    10, 10, 10, 10, 10, // 5
-    10, 10, 10, 10, 10, // 5
-    10, 10, 10,
+int bp_init_mods[] = {
+    10, 10, 10, 10,
+    10, 10, 10, 10,
 };
 int cl_init_hp[] = {150, 110, 70};
 int init_mn[] = {10, 20, 70};

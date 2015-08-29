@@ -4,12 +4,11 @@
 #include <items.h>
 #include <string>
 
-class body_part {
+struct body_part {
     std::string name;
-    int hp;
+    float mod;
     item_t* item;
-public:
-    body_part(std::string _name);
+    body_part(std::string _name, float _mod);
 
     bool put_on(item_t* thing);
     item_t* put_off();
