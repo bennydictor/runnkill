@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <iostream>
+#include <sgn.h>
 
 template <typename T>
 struct vec2 {
