@@ -123,20 +123,31 @@ int** gen_field_sun(int w, int h) {
         }
     }
 
+    int dx, dy;
     for (int i = 0; i < w / (BIG_WIGHT); i++) {
         for (int j = 0; j < h / (BIG_WIGHT); j++) {
             lx = get_rand(0, max(0, i - 1));
             rx = get_rand(min(w / BIG_WIGHT - 1, i + 1), w / (BIG_WIGHT) - 1);
             ly = get_rand(0, max(0, j - 1));
             hy = get_rand(min(h / BIG_WIGHT - 1, i + 1), h / (BIG_WIGHT) - 1);
-            if (get_rand(1, 7) < 4)
-                render_line_add(centres[i][j], centres[lx][ly], arr, 10);
-            if (get_rand(1, 7) < 4)
-                render_line_add(centres[i][j], centres[rx][ly], arr, 10);
-            if (get_rand(1, 7) < 4)
-                render_line_add(centres[i][j], centres[lx][hy], arr, 10);
-            if (get_rand(1, 7) < 4)
-                render_line_add(centres[i][j], centres[rx][hy], arr, 10);
+            dx = get_rand(0, 2);
+            dy = get_rand(0, 2);
+            if (i == w / BIG_WIGHT - 1) {
+                dx = 0;
+                dy = 1;
+            }
+            if (dx == dy and dy == 0) {
+                dx++;
+                dy++;
+            }
+            render_line_add(centres[i][j], centres[min(w / BIG_WIGHT - 1, i + dx)][min(h / BIG_WIGHT - 1, j + dy)], arr, 10);
+            /*
+            if (get_rand(0, 1) == 0) {
+                render_line_add(centres[i][j], centres[get_rand(0, w / BIG_WIGHT - 1)][hy], arr, 10);
+            } else {
+                render_line_add(centres[i][j], centres[rx][get_rand(0, h / BIG_WIGHT - 1)], arr, 10);
+            }
+            */
         }
     }
    
@@ -149,7 +160,9 @@ int** gen_field_sun(int w, int h) {
     {
         for (int j = 0; j < h; j++)
         {
-            if (arr[i][j] >= 30)
+            if (arr[i][j] > 40)
+                arr[i][j] = 2;
+            else if (arr[i][j] > 20)
                 arr[i][j] = 1;
             else if (arr[i][j] > 2)
                 arr[i][j] = 0;
