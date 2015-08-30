@@ -23,3 +23,7 @@ item_t* body_part::put_off() {
     item = NULL;
     return ret;
 }
+
+int count_dmg(body_part bp, int atk) {
+    return bp.mod * (1 - 0.9 * bp.is_fort) * atk;
+}

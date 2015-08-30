@@ -18,6 +18,7 @@ struct man {
     int level, exp;
     float def_mod, atk_mod;
     double time;
+    bool can_die;
     vec3<float> coords, speed;
     std::vector<item_t> bag;
     std::vector<body_part> body_parts;
@@ -28,5 +29,8 @@ struct man {
     void move(float curr_time);
     void set_speed(vec3<float> spd);
     void get_effect(mod_t res);
+    bool take_damage(int dmg);
 };
+
+int count_attack(man z);
 #endif // MAN

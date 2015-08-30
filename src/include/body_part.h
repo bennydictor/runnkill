@@ -15,4 +15,5 @@ struct body_part {
     item_t* put_off();
 };
 
+int count_dmg(body_part bp, int damage);
 #endif // BODY_PART_H

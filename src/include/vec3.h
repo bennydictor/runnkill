@@ -3,12 +3,12 @@
 
 
 #include <iostream>
+#include <cmath>
 //#include <sgn.h>
 
 template <typename T>
 struct vec3 {
     T x, y, z;
-
     vec3() : x(0), y(0), z(0) {}
     vec3(T _x, T _y, T _z) : x(_x), y(_y), z(_z) {}
 
@@ -16,6 +16,7 @@ struct vec3 {
     vec3<T> crs(const vec3<T> &v) const;
     T sdot(const vec3<T> &v) const;
     T sqlen() const;
+    void resize(const float s);
 };
 
 typedef vec3<long long int> vec3ll;
@@ -57,9 +58,22 @@ T vec3<T>::sqlen() const {
 }
 
 template <class T>
+
+void vec3<T>::resize(const float s) {
+    float len = sqrt(this->sqlen());
+    x /= len;
+    y /= len;
+    z /= len;
+    (*this) = s * (*this);
+}
+
+template <class T>
 std::ostream &operator<<(std::ostream &out, const vec3<T> &v) {
     return out << "(" << v.x << ", " << v.y << ", " << v.z << ")";
 }
 
-
+template <class T>
+T dist(vec3<T> a, vec3<T> b) {
+    return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
+}
 #endif // VEC3_H

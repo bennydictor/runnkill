@@ -23,6 +23,10 @@ int init_agi[] = {9, 15, 6};
 int init_strength[] = {15, 9, 6};
 int init_int[] = {3, 6, 15};
 int init_speed[] = {4, 6, 5};
+
+int atk_strength_mods[] = {4, 2, 1};
+int atk_agi_mods[] = {2, 3, 1};
+int atk_int_mods[] = {0, 1, 5};
 map<string, int> to_idx;
 map<string, map<string, int>> init_params;
 
@@ -44,3 +48,5 @@ void init_values(int &hp, int &mn, int &agi, int &strength, int &intellect, int 
     intellect = init_int[cl];
     speed = init_speed[cl];
 }
+
+

@@ -4,17 +4,17 @@
 #include <effect.h>
 #include <vector>
 #include <string>
-#include <vec2.h>
+#include <vec3.h>
 struct bullet {
-    vec2<float> speed, coords;
-    std::string type;
+    vec3<float> speed, coords;
+    std::string name;
     std::vector<effect> effects;
     int damage;
 
     bullet() {
     }
 
-    vec2<float> in_time(float time);
+    vec3<float> in_time(float time);
 };
 
 
