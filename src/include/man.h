@@ -10,6 +10,7 @@
 #include <mod_type.h>
 #include <skill_type.h>
 #include <vec2.h>
+#include <vec3.h>
 
 struct man {
     std::string name;
@@ -17,7 +18,7 @@ struct man {
     int level, exp;
     float def_mod, atk_mod;
     double time;
-    vec2<float> coords, speed;
+    vec3<float> coords, speed;
     std::vector<item_t> bag;
     std::vector<body_part> body_parts;
     std::vector<effect> effects;
@@ -25,7 +26,7 @@ struct man {
     int hp, mn, agility, strength, intellect, abs_speed;
     man(std::string _name, int cl);
     void move(float curr_time);
-    void set_speed(vec2<float> spd);
+    void set_speed(vec3<float> spd);
     void get_effect(mod_t res);
 };
 #endif // MAN

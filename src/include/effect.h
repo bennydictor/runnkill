@@ -1,7 +1,7 @@
 #ifndef EFFECT_H
 #define EFFECT_H
 
-
+#include <iostream>
 #include <string>
 #include <mod_type.h>
 
@@ -14,6 +14,7 @@ public:
     float time;
     effect(std::string _name) : name(_name) {}
     mod_t tic(float t);
+    void in(std::istream& stream);
 };
 
 

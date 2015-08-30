@@ -4,13 +4,15 @@ using namespace std;
 
 mod_t operator* (const mod_t a, const float b) {
     mod_t ret;
-    ret.def_mod = a.def_mod * b;
-    ret.atk_mod = a.atk_mod * b;
-    ret.speed = a.speed * b;
-    ret.agility = a.agility * b;
-    ret.intellect = a.intellect * b;
-    ret.strength = a.strength * b;
     ret.hp = a.hp * b;
     ret.mn = a.mn * b;
+    if (b == -1) {
+        ret.def_mod = 1 / a.def_mod;
+        ret.atk_mod = 1 / a.atk_mod;
+        ret.speed = 1 / a.speed;
+        ret.agility = 1 / a.agility;
+        ret.intellect = 1 / a.intellect;
+        ret.strength = 1 / a.strength;
+    }
     return ret;
 }

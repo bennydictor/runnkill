@@ -11,9 +11,9 @@ INCLUDEDIRS=$(shell find $(SRCDIR) -type d -name include)
 OBJSUBDIRS=$(subst $(SRCDIR),$(OBJDIR),$(SUBDIRS))
 
 CC=gcc
-CFLAGS=-std=c11 $(if $(DEBUG),$(DEBUGOPTS),$(RELEASEOPTS)) -Wall -Wextra -Wshadow $(foreach inc,$(INCLUDEDIRS), -I$(realpath $(inc)))
+CFLAGS=-std=c14 $(if $(DEBUG),$(DEBUGOPTS),$(RELEASEOPTS)) -Wall -Wextra -Wshadow $(foreach inc,$(INCLUDEDIRS), -I$(realpath $(inc)))
 CXX=g++
-CXXFLAGS=-std=c++11 $(if $(DEBUG),$(DEBUGOPTS),$(RELEASEOPTS)) -Wall -Wextra -Wshadow $(foreach inc,$(INCLUDEDIRS), -I$(realpath $(inc)))
+CXXFLAGS=-std=c++14 $(if $(DEBUG),$(DEBUGOPTS),$(RELEASEOPTS)) -Wall -Wextra -Wshadow $(foreach inc,$(INCLUDEDIRS), -I$(realpath $(inc)))
 LD=g++
 LDFLAGS=$(if $(DEBUG),$(DEBUGOPTS),$(RELEASEOPTS)) $(addprefix -l,$(LIBS))
 

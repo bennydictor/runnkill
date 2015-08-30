@@ -5,6 +5,7 @@ using namespace std;
 
 body_part::body_part(string _name, float _mod) {
     name = _name;
+    is_fort = 0;
     mod = _mod;
     item = NULL;
 }

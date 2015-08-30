@@ -6,6 +6,7 @@ man::man(string _name, int cl) {
     name = _name;
     cls = cl;
     def_mod = atk_mod = 1; 
+
     for (size_t i = 0; i < BP_AMOUNT; i++) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
@@ -13,7 +14,7 @@ man::man(string _name, int cl) {
     exp = level = 0;
 }
 
-void man::set_speed(vec2<float> spd) {
+void man::set_speed(vec3<float> spd) {
     speed = spd;
 }
 
@@ -41,5 +42,4 @@ void man::move(float curr_time) {
     }
     time = curr_time;
 }
-
 

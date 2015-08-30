@@ -9,3 +9,8 @@ mod_t effect::tic(float t) {
     time -= t;
     return ret;
 }
+
+void effect::in(istream& stream) {
+    stream >> mods_one_side.hp >> mods_one_side.mn;
+    stream >> mods_two_side.strength >> mods_two_side.agility >> mods_two_side.intellect >> mods_two_side.speed;
+}
