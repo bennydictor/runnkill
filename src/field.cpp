@@ -105,8 +105,10 @@ int** gen_field_sun(int w, int h) {
     }
     int lx, rx, ly, hy;
     
-    vec2<int>centres[w / (BIG_WIGHT)][h / (BIG_WIGHT)] ;
-
+    vec2<int>** centres = new vec2<int>*[w / (BIG_WIGHT)];
+    for (int i = 0; i < w / BIG_WIGHT; i++) {
+        centres[i] = new vec2<int>[h / (BIG_WIGHT)];
+    }
     for (int i = 0; i < w / (BIG_WIGHT); i++) {
         for (int j = 0; j < h / (BIG_WIGHT); j++) {
             lx = i * BIG_WIGHT;

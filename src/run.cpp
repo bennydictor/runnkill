@@ -55,7 +55,7 @@ void attack(int man_idx, int idx) {
                 He.y = persons[i]->coords.y;
                 I.x = z->coords.x - He.x;
                 I.y = z->coords.y - He.y;
-                I = get_turned(I, M_PI / 4 + atan2(persons[i]->coords.y, persons[i]->coords.x));
+                I = get_turned(I, M_PI / 4 + atan2(persons[i]->orientation.y, persons[i]->orientation.x));
                 cerr << "Yeah, we can detected an attack direction!" << endl;
                 int damage;
                 int attack = count_attack(*z);
@@ -143,6 +143,7 @@ int main()
     warrior = man("warrior", 0);
     archer = man("archer", 1);
     mage = man("mage", 2);
+    warrior.out(cerr);
     cerr << "Warrior:" << "hp = " << warrior.hp << "; mn = " << warrior.mn << "; attack = " << count_attack(warrior) << endl;
     cerr << "Now make font less and run look_at_map.py" << endl;
 }

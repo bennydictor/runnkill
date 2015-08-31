@@ -11,6 +11,7 @@
 #include <skill_type.h>
 #include <vec2.h>
 #include <vec3.h>
+#include <iostream>
 
 struct man {
     std::string name;
@@ -19,7 +20,7 @@ struct man {
     float def_mod, atk_mod;
     double time;
     bool can_die, have_shield;
-    vec3<float> coords, speed;
+    vec3<float> coords, speed, orientation;
     std::vector<item_t> bag;
     std::vector<body_part> body_parts;
     std::vector<effect> effects;
@@ -29,8 +30,10 @@ struct man {
     man(std::string _name, int cl);
     void move(float curr_time);
     void set_speed(vec3<float> spd);
+    void set_orientation(vec3<float> orient);
     void get_effect(mod_t res);
     void fortify(int idx);
+    void out(std::ostream& stream);
     bool take_damage(int dmg);
 };
 

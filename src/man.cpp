@@ -7,6 +7,7 @@ man::man() {
     def_mod = atk_mod = 1; 
     can_die = true;
     have_shield = false;
+    orientation = vec3<float>(0, 1, 0);
     for (size_t i = 0; i < BP_AMOUNT; i++) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
@@ -19,6 +20,7 @@ man::man(string _name, int cl) {
     def_mod = atk_mod = 1; 
     can_die = true;
     have_shield = false;
+    orientation = vec3<float>(0, 1, 0);
     for (size_t i = 0; i < BP_AMOUNT; i++) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
@@ -30,6 +32,10 @@ void man::set_speed(vec3<float> spd) {
     speed = spd;
 }
 
+void man::set_orientation(vec3<float> orient) {
+    orientation = orient;
+    orientation.resize(1);
+}
 void man::get_effect(mod_t res) {
     hp += res.hp;
     mn += res.mn;
@@ -82,4 +88,11 @@ void man::fortify(int idx) {
                            body_parts[(idx + 2 + BP_AMOUNT) % BP_AMOUNT].is_fortified) {
         body_parts[idx].is_fortified = true;
     }
+}
+
+void man::out(ostream& stream) {
+    stream << name << ' ' << (cls == 0 ? "Warrior" : ((cls == 1) ? "Archer" : "Mage")) << ", " << level << " lvl, " << endl;
+    stream << hp << ' ' << mn << endl;
+    stream << "My attack = " << count_attack(*this) << endl;
+    stream << "I`m in " << coords << endl;
 }
