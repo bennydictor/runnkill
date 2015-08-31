@@ -2,7 +2,7 @@
 #define SPHERE_BO_H
 
 
-#include <vertex3d.h>
+#include <graphics/vertex3d.h>
 
 #ifdef __cplusplus
 extern "C" {

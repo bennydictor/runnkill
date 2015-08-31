@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-void print_status_log(unsigned int log_level, unsigned int id);
+void print_status_log(unsigned int id);
 
 unsigned int create_shader(const char *filename, GLenum type);
 

@@ -18,7 +18,6 @@ extern unsigned int min_log_level;
 FILE* lopen(const char* path);
 int lclose();
 int printl(unsigned int log_level, const char* format, ...);
-int printlm(unsigned int log_level, const char* format, ...);
 
 #ifdef __cplusplus
 }

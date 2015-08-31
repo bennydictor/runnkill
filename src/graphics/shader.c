@@ -1,11 +1,14 @@
-#include <shader.h>
+#include <graphics/shader.h>
+
 #include <stdlib.h>
+
 #include <GL/glew.h>
-#include <log.h>
-#include <file.h>
+
+#include <util/log.h>
+#include <util/file.h>
 
 
-void print_status_log(unsigned int log_level, GLuint id) {
+void print_status_log(GLuint id) {
     GLint log_len = 0;
     if (glIsShader(id)) {
         glGetShaderiv(id, GL_INFO_LOG_LENGTH, &log_len);
@@ -21,7 +24,7 @@ void print_status_log(unsigned int log_level, GLuint id) {
     } else {
         glGetProgramInfoLog(id, log_len, NULL, log);
     }
-    printlm(log_level, log);
+    printl(LOG_I, log);
     free(log);
 }
 
@@ -48,7 +51,7 @@ GLuint create_shader(const char *filename, GLenum type) {
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status);
     if (compile_status == GL_FALSE) {
         printl(LOG_W, "Error while compiling shader %s:\n", filename);
-        print_status_log(LOG_W, shader);
+        print_status_log(shader);
         glDeleteShader(shader);
         return -1;
     }
@@ -64,7 +67,7 @@ GLuint create_program(GLuint vs, GLuint fs) {
     glGetProgramiv(prog, GL_LINK_STATUS, &link_status);
     if (link_status == GL_FALSE) {
         printl(LOG_W, "Error while linking program:\n");
-        print_status_log(LOG_W, prog);
+        print_status_log(prog);
         glDeleteProgram(prog);
         return -1;
     }

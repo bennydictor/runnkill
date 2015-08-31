@@ -1,8 +1,10 @@
-#include <sphere_bo.h>
-#include <log.h>
-#define __USE_MISC
+#include <graphics/sphere_bo.h>
+
 #include <math.h>
 #include <assert.h>
+
+#include <math/pi.h>
+#include <util/log.h>
 
 
 vertex3d sphere_vbo_data[HEIGHT1][WIDTH];

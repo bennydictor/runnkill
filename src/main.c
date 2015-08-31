@@ -7,14 +7,11 @@
 #include <GL/gl.h>
 #include <GL/freeglut.h>
 
-#include <log.h>
-#include <shader.h>
-#include <vecmath.h>
-#include <sphere_bo.h>
+#include <graphics/shader.h>
+#include <graphics/sphere_bo.h>
+#include <util/log.h>
+#include <math/vecmath.h>
 
-#ifndef M_PI
-#  define M_PI		3.14159265358979323846
-#endif
 
 unsigned int prog;
 unsigned int vbo;

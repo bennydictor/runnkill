@@ -1,4 +1,5 @@
-#include <vecmath.h>
+#include <math/vecmath.h>
+
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
