@@ -1,11 +1,12 @@
 #include <body_part.h>
 #include <common.h>
+#include <iostream>
 
 using namespace std;
 
 body_part::body_part(string _name, float _mod) {
     name = _name;
-    is_fort = 0;
+    is_fortified = 0;
     mod = _mod;
     item = NULL;
 }
@@ -25,5 +26,6 @@ item_t* body_part::put_off() {
 }
 
 int count_dmg(body_part bp, int atk) {
-    return bp.mod * (1 - 0.9 * bp.is_fort) * atk;
+    cerr << "we are here" << endl;
+    return bp.mod * (1 - 0.9 * bp.is_fortified) * atk;
 }

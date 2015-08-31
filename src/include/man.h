@@ -18,17 +18,19 @@ struct man {
     int level, exp;
     float def_mod, atk_mod;
     double time;
-    bool can_die;
+    bool can_die, have_shield;
     vec3<float> coords, speed;
     std::vector<item_t> bag;
     std::vector<body_part> body_parts;
     std::vector<effect> effects;
     std::vector<skill_t> skills;
     int hp, mn, agility, strength, intellect, abs_speed;
+    man();
     man(std::string _name, int cl);
     void move(float curr_time);
     void set_speed(vec3<float> spd);
     void get_effect(mod_t res);
+    void fortify(int idx);
     bool take_damage(int dmg);
 };
 

@@ -3,6 +3,11 @@
 
 #define BP_AMOUNT 8
 
+#define LEFT_UP 0
+#define LEFT_DOWN 2
+#define RIGHT_UP 4
+#define RIGHT_DOWN 6
+
 #include <string>
 #include <map>
 

@@ -9,7 +9,7 @@ struct bullet {
     vec3<float> speed, coords;
     std::string name;
     std::vector<effect> effects;
-    int damage;
+    float damage;
 
     bullet() {
     }

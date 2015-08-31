@@ -2,11 +2,23 @@
 #include <common.h>
 
 using namespace std;
+man::man() {
+    cls = 0;
+    def_mod = atk_mod = 1; 
+    can_die = true;
+    have_shield = false;
+    for (size_t i = 0; i < BP_AMOUNT; i++) {
+        body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
+    }
+    init_values(hp, mn, agility, strength, intellect, abs_speed, cls);
+    exp = level = 0;
+}
 man::man(string _name, int cl) {
     name = _name;
     cls = cl;
-    can_die = def_mod = atk_mod = 1; 
-    
+    def_mod = atk_mod = 1; 
+    can_die = true;
+    have_shield = false;
     for (size_t i = 0; i < BP_AMOUNT; i++) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
@@ -30,7 +42,16 @@ void man::get_effect(mod_t res) {
 }
 
 void man::move(float curr_time) {
-    coords = coords + (float)(curr_time - time) * speed;
+    int amount_of_f = 0;
+    for (int j = 0; j < BP_AMOUNT; j++) {
+        if (body_parts[j].is_fortified) {
+            amount_of_f++;
+        }
+    }
+    if (have_shield) {
+        amount_of_f--;
+    }
+    coords = coords + (float)((curr_time - time) * (1 - 0.2 * amount_of_f)) * speed;
     for (size_t i = 0; i < effects.size(); i++)
     {
         mod_t res = effects[i].tic(curr_time - time);
@@ -56,3 +77,9 @@ int count_attack(man z) {
     return atk_strength_mods[z.cls] * z.strength + atk_agi_mods[z.cls] * z.agility + atk_int_mods[z.cls] * z.intellect;
 }
 
+void man::fortify(int idx) {
+    if (idx == RIGHT_UP or body_parts[(idx - 2 + BP_AMOUNT) % BP_AMOUNT].is_fortified or 
+                           body_parts[(idx + 2 + BP_AMOUNT) % BP_AMOUNT].is_fortified) {
+        body_parts[idx].is_fortified = true;
+    }
+}

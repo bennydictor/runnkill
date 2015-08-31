@@ -11,7 +11,7 @@ struct vec3 {
     T x, y, z;
     vec3() : x(0), y(0), z(0) {}
     vec3(T _x, T _y, T _z) : x(_x), y(_y), z(_z) {}
-
+    vec3(vec3<T> b, vec3<T> e) : x(e.x - b.x), y(e.y - b.y), z(e.z - b.z) {};
     T dot(const vec3<T> &v) const;
     vec3<T> crs(const vec3<T> &v) const;
     T sdot(const vec3<T> &v) const;

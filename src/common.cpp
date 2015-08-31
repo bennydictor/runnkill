@@ -14,10 +14,10 @@ string bp_names[] = {"left up front", "left up back", "left down front", "left d
 
 map<string, string> item_bp;
 float bp_init_mods[] = {
-    10, 10, 10, 10,
-    10, 10, 10, 10,
+    1.2, 1.5, 0.8, 1,
+    1.2, 1.5, 0.8, 1,
 };
-int cl_init_hp[] = {150, 110, 70};
+int cl_init_hp[] = {1500, 1100, 700};
 int init_mn[] = {10, 20, 70};
 int init_agi[] = {9, 15, 6};
 int init_strength[] = {15, 9, 6};
