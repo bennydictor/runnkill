@@ -21,8 +21,7 @@ unsigned int attr_v_coord, attr_v_normal;
 
 unsigned int unif_v_mat_m, unif_v_mat_v, unif_v_mat_p;
 
-float angle;
-vec3 pos;
+vec3 pos, rot;
 
 unsigned int prev_time;
 unsigned int fps;
@@ -65,9 +64,9 @@ int init_resources(void) {
     id_mat4(mat_v);
     id_mat4(mat_p);
     persp_mat(1, 1366.0 / 768.0, .0001, 1000, mat_p);
-    pos = make_vec3(-5, 0, -5);
+    pos = make_vec3(0, 0, -5);
+    rot = make_vec3(0, 0, 0);
     trans_mat(pos, mat_v);
-    pos[2] = 0;
 
     unsigned int vs = create_shader("shaders/light_vertex.glsl", GL_VERTEX_SHADER);
     if (vs == -1U) {
@@ -111,7 +110,7 @@ int init_resources(void) {
     glUniform3f(glGetUniformLocation(prog, "f_material.specular"), 1, 1, 1);
     glUniform1f(glGetUniformLocation(prog, "f_material.shininess"), 128);
 
-    glUniform3f(glGetUniformLocation(prog, "f_light[0].coord"), 0, 3, -5);
+    glUniform3f(glGetUniformLocation(prog, "f_light[0].coord"), 0, 3, 2);
     glUniform3f(glGetUniformLocation(prog, "f_light[0].ambient"), .2, .2, .2);
     glUniform3f(glGetUniformLocation(prog, "f_light[0].diffuse"), .9, .9, .9);
     glUniform3f(glGetUniformLocation(prog, "f_light[0].specular"), 1, 1, 1);
@@ -151,11 +150,67 @@ void on_display(void) {
     glutSwapBuffers();
 }
 
-void on_idle() {
-    pos[0] = angle = delta();
-    irot_x_mat(angle, mat_m);
+#define KEY_DOWN 1
+#define KEY_UP 0
+
+unsigned char kbd_key_status[255];
+int mouse_dx, mouse_dy;
+
+void update() {
+    float dt = delta();
+    if (kbd_key_status[(unsigned char)'w'] == KEY_DOWN) {
+        pos[0] -= sin(rot[1]) * dt;
+        pos[2] += cos(rot[1]) * dt;
+    }
+    if (kbd_key_status[(unsigned char)'s'] == KEY_DOWN) {
+        pos[0] += sin(rot[1]) * dt;
+        pos[2] -= cos(rot[1]) * dt;
+    }
+    if (kbd_key_status[(unsigned char)'a'] == KEY_DOWN) {
+        pos[0] += cos(rot[1]) * dt;
+        pos[2] += sin(rot[1]) * dt;
+    }
+    if (kbd_key_status[(unsigned char)'d'] == KEY_DOWN) {
+        pos[0] -= cos(rot[1]) * dt;
+        pos[2] -= sin(rot[1]) * dt;
+    }
+    rot[0] += mouse_dy / 100.0;
+    rot[1] += mouse_dx / 100.0;
+    id_mat4(mat_v);
     itrans_mat(pos, mat_v);
+    irot_y_mat(rot[1], mat_v);
+    irot_x_mat(rot[0], mat_v);
+
     glutPostRedisplay();
+}
+
+void on_kbd_down(unsigned char key, int x, int y) {
+    ((void) x);
+    ((void) y);
+    kbd_key_status[key] = KEY_DOWN;
+    update();
+}
+
+void on_kbd_up(unsigned char key, int x, int y) {
+    ((void) x);
+    ((void) y);
+    kbd_key_status[key] = KEY_UP;
+    update();
+}
+
+void on_mouse(int x, int y) {
+    int center_x = glutGet(GLUT_WINDOW_WIDTH) / 2;
+    int center_y = glutGet(GLUT_WINDOW_HEIGHT) / 2;
+    mouse_dx = x - center_x;
+    mouse_dy = y - center_y;
+    if (x != center_x || y != center_y) {
+        glutWarpPointer(center_x, center_y);
+    }
+    update();
+}
+
+void on_idle() {
+    update();
 }
 
 void free_resources(void) {
@@ -186,6 +241,10 @@ int main(int argc, char** argv) {
     if (init_resources() != -1) {
         glutDisplayFunc(on_display);
         glutIdleFunc(on_idle);
+        glutKeyboardFunc(on_kbd_down);
+        glutKeyboardUpFunc(on_kbd_up);
+        glutPassiveMotionFunc(on_mouse);
+        glutIgnoreKeyRepeat(1);
         glutMainLoop();
     }
 

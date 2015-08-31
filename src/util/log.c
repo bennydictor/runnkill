@@ -58,8 +58,8 @@ int printl(unsigned int log_level, const char* format, ...) {
         }
     }
 
-    char *nformat = malloc((strlen(format) + cr_cnt * (header_len + 1) + 2) * sizeof(char));
-    memset(nformat, 0, (strlen(format) + cr_cnt * (header_len + 1) + 2) * sizeof(char));
+    char *nformat = malloc((strlen(format) + (cr_cnt + 1) * (header_len + 1) + 2) * sizeof(char));
+    memset(nformat, 0, (strlen(format) + (cr_cnt + 1) * (header_len + 1) + 2) * sizeof(char));
     char *nfptr = nformat;
     strcpy(nfptr, header);
     nfptr += header_len;
@@ -82,5 +82,6 @@ int printl(unsigned int log_level, const char* format, ...) {
     int ret = vfprintf(log_file_fd, nformat, args);
     va_end(args);
     fflush(log_file_fd);
+    free(nformat);
     return ret;
 }

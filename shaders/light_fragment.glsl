@@ -34,7 +34,7 @@ void main() {
     for (int i = 0; i < LIGHT_COUNT; ++i) {
         if (f_light_enable[i] != 0) {
             ambient_fc += f_light[i].ambient;
-            vec3 light_position = (vec4(f_light[i].coord, 1)).xyz;
+            vec3 light_position = (v_mat_v * vec4(f_light[i].coord, 1)).xyz;
             vec3 light_direction = normalize(light_position - vertex_position);
             float diffuse_light_intensity = max(0, dot(surface_normal, light_direction));
             diffuse_fc += diffuse_light_intensity * f_light[i].diffuse;
