@@ -17,10 +17,9 @@ unsigned int prog;
 unsigned int vbo;
 mat4 mat_m, mat_v, mat_p;
 
-unsigned int unif_v_mat_m, unif_v_mat_v, unif_v_mat_p;
-unsigned int unif_f_color;
-unsigned int unif_f_light;
 unsigned int attr_v_coord, attr_v_normal;
+
+unsigned int unif_v_mat_m, unif_v_mat_v, unif_v_mat_p;
 
 float angle;
 vec3 pos;
@@ -95,8 +94,6 @@ int init_resources(void) {
     INIT_ATTR(v_coord);
     INIT_ATTR(v_normal);
 
-    INIT_UNIF(f_light);
-    INIT_UNIF(f_color);
     INIT_UNIF(v_mat_m);
     INIT_UNIF(v_mat_v);
     INIT_UNIF(v_mat_p);
@@ -109,6 +106,25 @@ int init_resources(void) {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
+    glUniform3f(glGetUniformLocation(prog, "f_material.ambient"), 1, 1, 1);
+    glUniform3f(glGetUniformLocation(prog, "f_material.diffuse"), 1, 1, 1);
+    glUniform3f(glGetUniformLocation(prog, "f_material.specular"), 1, 1, 1);
+    glUniform1f(glGetUniformLocation(prog, "f_material.shininess"), 128);
+
+    glUniform3f(glGetUniformLocation(prog, "f_light[0].coord"), 0, 3, -5);
+    glUniform3f(glGetUniformLocation(prog, "f_light[0].ambient"), .2, .2, .2);
+    glUniform3f(glGetUniformLocation(prog, "f_light[0].diffuse"), .9, .9, .9);
+    glUniform3f(glGetUniformLocation(prog, "f_light[0].specular"), 1, 1, 1);
+
+    glUniform1i(glGetUniformLocation(prog, "f_light_enable[0]"), 1);
+    glUniform1i(glGetUniformLocation(prog, "f_light_enable[1]"), 0);
+    glUniform1i(glGetUniformLocation(prog, "f_light_enable[2]"), 0);
+    glUniform1i(glGetUniformLocation(prog, "f_light_enable[3]"), 0);
+    glUniform1i(glGetUniformLocation(prog, "f_light_enable[4]"), 0);
+    glUniform1i(glGetUniformLocation(prog, "f_light_enable[5]"), 0);
+    glUniform1i(glGetUniformLocation(prog, "f_light_enable[6]"), 0);
+    glUniform1i(glGetUniformLocation(prog, "f_light_enable[7]"), 0);
+
     return 0;
 }
 
@@ -119,8 +135,6 @@ void on_display(void) {
     glUniformMatrix4fv(unif_v_mat_m, 1, GL_FALSE, mat_m);
     glUniformMatrix4fv(unif_v_mat_v, 1, GL_FALSE, mat_v);
     glUniformMatrix4fv(unif_v_mat_p, 1, GL_FALSE, mat_p);
-    glUniform3f(unif_f_color, 1, 1, 1);
-    glUniform3f(unif_f_light, 0, 3, -5);
 
     glEnableVertexAttribArray(attr_v_coord);
     glEnableVertexAttribArray(attr_v_normal);
