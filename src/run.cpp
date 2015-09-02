@@ -15,6 +15,9 @@ const int len = 1;
 vector<bullet> bullets;
 vector<man*> persons;
 vector<bool> is_alive;
+int** F;
+int w, h;
+
 template <class T>
 
 vec3<T> get_turned(vec3<T> s, float angle) {
@@ -30,10 +33,15 @@ int all_dmg(body_part u_l_bp, body_part u_r_bp, body_part d_l_bp, body_part d_r_
            count_dmg(d_r_bp, skill.d_r * attack);
 
 }
+void move_bullet(int b_idx, float time) {
+    for (int i = 0; i < (int)persons.size(); i++) {
+        
+    }
+}
 void attack(int man_idx, int idx) {
 
     man* z = persons[man_idx];
-    if ((int)z->skills.size() <= idx or z->skills[idx].cost.mn > z->mn) {
+    if ((int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp) {
         cerr << "You missed!" << endl;
         return;
     }
@@ -85,7 +93,28 @@ void attack(int man_idx, int idx) {
         }
     }
 }
-
+/*
+void what_to_draw(vector<obj> &result) {
+    result.clear();
+    for (int i = 0; i < w; i++) {
+        for (int j = 0; j < h; j++) {
+            result.push_back(obj(ORTO));
+            result.back().coord1 = vec3<float>(i, j, 0);
+            result.back().coord2 = vec3<float>(i + 1, j + 1, F[i][j]);
+        }
+    }
+    for (int i = 0; i < (int)persons.size(); i++) {
+        result.push_back(obj(SPHERE));
+        result.back().coord1 = persons[i].coords;
+        result.height = 1;
+    }
+    for (int i = 0; i < (int)bullets.size(); i++) {
+        result.push_back(obj(SPHERE));
+        result.back().coord1 = bullets[i].coords'
+        result.height = 0.1;
+    }
+}
+*/
 int main()
 {
     ifstream skills;
@@ -99,7 +128,7 @@ int main()
         skills >> amount;
         for (int j = 0; j < amount; j++) {
             classes[i].push_back(skill_t());
-            skills >> classes[i].back().cost.hp >> classes[i].back().cost.mn;
+            skills >> classes[i].back().cost.hp >> classes[i].back().cost.mp;
             skills >> type;
             classes[i].back().is_range = (type == 'R');
             classes[i].back().in_damage(skills);
@@ -107,8 +136,8 @@ int main()
     }
     cerr << classes[0][0].is_range << ' ' << classes[0][0].u_l << endl;
     freopen("field", "w", stdout);
-    int w = 200, h = 200;
-    int** F = gen_field_sun(w, h);
+    w = h = 200;
+    F = gen_field_sun(w, h);
     for (int i = 0; i < w; i++)
     {
         for (int j = 0; j < h; j++)
@@ -121,9 +150,9 @@ int main()
     z.coords = vec3<float>(0, 0, 0);
 
     persons.push_back(&z);
-    is_alive.push_back(1);
+    is_alive.push_back(0);
 
-    z.skills.push_back(classes[0][0]);
+    z.skills.push_back(classes[1][0]);
     man sample = man("y", 0);
     man warrior, archer, mage;
     persons.push_back(&sample);
@@ -134,16 +163,17 @@ int main()
     z.move(0.5);
     cerr << z.coords << endl;
     attack(0, 0);
-    sample.fortify(RIGHT_UP);
-    cerr << sample.hp << ' ' << sample.mn << endl;
-    cerr << z.hp << ' ' << z.mn << ' ' << count_attack(z) << endl;
+    cerr << sample.hp << ' ' << sample.mp << endl;
+    cerr << z.hp << ' ' << z.mp << ' ' << count_attack(z) << endl;
     
+    sample.fortify(RIGHT_UP);
     attack(0, 0);
-    cerr << sample.hp << ' ' << sample.mn << endl;
+    cerr << sample.hp << ' ' << sample.mp << endl;
     warrior = man("warrior", 0);
     archer = man("archer", 1);
     mage = man("mage", 2);
     warrior.out(cerr);
-    cerr << "Warrior:" << "hp = " << warrior.hp << "; mn = " << warrior.mn << "; attack = " << count_attack(warrior) << endl;
+    cerr << "Warrior:" << "hp = " << warrior.hp << "; mp = " << warrior.mp << "; attack = " << count_attack(warrior) << endl;
     cerr << "Now make font less and run look_at_map.py" << endl;
+
 }

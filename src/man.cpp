@@ -11,7 +11,7 @@ man::man() {
     for (size_t i = 0; i < BP_AMOUNT; i++) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
-    init_values(hp, mn, agility, strength, intellect, abs_speed, cls);
+    init_values(hp, mp, agility, strength, intellect, abs_speed, cls);
     exp = level = 0;
 }
 man::man(string _name, int cl) {
@@ -24,7 +24,7 @@ man::man(string _name, int cl) {
     for (size_t i = 0; i < BP_AMOUNT; i++) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
-    init_values(hp, mn, agility, strength, intellect, abs_speed, cl);
+    init_values(hp, mp, agility, strength, intellect, abs_speed, cl);
     exp = level = 0;
 }
 
@@ -38,7 +38,7 @@ void man::set_orientation(vec3<float> orient) {
 }
 void man::get_effect(mod_t res) {
     hp += res.hp;
-    mn += res.mn;
+    mp += res.mp;
     agility *= res.agility;
     strength *= res.strength;
     intellect *= res.intellect;
@@ -92,7 +92,7 @@ void man::fortify(int idx) {
 
 void man::out(ostream& stream) {
     stream << name << ' ' << (cls == 0 ? "Warrior" : ((cls == 1) ? "Archer" : "Mage")) << ", " << level << " lvl, " << endl;
-    stream << hp << ' ' << mn << endl;
+    stream << hp << ' ' << mp << endl;
     stream << "My attack = " << count_attack(*this) << endl;
     stream << "I`m in " << coords << endl;
 }

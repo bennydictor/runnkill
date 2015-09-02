@@ -26,6 +26,5 @@ item_t* body_part::put_off() {
 }
 
 int count_dmg(body_part bp, int atk) {
-    cerr << "we are here" << endl;
     return bp.mod * (1 - 0.9 * bp.is_fortified) * atk;
 }

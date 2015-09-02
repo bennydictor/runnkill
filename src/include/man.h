@@ -25,7 +25,7 @@ struct man {
     std::vector<body_part> body_parts;
     std::vector<effect> effects;
     std::vector<skill_t> skills;
-    int hp, mn, agility, strength, intellect, abs_speed;
+    int hp, mp, agility, strength, intellect, abs_speed;
     man();
     man(std::string _name, int cl);
     void move(float curr_time);

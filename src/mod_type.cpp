@@ -5,7 +5,7 @@ using namespace std;
 mod_t operator* (const mod_t a, const float b) {
     mod_t ret;
     ret.hp = a.hp * b;
-    ret.mn = a.mn * b;
+    ret.mp = a.mp * b;
     if (b == -1) {
         ret.def_mod = 1 / a.def_mod;
         ret.atk_mod = 1 / a.atk_mod;

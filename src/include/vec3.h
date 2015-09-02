@@ -77,3 +77,4 @@ T dist(vec3<T> a, vec3<T> b) {
     return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
 }
 #endif // VEC3_H
+

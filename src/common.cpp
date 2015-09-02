@@ -18,7 +18,7 @@ float bp_init_mods[] = {
     1.2, 1.5, 0.8, 1,
 };
 int cl_init_hp[] = {1500, 1100, 700};
-int init_mn[] = {10, 20, 70};
+int init_mp[] = {10, 20, 70};
 int init_agi[] = {9, 15, 6};
 int init_strength[] = {15, 9, 6};
 int init_int[] = {3, 6, 15};
@@ -40,9 +40,9 @@ void init_maps() {
     }
 }
 
-void init_values(int &hp, int &mn, int &agi, int &strength, int &intellect, int &speed, int cl) {
+void init_values(int &hp, int &mp, int &agi, int &strength, int &intellect, int &speed, int cl) {
     hp = cl_init_hp[cl];
-    mn = init_mn[cl];
+    mp = init_mp[cl];
     agi = init_agi[cl];
     strength = init_strength[cl];
     intellect = init_int[cl];

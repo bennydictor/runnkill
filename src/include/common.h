@@ -23,5 +23,5 @@ extern int atk_agi_mods[];
 extern int atk_int_mods[];
 
 long long count_score(int lv1, int lv2, int dmg, int heal);
-void init_values(int &hp, int &mn, int &agi, int &strength, int &intellect, int &speed, int cl);
+void init_values(int &hp, int &mp, int &agi, int &strength, int &intellect, int &speed, int cl);
 #endif // COMMON_H
