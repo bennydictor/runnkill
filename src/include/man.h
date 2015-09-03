@@ -1,5 +1,6 @@
 #ifndef MAN
 #define MAN
+#define MAN_RAD 1
 
 #include <common.h>
 #include <items.h>

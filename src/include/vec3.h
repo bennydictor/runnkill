@@ -38,6 +38,11 @@ vec3<T> operator*(T x, const vec3<T> &v) {
 }
 
 template <class T>
+vec3<T> operator/(const vec3<T> &v, T x) {
+    return vec3<T>(v.x / x, v.y / x, v.z / x);
+}
+
+template <class T>
 T vec3<T>::dot(const vec3<T> &v) const {
     return x * v.x + y * v.y + z * v.z;
 }

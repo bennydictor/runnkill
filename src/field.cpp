@@ -173,3 +173,15 @@ int** gen_field_sun(int w, int h) {
     }
     return arr;
 }
+
+int** gen_field_empty(int w, int h) {
+    int** field;
+    field = new int*[w];
+    for (int i = 0; i < w; i++) {
+        field[i] = new int[h];
+        for (int j = 0; j < h; j++) {
+            field[i][j] = 0;
+        }
+    }
+    return field; 
+}

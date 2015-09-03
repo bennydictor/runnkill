@@ -7,6 +7,7 @@ using namespace std;
 void skill_t::in_damage(istream& stream) {
     if (is_range) {
         stream >> dmg;
+        sample.in(stream);
     } else {
         stream >> u_l >> u_r >> d_l >> d_r;
     }

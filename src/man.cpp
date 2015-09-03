@@ -7,7 +7,7 @@ man::man() {
     def_mod = atk_mod = 1; 
     can_die = true;
     have_shield = false;
-    orientation = vec3<float>(0, 1, 0);
+    orientation = vec3<float>(1, 0, 0);
     for (size_t i = 0; i < BP_AMOUNT; i++) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
@@ -20,7 +20,7 @@ man::man(string _name, int cl) {
     def_mod = atk_mod = 1; 
     can_die = true;
     have_shield = false;
-    orientation = vec3<float>(0, 1, 0);
+    orientation = vec3<float>(1, 0, 0);
     for (size_t i = 0; i < BP_AMOUNT; i++) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }

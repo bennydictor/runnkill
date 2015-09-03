@@ -1,6 +1,6 @@
 #ifndef BULLET
 #define BULLET
-
+#include <iostream>
 #include <effect.h>
 #include <vector>
 #include <string>
@@ -11,9 +11,8 @@ struct bullet {
     std::vector<effect> effects;
     float damage;
 
-    bullet() {
-    }
-
+    bullet();
+    void in (std::istream& stream);
     vec3<float> in_time(float time);
 };
 
