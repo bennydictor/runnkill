@@ -177,13 +177,17 @@ void update() {
     }
     rot[0] += mouse_dy / 100.0;
     rot[1] += mouse_dx / 100.0;
-    for (int i = 0; i < 2; ++i) {
-        if (rot[i] < -2 * M_PI) {
-            rot[i] += 2 * M_PI;
-        }
-        if (rot[i] > +2 * M_PI) {
-            rot[i] -= 2 * M_PI;
-        }
+    if (rot[0] < -M_PI / 2) {
+        rot[0] = -M_PI / 2;
+    }
+    if (rot[0] > +M_PI / 2) {
+        rot[0] = +M_PI / 2;
+    }
+    if (rot[1] < -2 * M_PI) {
+        rot[1] += 2 * M_PI;
+    }
+    if (rot[1] > +2 * M_PI) {
+        rot[1] -= 2 * M_PI;
     }
     printl(LOG_D, "rot[1] = %f", rot[1]);
     id_mat4(mat_v);
