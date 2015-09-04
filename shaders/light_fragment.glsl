@@ -30,7 +30,7 @@ void main() {
     vec3 specular_fc = vec3(0, 0, 0);
     
     vec3 vertex_position = (v_mat_v * v_mat_m * vec4(f_coord, 1)).xyz;
-    vec3 surface_normal = normalize((v_mat_m * vec4(f_normal, 1)).xyz);
+    vec3 surface_normal = normalize((v_mat_v * v_mat_m * vec4(f_normal, 0)).xyz);
     for (int i = 0; i < LIGHT_COUNT; ++i) {
         if (f_light_enable[i] != 0) {
             ambient_fc += f_light[i].ambient;
