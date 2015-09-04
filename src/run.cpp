@@ -26,9 +26,48 @@ template <class T>
 
 vec3<T> get_turned(vec3<T> s, float angle) {
     vec3<T> res(s);
-    res.x = cos(angle) * s.x - sin(angle) * s.y;
-    res.y = sin(angle) * s.x + cos(angle) * s.y;
+    res.x = cos(angle) * s.x - sin(angle) * s.z;
+    res.z = sin(angle) * s.x + cos(angle) * s.z;
     return res;
+}
+
+template <class T>
+
+int detect_sector(vec3<T> centre, vec3<T> point, vec3<T> orientation) {
+    point.x -= centre.x;
+    point.y -= centre.y;
+    point.z -= centre.z;
+    point = get_turned(point, M_PI / 4 + atan2(orientation.z, orientation.x));
+    float x = point.x, y = point.y, z = point.z;
+    if (x > 0) {
+        if (y > 0) {
+            if (z > 0) {
+                return LEFT_FRONT_UP;
+            } else {
+                return RIGHT_FRONT_UP;
+            }
+        } else {
+            if (z > 0) {
+                return LEFT_FRONT_DOWN;
+            } else {
+                return RIGHT_FRONT_DOWN;
+            }
+        }
+    } else {
+        if (y > 0) {
+            if (z > 0) {
+                return LEFT_BACK_UP;
+            } else {
+                return RIGHT_BACK_UP;
+            }
+        } else {
+            if (z > 0) {
+                return LEFT_BACK_DOWN;
+            } else {
+                return RIGHT_BACK_DOWN;
+            }
+        }
+    }
 }
 
 bool is_intersected(vec3<float> centre, float rad, vec3<float> begin, vec3<float> end, vec3<float>& res) {
@@ -75,17 +114,16 @@ void move_bullet(int b_idx, float time) {
     for (int i = 0; i < (int)persons.size(); i++) {
         if (is_intersected(persons[i]->coords, MAN_RAD, bullets[b_idx].coords,
             our_point, intersection)) {
-            cerr << "Strike #" << i <<  endl;
+            cerr << "Strike #" << i << endl;
             explosions.push_back(intersection);
-
-            /*
-            or (int j = 0; j < (int)persons.size(); j++) {
-                if (dist(intersection, persons[i]->coords) < MAN_RAD + EXPLOSION_RAD) {
-                    
+            for (int j = 0; j < (int)persons.size(); j++) {
+                if (dist(intersection, persons[j]->coords) < MAN_RAD + EXPLOSION_RAD) {
+                    int sector = detect_sector(persons[j]->coords, intersection, persons[j]->orientation);
+                    is_alive[j] = !persons[j]->take_damage(
+                                count_dmg(persons[j]->body_parts[sector], bullets[b_idx].damage));
+                    //Here will be effects adding
                 }
             }
-            */
-
             alive_bullets[b_idx] = 0;
             return;
         }
@@ -120,6 +158,7 @@ void attack(int man_idx, int idx) {
      if (curr.is_range) {
         bullets.push_back(bullet(curr.sample));
         bullets.back().coords = z->coords + (float)MAN_RAD * z->orientation;
+        bullets.back().speed = vec3<float>(z->coords, bullets.back().coords);
         bullets.back().speed.resize(sqrt(z->speed.sqlen()) + curr.sample.speed.x);
         bullets.back().damage *= count_attack(*z);
         alive_bullets.push_back(1);
@@ -161,6 +200,9 @@ void attack(int man_idx, int idx) {
                     }
                 }
                 is_alive[i] = !persons[i]->take_damage(damage);
+
+                //Here will be effects adding
+
             }
         }
     }
@@ -220,7 +262,7 @@ int main()
     }
     man z = man("z", 0);
     z.coords = vec3<float>(0, 1, 0);
-
+    z.set_orientation(vec3<float>(3, 0.5, 0.5));
     persons.push_back(&z);
     is_alive.push_back(0);
 
@@ -235,27 +277,30 @@ int main()
     z.move(0.5);
     cerr << z.coords << endl;
     attack(0, 0);
-    cerr << sample.hp << ' ' << sample.mp << endl;
     cerr << z.hp << ' ' << z.mp << ' ' << count_attack(z) << endl;
     cerr << "Look at it!" << endl;
     cerr << "----------" << endl;
     cerr << bullets[0].coords << ' ' << bullets[0].speed << alive_bullets[0] << endl;
     for (int i = 0; i < 10; i++) {
-        move_bullet(0, 0.1);
-        cerr << bullets[0].coords << ' ' << bullets[0].speed << alive_bullets[0] << endl;
+        move_bullet(0, 0.05);
+        cerr << "Bullet #0 in " << bullets[0].coords << endl; 
         if (!alive_bullets[0]) {
             cerr << explosions[0] << endl;
         }
     }
-    /*
+    cerr << sample.hp << ' ' << sample.mp << endl;
+    
     sample.fortify(RIGHT_UP);
     attack(0, 0);
+    for (int i = 0; i < 10; i++) {
+        cerr << "Bullet #1 in " << bullets[1].coords << endl; 
+        move_bullet(1, 0.05);
+    }
     cerr << sample.hp << ' ' << sample.mp << endl;
     warrior = man("warrior", 0);
     archer = man("archer", 1);
     mage = man("mage", 2);
     warrior.out(cerr);
-    cerr << "Warrior:" << "hp = " << warrior.hp << "; mp = " << warrior.mp << "; attack = " << count_attack(warrior) << endl
+    cerr << "Warrior:" << "hp = " << warrior.hp << "; mp = " << warrior.mp << "; attack = " << count_attack(warrior) << endl;
     cerr << "Now make font less and run look_at_map.py" << endl;
-    */
 }

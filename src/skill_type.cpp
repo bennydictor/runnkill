@@ -8,6 +8,7 @@ void skill_t::in_damage(istream& stream) {
     if (is_range) {
         stream >> dmg;
         sample.in(stream);
+        sample.damage = dmg;
     } else {
         stream >> u_l >> u_r >> d_l >> d_r;
     }
@@ -18,6 +19,9 @@ void skill_t::in_damage(istream& stream) {
         stream >> eff_name;
         effects.push_back(effect(eff_name));
         effects[i].in(stream);
+    }
+    if (is_range) {
+        sample.effects = effects;
     }
 }
 
