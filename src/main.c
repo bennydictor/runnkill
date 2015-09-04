@@ -11,6 +11,7 @@
 #include <graphics/sphere_bo.h>
 #include <util/log.h>
 #include <math/vecmath.h>
+#include <math/pi.h>
 
 
 unsigned int prog;
@@ -107,7 +108,7 @@ int init_resources(void) {
 
     glUniform3f(glGetUniformLocation(prog, "f_material.ambient"), 1, 1, 1);
     glUniform3f(glGetUniformLocation(prog, "f_material.diffuse"), 1, 1, 1);
-    glUniform3f(glGetUniformLocation(prog, "f_material.specular"), 1, 1, 1);
+    glUniform3f(glGetUniformLocation(prog, "f_material.specular"), 0, 0, 0);
     glUniform1f(glGetUniformLocation(prog, "f_material.shininess"), 128);
 
     glUniform3f(glGetUniformLocation(prog, "f_light[0].coord"), 0, 3, 2);
@@ -176,6 +177,15 @@ void update() {
     }
     rot[0] += mouse_dy / 100.0;
     rot[1] += mouse_dx / 100.0;
+    for (int i = 0; i < 2; ++i) {
+        if (rot[i] < -2 * M_PI) {
+            rot[i] += 2 * M_PI;
+        }
+        if (rot[i] > +2 * M_PI) {
+            rot[i] -= 2 * M_PI;
+        }
+    }
+    printl(LOG_D, "rot[1] = %f", rot[1]);
     id_mat4(mat_v);
     itrans_mat(pos, mat_v);
     irot_y_mat(rot[1], mat_v);
@@ -184,16 +194,18 @@ void update() {
     glutPostRedisplay();
 }
 
+#define unused(X) ((void) (X))
+
 void on_kbd_down(unsigned char key, int x, int y) {
-    ((void) x);
-    ((void) y);
+    unused(x);
+    unused(y);
     kbd_key_status[key] = KEY_DOWN;
     update();
 }
 
 void on_kbd_up(unsigned char key, int x, int y) {
-    ((void) x);
-    ((void) y);
+    unused(x);
+    unused(y);
     kbd_key_status[key] = KEY_UP;
     update();
 }
