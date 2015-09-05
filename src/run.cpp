@@ -10,7 +10,7 @@
 
 #define EPS 1e-4
 #define EXPLOSION_RAD 1e-2
-
+#define INF 10000000
 using namespace std;
 
 const int len = 1;
@@ -105,6 +105,17 @@ int all_dmg(body_part u_l_bp, body_part u_r_bp, body_part d_l_bp, body_part d_r_
          + count_dmg(d_l_bp, skill.d_l * attack) + count_dmg(d_r_bp, skill.d_r * attack);
 
 }
+void damage_last_explosion(int b_idx) {
+            for (int j = 0; j < (int)persons.size(); j++) {
+                if (dist(explosions.back(), persons[j]->coords) < MAN_RAD + EXPLOSION_RAD) {
+                    int sector = detect_sector(persons[j]->coords, explosions.back(), persons[j]->orientation);
+                    is_alive[j] = !persons[j]->take_damage(
+                                count_dmg(persons[j]->body_parts[sector], bullets[b_idx].damage));
+                    //Here will be effects adding
+                }
+            }
+
+}
 void move_bullet(int b_idx, float time) {
     if (!alive_bullets[b_idx]) {
         return;
@@ -116,36 +127,46 @@ void move_bullet(int b_idx, float time) {
             our_point, intersection)) {
             cerr << "Strike #" << i << endl;
             explosions.push_back(intersection);
-            for (int j = 0; j < (int)persons.size(); j++) {
-                if (dist(intersection, persons[j]->coords) < MAN_RAD + EXPLOSION_RAD) {
-                    int sector = detect_sector(persons[j]->coords, intersection, persons[j]->orientation);
-                    is_alive[j] = !persons[j]->take_damage(
-                                count_dmg(persons[j]->body_parts[sector], bullets[b_idx].damage));
-                    //Here will be effects adding
-                }
-            }
+            damage_last_explosion(b_idx);
             alive_bullets[b_idx] = 0;
             return;
         }
     }
-    if (F[(int)our_point.x][(int)our_point.z] > our_point.y) {
-        vec3<float> l, r, m;
-        l = bullets[b_idx].coords;
-        r = our_point;
-        for (int i = 0; i < 30; i++) {
-            m = (l + r) / (float)2;
-            if (F[(int)m.x][(int)m.z] >= m.y) {
-                r = m;   
-            } else {
-                l = m;               
-            }
+    vec3<float> l, r, m, min_point(-INF, -INF, -INF);
+    l = bullets[b_idx].coords;
+    r = our_point;
+    vec3<float> cube_p_d((int)r.x, (int)r.z, 0), cube_p_u((int)r.x, (int)r.z, F[(int)r.x][(int)r.z]);
+    for (int i = 0; i < 30; i++) {
+        m = (l + r) / (float)2;
+        if (vec3<float>(cube_p_d, m).crs(vec3<float>(cube_p_d, cube_p_u)).y * 
+            vec3<float>(cube_p_d, cube_p_u).crs(vec3<float>(cube_p_d, min_point)).y < 0) {
+            l = m;
         }
+        else {
+            r = m;
+        }
+    }
+    l = bullets[b_idx].coords;
+    for (int i = 0; i < 30; i++) {
+        m = (l + r) / (float)2;
+        if (F[(int)m.x][(int)m.z] >= m.y) {
+            r = m;   
+        } else {
+            l = m;               
+        }
+    }
+
+    if (F[(int)l.x][(int)l.z] >= l.y) {
         explosions.push_back(l);
         alive_bullets[b_idx] = 0;
+        damage_last_explosion(b_idx);
         return;
     }
     bullets[b_idx].coords = our_point; 
 }
+
+//vec3<float> ternary_search_closest(vec3<float> 
+
 void attack(int man_idx, int idx) {
 
     man* z = persons[man_idx];
@@ -181,31 +202,42 @@ void attack(int man_idx, int idx) {
                 if (He.x > I.x) {
                     if (He.z > I.z) {
                         cerr << "It`s 0" << endl;
-                        damage = all_dmg(persons[i]->body_parts[0], persons[i]->body_parts[4],
-                                            persons[i]->body_parts[2], persons[i]->body_parts[6], z->skills[idx], attack);
+                        damage = all_dmg(persons[i]->body_parts[LEFT_FRONT_UP], persons[i]->body_parts[RIGHT_FRONT_UP],
+                                        persons[i]->body_parts[LEFT_FRONT_DOWN], persons[i]->body_parts[RIGHT_FRONT_DOWN],
+                                        z->skills[idx], attack);
                     } else {
                         cerr << "It`s 1" << endl;
-                        damage = all_dmg(persons[i]->body_parts[1], persons[i]->body_parts[5],
-                                            persons[i]->body_parts[3], persons[i]->body_parts[7], z->skills[idx], attack);
+                        damage = all_dmg(persons[i]->body_parts[RIGHT_BACK_UP], persons[i]->body_parts[LEFT_BACK_UP],
+                                        persons[i]->body_parts[RIGHT_BACK_DOWN], persons[i]->body_parts[LEFT_BACK_DOWN],
+                                            z->skills[idx], attack);
                     }
                 } else {
                     if (He.z > I.z) {
                         cerr << "It`s 2" << endl;
-                        damage = all_dmg(persons[i]->body_parts[2], persons[i]->body_parts[6],
-                                            persons[i]->body_parts[1], persons[i]->body_parts[5], z->skills[idx], attack);
+                        damage = all_dmg(persons[i]->body_parts[RIGHT_FRONT_UP], persons[i]->body_parts[RIGHT_BACK_UP],
+                                        persons[i]->body_parts[RIGHT_FRONT_DOWN], persons[i]->body_parts[RIGHT_BACK_DOWN],
+                                        z->skills[idx], attack);
                     } else {
                         cerr << "It`s 3" << endl;
-                        damage = all_dmg(persons[i]->body_parts[3], persons[i]->body_parts[7],
-                                            persons[i]->body_parts[0], persons[i]->body_parts[4], z->skills[idx], attack);
+                        damage = all_dmg(persons[i]->body_parts[LEFT_BACK_UP], persons[i]->body_parts[LEFT_FRONT_UP],
+                                            persons[i]->body_parts[LEFT_BACK_DOWN], persons[i]->body_parts[LEFT_FRONT_DOWN],
+                                            z->skills[idx], attack);
                     }
                 }
                 is_alive[i] = !persons[i]->take_damage(damage);
-
                 //Here will be effects adding
-
             }
         }
     }
+}
+
+void move_man(int idx, float time) {
+    vec3<float> our_point = persons[idx]->in_time(time);
+    vec3<float> low, hig;
+    low.x = (int)persons[idx]->coords.x, hig.x = (int)persons[idx]->coords.x + 1;
+    low.z = (int)persons[idx]->coords.z, hig.z = (int)persons[idx]->coords.z + 1;
+    low.y = 0, hig.y = F[(int)low.x][(int)low.z];
+//    ternary_search_closest(low, hig, persons[idx]->coords);
 }
 /*
 void what_to_draw(vector<obj> &result) {
@@ -260,15 +292,14 @@ int main()
         }
         cout << endl;
     }
-    man z = man("z", 0);
+    man z = man("z", WARRIOR);
     z.coords = vec3<float>(0, 1, 0);
     z.set_orientation(vec3<float>(3, 0.5, 0.5));
     persons.push_back(&z);
-    is_alive.push_back(0);
+    is_alive.push_back(1);
 
-    z.skills.push_back(classes[1][0]);
-    man sample = man("y", 0);
-    man warrior, archer, mage;
+    z.skills.push_back(classes[ARCHER][0]);
+    man sample = man("sample", WARRIOR);
     persons.push_back(&sample);
     is_alive.push_back(1);
 
@@ -297,9 +328,11 @@ int main()
         move_bullet(1, 0.05);
     }
     cerr << sample.hp << ' ' << sample.mp << endl;
-    warrior = man("warrior", 0);
-    archer = man("archer", 1);
-    mage = man("mage", 2);
+    man warrior, archer, mage;
+    warrior = man("warrior", WARRIOR);
+
+    archer = man("archer", ARCHER);
+    mage = man("mage", MAGE);
     warrior.out(cerr);
     cerr << "Warrior:" << "hp = " << warrior.hp << "; mp = " << warrior.mp << "; attack = " << count_attack(warrior) << endl;
     cerr << "Now make font less and run look_at_map.py" << endl;

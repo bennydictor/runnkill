@@ -8,6 +8,10 @@
 #define RIGHT_UP 4
 #define RIGHT_DOWN 6
 
+#define WARRIOR 0
+#define ARCHER 1
+#define MAGE 2
+
 #include <string>
 #include <map>
 

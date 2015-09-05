@@ -47,7 +47,7 @@ void man::get_effect(mod_t res) {
     atk_mod *= res.atk_mod;
 }
 
-void man::move(float curr_time) {
+vec3<float> man::in_time(float time) {
     int amount_of_f = 0;
     for (int j = 0; j < BP_AMOUNT; j++) {
         if (body_parts[j].is_fortified) {
@@ -57,17 +57,29 @@ void man::move(float curr_time) {
     if (have_shield) {
         amount_of_f--;
     }
-    coords = coords + (float)((curr_time - time) * (1 - 0.2 * amount_of_f)) * speed;
+    return coords + (float)((time) * (1 - (float)0.2 * amount_of_f)) * speed;
+}
+
+void man::move(float time) {
+    int amount_of_f = 0;
+    for (int j = 0; j < BP_AMOUNT; j++) {
+        if (body_parts[j].is_fortified) {
+            amount_of_f++;
+        }
+    }
+    if (have_shield) {
+        amount_of_f--;
+    }
+    coords = coords + (float)((time) * (1 - 0.2 * amount_of_f)) * speed;
     for (size_t i = 0; i < effects.size(); i++)
     {
-        mod_t res = effects[i].tic(curr_time - time);
+        mod_t res = effects[i].tic(time);
         this->get_effect(res);
         if (effects[i].time <= 0)
         {
             this->get_effect(effects[i].mods_two_side * -1);
         }
     }
-    time = curr_time;
 }
 
 bool man::take_damage(int dmg) {
