@@ -252,6 +252,8 @@ void attack(int man_idx, int idx) {
 
 bool move_man(int idx, float time) {
     vec3<float> our_point = persons[idx]->in_time(time);
+    cerr << our_point << endl;
+
     vec3<float> low, hig;
     low.x = (int)persons[idx]->coords.x, hig.x = (int)persons[idx]->coords.x + 1;
     low.z = (int)persons[idx]->coords.z, hig.z = (int)persons[idx]->coords.z + 1;
@@ -270,7 +272,10 @@ bool move_man(int idx, float time) {
     {
         if (!is_alive[i] or i == idx)
             continue;
-        if (dist(persons[i]->coords, persons[idx]->coords) < 2 * MAN_RAD)
+        low = persons[idx]->coords;
+        hig = our_point;
+        ternary_search_closest(low, hig, persons[i]->coords);
+        if (dist(persons[i]->coords, low) < 2 * MAN_RAD)
         {
             if (move_man(idx, time / 2) and time > EPS)
             {
@@ -282,7 +287,7 @@ bool move_man(int idx, float time) {
     }   
     persons[idx]->move(time);
     persons[idx]->coords = our_point;
-    return false;
+    return true;
 }
 /*
 void what_to_draw(vector<obj> &result) {
@@ -308,6 +313,7 @@ void what_to_draw(vector<obj> &result) {
 */
 int main()
 {
+    string a;
     srand(time(0));
     ifstream skills;
     skills.open("skills");
@@ -329,7 +335,7 @@ int main()
     cerr << classes[0][0].is_range << ' ' << classes[0][0].u_l << endl;
     freopen("field", "w", stdout);
     w = h = 200;
-    F = gen_field_sun(w, h);
+    F = gen_field_empty(w, h);
     for (int i = 0; i < w; i++)
     {
         for (int j = 0; j < h; j++)
@@ -351,7 +357,10 @@ int main()
 
     sample.coords = vec3<float>(3, 1, 0);
     z.set_speed(vec3<float>(1, 0, 0));
-    move_man(0, 0.5);
+    
+    while (move_man(0, 0.01))
+    ;
+
     cerr << z.coords << endl;
     attack(0, 0);
     cerr << z.hp << ' ' << z.mp << ' ' << count_attack(z) << endl;
