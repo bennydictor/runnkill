@@ -7,6 +7,7 @@
 #include <bullet.h>
 #include <vector>
 #include <cmath>
+#include <ctime>
 
 #define EPS 1e-4
 #define EXPLOSION_RAD 1e-2
@@ -249,7 +250,7 @@ void attack(int man_idx, int idx) {
     }
 }
 
-void move_man(int idx, float time) {
+bool move_man(int idx, float time) {
     vec3<float> our_point = persons[idx]->in_time(time);
     vec3<float> low, hig;
     low.x = (int)persons[idx]->coords.x, hig.x = (int)persons[idx]->coords.x + 1;
@@ -258,11 +259,12 @@ void move_man(int idx, float time) {
     ternary_search_closest(low, hig, persons[idx]->coords);
     if (dist(low, persons[idx]->coords) < MAN_RAD)
     {
-        move_man(idx, time / 2);
-        if (time > EPS)
+        if (move_man(idx, time / 2) and (time > EPS))
+        {
             move_man(idx, time / 2);
-        persons[idx]->move(time);
-        return;
+        }
+        persons[idx]->move(time / 2);    
+        return false;
     }
     for (int i = 0; i < (int)persons.size(); i++)
     {
@@ -270,15 +272,17 @@ void move_man(int idx, float time) {
             continue;
         if (dist(persons[i]->coords, persons[idx]->coords) < 2 * MAN_RAD)
         {
-            move_man(idx, time / 2);
-            if (time > EPS)
+            if (move_man(idx, time / 2) and time > EPS)
+            {
                 move_man(idx, time / 2);
-            persons[idx]->move(time);
-            return;
+            }
+            persons[idx]->move(time / 2);
+            return false;
         }
     }   
     persons[idx]->move(time);
     persons[idx]->coords = our_point;
+    return false;
 }
 /*
 void what_to_draw(vector<obj> &result) {
@@ -304,6 +308,7 @@ void what_to_draw(vector<obj> &result) {
 */
 int main()
 {
+    srand(time(0));
     ifstream skills;
     skills.open("skills");
     vector<vector<skill_t> > classes(3);
@@ -324,7 +329,7 @@ int main()
     cerr << classes[0][0].is_range << ' ' << classes[0][0].u_l << endl;
     freopen("field", "w", stdout);
     w = h = 200;
-    F = gen_field_empty(w, h);
+    F = gen_field_sun(w, h);
     for (int i = 0; i < w; i++)
     {
         for (int j = 0; j < h; j++)
@@ -346,7 +351,7 @@ int main()
 
     sample.coords = vec3<float>(3, 1, 0);
     z.set_speed(vec3<float>(1, 0, 0));
-    z.move(0.5);
+    move_man(0, 0.5);
     cerr << z.coords << endl;
     attack(0, 0);
     cerr << z.hp << ' ' << z.mp << ' ' << count_attack(z) << endl;

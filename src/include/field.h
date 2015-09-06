@@ -1,7 +1,8 @@
 #ifndef FIELD_H
 #define FIELD_H
 #define S_WIGHT 6
-#define BIG_WIGHT 20
+#define BIG_WIGHT 14
+
 #include <vec2.h>
 #include <cstdlib>
 template <class T>

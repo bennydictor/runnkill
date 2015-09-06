@@ -86,6 +86,9 @@ bool** gen_field(int w, int h) {
 
     
 int** gen_field_sun(int w, int h) {
+    cerr << "gen_field must have !w&1 and !h&1" << endl;
+    w /= 2;
+    h /= 2;
     int **arr = new int*[w];
     for (int i = 0; i < w; i++) {
         arr[i] = new int[h];
@@ -124,7 +127,7 @@ int** gen_field_sun(int w, int h) {
             } 
         }
     }
-
+    
     int dx, dy;
     for (int i = 0; i < w / (BIG_WIGHT); i++) {
         for (int j = 0; j < h / (BIG_WIGHT); j++) {
@@ -142,7 +145,7 @@ int** gen_field_sun(int w, int h) {
                 dx++;
                 dy++;
             }
-            render_line_add(centres[i][j], centres[min(w / BIG_WIGHT - 1, i + dx)][min(h / BIG_WIGHT - 1, j + dy)], arr, 10);
+            render_line(centres[i][j], centres[min(w / BIG_WIGHT - 1, i + dx)][min(h / BIG_WIGHT - 1, j + dy)], arr, 0);
             /*
             if (get_rand(0, 1) == 0) {
                 render_line_add(centres[i][j], centres[get_rand(0, w / BIG_WIGHT - 1)][hy], arr, 10);
@@ -158,20 +161,38 @@ int** gen_field_sun(int w, int h) {
            arr[centres[i][j].x][centres[i][j].y] = 1; 
         }
     }
+    w *= 2;
+    h *= 2;
+    int** res = new int*[w];
     for (int i = 0; i < w; i++)
     {
+        res[i] = new int[h];
         for (int j = 0; j < h; j++)
         {
-            if (arr[i][j] > 40)
-                arr[i][j] = 2;
-            else if (arr[i][j] > 20)
-                arr[i][j] = 1;
-            else if (arr[i][j] > 2)
-                arr[i][j] = 0;
-
+            res[i][j] = arr[i / 2][j / 2];
         }
     }
-    return arr;
+    for (int i = 1; i < w - 1; i++)
+    {
+        for (int j = 1; j < h - 1; j++)
+        {
+            if ((!(res[i - 1][j] || res[i][j - 1]) or !(res[i - 1][j] || res[i][j + 1])
+             or !(res[i + 1][j] || res[i][j - 1]) or !(res[i + 1][j] || res[i][j + 1])) and (res[i][j] == 2))
+                res[i][j] = -1;
+        }
+    }
+    for (int i = 1; i < w - 1; i++)
+    {
+        for (int j = 1; j < h - 1; j++)
+        {
+            if (res[i][j] == -1)
+            {
+                res[i][j] = 0;
+            }
+        }
+    }
+
+    return res;
 }
 
 int** gen_field_empty(int w, int h) {
