@@ -68,6 +68,24 @@ int detect_sector(vec3<T> centre, vec3<T> point, vec3<T> orientation) {
             }
         }
     }
+
+}
+void ternary_search_closest(vec3<float>& low, vec3<float>& hig, vec3<float> centre)
+{
+    for (int i = 0; i < 50; i++)
+    {
+        vec3<float> m1, m2;
+        m1 = ((float)2 * low + hig) / (float)3;
+        m2 = (low + (float)2 * hig) / (float)3;
+        if (dist(m1, centre) > dist(m2, centre))
+        {
+            low = m1;
+        }
+        else
+        {
+            hig = m2;
+        }
+    }
 }
 
 bool is_intersected(vec3<float> centre, float rad, vec3<float> begin, vec3<float> end, vec3<float>& res) {
@@ -237,7 +255,30 @@ void move_man(int idx, float time) {
     low.x = (int)persons[idx]->coords.x, hig.x = (int)persons[idx]->coords.x + 1;
     low.z = (int)persons[idx]->coords.z, hig.z = (int)persons[idx]->coords.z + 1;
     low.y = 0, hig.y = F[(int)low.x][(int)low.z];
-//    ternary_search_closest(low, hig, persons[idx]->coords);
+    ternary_search_closest(low, hig, persons[idx]->coords);
+    if (dist(low, persons[idx]->coords) < MAN_RAD)
+    {
+        move_man(idx, time / 2);
+        if (time > EPS)
+            move_man(idx, time / 2);
+        persons[idx]->move(time);
+        return;
+    }
+    for (int i = 0; i < (int)persons.size(); i++)
+    {
+        if (!is_alive[i] or i == idx)
+            continue;
+        if (dist(persons[i]->coords, persons[idx]->coords) < 2 * MAN_RAD)
+        {
+            move_man(idx, time / 2);
+            if (time > EPS)
+                move_man(idx, time / 2);
+            persons[idx]->move(time);
+            return;
+        }
+    }   
+    persons[idx]->move(time);
+    persons[idx]->coords = our_point;
 }
 /*
 void what_to_draw(vector<obj> &result) {

@@ -61,16 +61,6 @@ vec3<float> man::in_time(float time) {
 }
 
 void man::move(float time) {
-    int amount_of_f = 0;
-    for (int j = 0; j < BP_AMOUNT; j++) {
-        if (body_parts[j].is_fortified) {
-            amount_of_f++;
-        }
-    }
-    if (have_shield) {
-        amount_of_f--;
-    }
-    coords = coords + (float)((time) * (1 - 0.2 * amount_of_f)) * speed;
     for (size_t i = 0; i < effects.size(); i++)
     {
         mod_t res = effects[i].tic(time);
