@@ -251,12 +251,17 @@ void attack(int man_idx, int idx) {
 }
 
 bool move_man(int idx, float time) {
+    if (time < EPS)
+    {
+        return true;
+    }
     vec3<float> our_point = persons[idx]->in_time(time);
     cerr << our_point << endl;
 
     vec3<float> low, hig;
-    low.x = (int)persons[idx]->coords.x, hig.x = (int)persons[idx]->coords.x + 1;
-    low.z = (int)persons[idx]->coords.z, hig.z = (int)persons[idx]->coords.z + 1;
+    low.x = (int)our_point.x, hig.x = (int)our_point.x + 1;
+
+    low.z = (int)our_point.z, hig.z = (int)our_point.z + 1;
     low.y = 0, hig.y = F[(int)low.x][(int)low.z];
     ternary_search_closest(low, hig, persons[idx]->coords);
     if (dist(low, persons[idx]->coords) < MAN_RAD)
@@ -314,7 +319,7 @@ void what_to_draw(vector<obj> &result) {
 int main()
 {
     string a;
-    srand(time(0));
+    //srand(time(0));
     ifstream skills;
     skills.open("skills");
     vector<vector<skill_t> > classes(3);
@@ -334,8 +339,8 @@ int main()
     }
     cerr << classes[0][0].is_range << ' ' << classes[0][0].u_l << endl;
     freopen("field", "w", stdout);
-    w = h = 200;
-    F = gen_field_empty(w, h);
+    w = h = 100;
+    F = gen_field_sun(w, h);
     for (int i = 0; i < w; i++)
     {
         for (int j = 0; j < h; j++)
@@ -345,7 +350,8 @@ int main()
         cout << endl;
     }
     man z = man("z", WARRIOR);
-    z.coords = vec3<float>(0, 1, 0);
+    z.coords = vec3<float>(5, 1, 11);
+
     z.set_orientation(vec3<float>(3, 0.5, 0.5));
     persons.push_back(&z);
     is_alive.push_back(1);
@@ -355,7 +361,8 @@ int main()
     persons.push_back(&sample);
     is_alive.push_back(1);
 
-    sample.coords = vec3<float>(3, 1, 0);
+    sample.coords = vec3<float>(10, 1, 7);
+
     z.set_speed(vec3<float>(1, 0, 0));
     
     while (move_man(0, 0.01))
