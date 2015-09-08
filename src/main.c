@@ -14,13 +14,17 @@
 #include <math/pi.h>
 
 
-unsigned int prog;
-unsigned int vbo;
+unsigned int screen_width, screen_height;
+unsigned int prog, prog_pp;
+unsigned int vbo, vbo_pp;
+unsigned int fbo, rbo, fbo_texture;
 mat4 mat_m, mat_v, mat_p;
 
 unsigned int attr_v_coord, attr_v_normal;
-
 unsigned int unif_v_mat_m, unif_v_mat_v, unif_v_mat_p;
+
+unsigned int attr_pp_v_coord;
+unsigned int unif_pp_f_texture;
 
 vec3 pos, rot;
 
@@ -56,6 +60,28 @@ float delta() {
     } \
 } while (0)
 
+#define INIT_ATTR_PP(ATTR) do { \
+    attr_pp_##ATTR = glGetAttribLocation(prog_pp, #ATTR); \
+    if (attr_pp_##ATTR == -1U) { \
+        printl(LOG_E, "Error while initializing resources: cannot bind attribute " #ATTR " (postprocess)\n"); \
+        return -1; \
+    } \
+} while (0)
+#define INIT_UNIF_PP(UNIF) do { \
+    unif_pp_##UNIF = glGetUniformLocation(prog_pp, #UNIF); \
+    if (unif_pp_##UNIF == -1U) { \
+        printl(LOG_E, "Error while initializing resources: cannot bind uniform " #UNIF " (postprocess)\n"); \
+        return -1; \
+    } \
+} while (0)
+
+const vertex3d pp_vbo_data[] = {
+    {{-1, -1, 0}, {0, 0, 0}},
+    {{+1, -1, 0}, {0, 0, 0}},
+    {{+1, +1, 0}, {0, 0, 0}},
+    {{-1, +1, 0}, {0, 0, 0}},
+};
+
 int init_resources(void) {
     init_sphere();
     mat_m = make_mat4();
@@ -64,7 +90,7 @@ int init_resources(void) {
     id_mat4(mat_m);
     id_mat4(mat_v);
     id_mat4(mat_p);
-    persp_mat(1, 1366.0 / 768.0, .0001, 1000, mat_p);
+    persp_mat(1, ((double) screen_width) / ((double) screen_height), .0001, 1000, mat_p);
     pos = make_vec3(0, 0, -5);
     rot = make_vec3(0, 0, 0);
     trans_mat(pos, mat_v);
@@ -87,9 +113,31 @@ int init_resources(void) {
         return -1;
     }
 
+    unsigned int vs_pp = create_shader("shaders/postprocess_vertex.glsl", GL_VERTEX_SHADER);
+    if (vs == -1U) {
+        printl(LOG_E, "Error while initializing resources: cannot compile postprocess vertex shader.\n");
+        return -1;
+    }
+
+    unsigned int fs_pp = create_shader("shaders/postprocess_fragment.glsl", GL_FRAGMENT_SHADER);
+    if (fs == -1U) {
+        printl(LOG_E, "Error while initializing resources: cannot compile postprocess fragment shader.\n");
+        return -1;
+    }
+
+    prog_pp = create_program(vs_pp, fs_pp);
+    if (prog == -1U) {
+        printl(LOG_E, "Error while initializing resources: cannot compile postprocess program.\n");
+        return -1;
+    }
+
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(sphere_vbo_data), sphere_vbo_data, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &vbo_pp);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_pp);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(pp_vbo_data), pp_vbo_data, GL_STATIC_DRAW);
 
     INIT_ATTR(v_coord);
     INIT_ATTR(v_normal);
@@ -98,13 +146,16 @@ int init_resources(void) {
     INIT_UNIF(v_mat_v);
     INIT_UNIF(v_mat_p);
 
-    glUseProgram(prog);
+    INIT_ATTR_PP(v_coord);
+    INIT_UNIF_PP(f_texture);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+
+    glUseProgram(prog);
 
     glUniform3f(glGetUniformLocation(prog, "f_material.ambient"), 1, 1, 1);
     glUniform3f(glGetUniformLocation(prog, "f_material.diffuse"), 1, 1, 1);
@@ -125,10 +176,39 @@ int init_resources(void) {
     glUniform1i(glGetUniformLocation(prog, "f_light_enable[6]"), 0);
     glUniform1i(glGetUniformLocation(prog, "f_light_enable[7]"), 0);
 
+    glActiveTexture(GL_TEXTURE0);
+    glGenTextures(1, &fbo_texture);
+    glBindTexture(GL_TEXTURE_2D, fbo_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screen_width, screen_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, screen_width, screen_height);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_texture, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+    unsigned int framebuffer_status;
+    if ((framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
+        printl(LOG_E, "Error while initializing resources: framebuffer is not complete (%d).\n", framebuffer_status);
+        return -1;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     return 0;
 }
 
 void on_display(void) {
+    glUseProgram(prog);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glClearColor(0, 0, 0, 1);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
@@ -147,6 +227,24 @@ void on_display(void) {
 
     glDisableVertexAttribArray(attr_v_coord);
     glDisableVertexAttribArray(attr_v_normal);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glUseProgram(prog_pp);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+    glBindTexture(GL_TEXTURE_2D, fbo_texture);
+    glUniform1i(unif_pp_f_texture, /*GL_TEXTURE*/0);
+    
+    glEnableVertexAttribArray(attr_pp_v_coord);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_pp);
+    glVertexAttribPointer(attr_pp_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void*) offsetof(vertex3d, coord));
+
+    glDrawArrays(GL_QUADS, 0, 4);
+
+    glDisableVertexAttribArray(attr_pp_v_coord);
 
     glutSwapBuffers();
 }
@@ -189,7 +287,6 @@ void update() {
     if (rot[1] > +2 * M_PI) {
         rot[1] -= 2 * M_PI;
     }
-    printl(LOG_D, "rot[1] = %f", rot[1]);
     id_mat4(mat_v);
     itrans_mat(pos, mat_v);
     irot_y_mat(rot[1], mat_v);
@@ -225,6 +322,20 @@ void on_mouse(int x, int y) {
     update();
 }
 
+void on_reshape(int w, int h) {
+    screen_width = w;
+    screen_height = h;
+    persp_mat(1, ((double) screen_width) / ((double) screen_height), .0001, 1000, mat_p);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, screen_width, screen_height);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_texture, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
+}
+
 void on_idle() {
     update();
 }
@@ -232,6 +343,9 @@ void on_idle() {
 void free_resources(void) {
     glDeleteProgram(prog);
     glDeleteBuffers(1, &vbo);
+    glDeleteTextures(1, &fbo_texture);
+    glDeleteRenderbuffers(1, &rbo);
+    glDeleteFramebuffers(1, &fbo);
     free(mat_m);
     free(mat_v);
     free(mat_p);
@@ -245,7 +359,7 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitContextVersion(2, 0);
     glutInitDisplayMode(GLUT_RGBA | GLUT_ALPHA | GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize(1366, 768);
+    glutInitWindowSize(screen_width = 1366, screen_height = 786);
     glutCreateWindow("sphere");
 
     GLenum glew_status = glewInit();
@@ -257,6 +371,7 @@ int main(int argc, char** argv) {
     if (init_resources() != -1) {
         glutDisplayFunc(on_display);
         glutIdleFunc(on_idle);
+        glutReshapeFunc(on_reshape);
         glutKeyboardFunc(on_kbd_down);
         glutKeyboardUpFunc(on_kbd_up);
         glutPassiveMotionFunc(on_mouse);
