@@ -5,7 +5,7 @@
 
 #include <GL/glew.h>
 #include <GL/gl.h>
-#include <GL/freeglut.h>
+#include <GLFW/glfw3.h>
 
 #include <graphics/shader.h>
 #include <graphics/sphere_bo.h>
@@ -13,7 +13,9 @@
 #include <math/vecmath.h>
 #include <math/pi.h>
 
+#define unused(X) ((void) (X))
 
+GLFWwindow *sphere_window;
 unsigned int screen_width, screen_height;
 unsigned int prog, prog_pp;
 unsigned int vbo, vbo_pp;
@@ -28,19 +30,19 @@ unsigned int unif_pp_f_texture;
 
 vec3 pos, rot;
 
-unsigned int prev_time;
+float prev_time;
 unsigned int fps;
-unsigned int last_point;
+float last_point;
 
 float delta() {
     ++fps;
-    unsigned int cur_time = glutGet(GLUT_ELAPSED_TIME);
-    if (cur_time - last_point >= 1000) {
+    float cur_time = glfwGetTime();
+    if (cur_time - last_point >= 1) {
         printl(LOG_D, "fps: %d\n", fps);
         fps = 0;
         last_point = cur_time;
     }
-    float d = (cur_time - prev_time) / 1000.0f;
+    float d = cur_time - prev_time;
     prev_time = cur_time;
     return d;
 }
@@ -199,9 +201,10 @@ int init_resources(void) {
     unsigned int framebuffer_status;
     if ((framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
         printl(LOG_E, "Error while initializing resources: framebuffer is not complete (%d).\n", framebuffer_status);
-        return -1;
+
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
     return 0;
 }
@@ -236,7 +239,7 @@ void on_display(void) {
 
     glBindTexture(GL_TEXTURE_2D, fbo_texture);
     glUniform1i(unif_pp_f_texture, /*GL_TEXTURE*/0);
-    
+
     glEnableVertexAttribArray(attr_pp_v_coord);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo_pp);
@@ -246,35 +249,39 @@ void on_display(void) {
 
     glDisableVertexAttribArray(attr_pp_v_coord);
 
-    glutSwapBuffers();
+    glfwSwapBuffers(sphere_window);
+    glfwPollEvents();
 }
 
-#define KEY_DOWN 1
-#define KEY_UP 0
-
-unsigned char kbd_key_status[255];
 int mouse_dx, mouse_dy;
 
-void update() {
+void update(void) {
     float dt = delta();
-    if (kbd_key_status[(unsigned char)'w'] == KEY_DOWN) {
+    if (glfwGetKey(sphere_window, GLFW_KEY_W) == GLFW_PRESS) {
         pos[0] -= sin(rot[1]) * dt;
         pos[2] += cos(rot[1]) * dt;
     }
-    if (kbd_key_status[(unsigned char)'s'] == KEY_DOWN) {
+    if (glfwGetKey(sphere_window, GLFW_KEY_S) == GLFW_PRESS) {
         pos[0] += sin(rot[1]) * dt;
         pos[2] -= cos(rot[1]) * dt;
     }
-    if (kbd_key_status[(unsigned char)'a'] == KEY_DOWN) {
+    if (glfwGetKey(sphere_window, GLFW_KEY_A) == GLFW_PRESS) {
         pos[0] += cos(rot[1]) * dt;
         pos[2] += sin(rot[1]) * dt;
     }
-    if (kbd_key_status[(unsigned char)'d'] == KEY_DOWN) {
+    if (glfwGetKey(sphere_window, GLFW_KEY_D) == GLFW_PRESS) {
         pos[0] -= cos(rot[1]) * dt;
         pos[2] -= sin(rot[1]) * dt;
     }
+    if (glfwGetKey(sphere_window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        pos[1] -= dt;
+    }
+    if (glfwGetKey(sphere_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+        pos[1] += dt;
+    }
     rot[0] += mouse_dy / 100.0;
     rot[1] += mouse_dx / 100.0;
+    mouse_dx = mouse_dy = 0;
     if (rot[0] < -M_PI / 2) {
         rot[0] = -M_PI / 2;
     }
@@ -292,37 +299,22 @@ void update() {
     irot_y_mat(rot[1], mat_v);
     irot_x_mat(rot[0], mat_v);
 
-    glutPostRedisplay();
+    on_display();
 }
 
-#define unused(X) ((void) (X))
-
-void on_kbd_down(unsigned char key, int x, int y) {
-    unused(x);
-    unused(y);
-    kbd_key_status[key] = KEY_DOWN;
-    update();
+void on_mouse(GLFWwindow *window, double dx, double dy) {
+    static int old_x = 0, old_y = 0;
+    int x = dx;
+    int y = dy;
+    unused(window);
+    mouse_dx = x - old_x;
+    mouse_dy = y - old_y;
+    old_x = x;
+    old_y = y;
 }
 
-void on_kbd_up(unsigned char key, int x, int y) {
-    unused(x);
-    unused(y);
-    kbd_key_status[key] = KEY_UP;
-    update();
-}
-
-void on_mouse(int x, int y) {
-    int center_x = glutGet(GLUT_WINDOW_WIDTH) / 2;
-    int center_y = glutGet(GLUT_WINDOW_HEIGHT) / 2;
-    mouse_dx = x - center_x;
-    mouse_dy = y - center_y;
-    if (x != center_x || y != center_y) {
-        glutWarpPointer(center_x, center_y);
-    }
-    update();
-}
-
-void on_reshape(int w, int h) {
+void on_reshape(GLFWwindow *window, int w, int h) {
+    unused(window);
     screen_width = w;
     screen_height = h;
     persp_mat(1, ((double) screen_width) / ((double) screen_height), .0001, 1000, mat_p);
@@ -336,8 +328,8 @@ void on_reshape(int w, int h) {
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
 }
 
-void on_idle() {
-    update();
+void on_error(int error, const char *desc) {
+    printl(LOG_E, "GLFW error (%d), %s\n", error, desc);
 }
 
 void free_resources(void) {
@@ -352,33 +344,48 @@ void free_resources(void) {
     lclose();
 }
 
-int main(int argc, char** argv) {
+int main() {
     lopen("/dev/stderr");
     min_log_level = LOG_D;
 
-    glutInit(&argc, argv);
-    glutInitContextVersion(2, 0);
-    glutInitDisplayMode(GLUT_RGBA | GLUT_ALPHA | GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize(screen_width = 1366, screen_height = 786);
-    glutCreateWindow("sphere");
+    if(!glfwInit()) {
+        printl(LOG_E, "Failed it init GLFW\n");
+        return EXIT_FAILURE;
+    }
+
+    glfwSetErrorCallback(on_error);
+    GLFWwindow *window = glfwCreateWindow(screen_width = 1366, screen_height = 768, "shpere", NULL, NULL);
+    sphere_window = window;
+    if (!window) {
+        printl(LOG_E, "Failed to create window\n");
+        glfwTerminate();
+        return EXIT_FAILURE;
+    }
+    glfwMakeContextCurrent(window);
 
     GLenum glew_status = glewInit();
     if (glew_status != GLEW_OK) {
-        fprintf(stderr, "%s\n", glewGetErrorString(glew_status));
+        printl(LOG_E, "%s\n", glewGetErrorString(glew_status));
+        glfwTerminate();
         return EXIT_FAILURE;
     }
-    delta();
-    if (init_resources() != -1) {
-        glutDisplayFunc(on_display);
-        glutIdleFunc(on_idle);
-        glutReshapeFunc(on_reshape);
-        glutKeyboardFunc(on_kbd_down);
-        glutKeyboardUpFunc(on_kbd_up);
-        glutPassiveMotionFunc(on_mouse);
-        glutIgnoreKeyRepeat(1);
-        glutMainLoop();
+
+    if (init_resources() == -1) {
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return EXIT_FAILURE;
+    }
+
+    glfwSetFramebufferSizeCallback(window, on_reshape);
+    glfwSetCursorPosCallback(window, on_mouse);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    while (!glfwWindowShouldClose(window)) {
+        update();
     }
 
     free_resources();
+    glfwDestroyWindow(window);
+    glfwTerminate();
     return EXIT_SUCCESS;
 }
