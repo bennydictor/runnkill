@@ -204,5 +204,13 @@ int** gen_field_empty(int w, int h) {
             field[i][j] = 0;
         }
     }
+    for (int i = 0; i < w; i++) {
+        for (int j = 0; j < 2; j++) {
+            field[i][j] = 100;
+            field[j][i] = 100;
+            field[i][h - 1 - j] = 100;
+            field[w - 1 - j][i] = 100;
+        }
+    }
     return field; 
 }

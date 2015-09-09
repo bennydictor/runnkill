@@ -3,6 +3,7 @@
 
 #define BP_AMOUNT 8
 
+#define EPS 1e-5
 #define LEFT_UP 0
 #define LEFT_DOWN 2
 #define RIGHT_UP 4

@@ -9,7 +9,6 @@
 #include <cmath>
 #include <ctime>
 
-#define EPS 1e-4
 #define EXPLOSION_RAD 1e-2
 #define INF 10000000
 using namespace std;
@@ -71,25 +70,8 @@ int detect_sector(vec3<T> centre, vec3<T> point, vec3<T> orientation) {
     }
 
 }
-void ternary_search_closest(vec3<float>& low, vec3<float>& hig, vec3<float> centre)
-{
-    for (int i = 0; i < 50; i++)
-    {
-        vec3<float> m1, m2;
-        m1 = ((float)2 * low + hig) / (float)3;
-        m2 = (low + (float)2 * hig) / (float)3;
-        if (dist(m1, centre) > dist(m2, centre))
-        {
-            low = m1;
-        }
-        else
-        {
-            hig = m2;
-        }
-    }
-}
 
-bool is_intersected(vec3<float> centre, float rad, vec3<float> begin, vec3<float> end, vec3<float>& res) {
+bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin, vec3<float> end, vec3<float>& res) {
     vec3<float> l, r, m1, m2, m;
     l = begin;
     r = end;
@@ -102,13 +84,13 @@ bool is_intersected(vec3<float> centre, float rad, vec3<float> begin, vec3<float
             r = m2;
         }
     }
-    if (dist(centre, l) >= rad - EPS) {
+    if (dist(centre, l) >= rad + rad2 - EPS or dist(centre, l) < EPS) {
         return false;
     }
     l = begin;
     for (int i = 0; i < 30; i++) {
         m = (l + r) / (float)2;
-        if (dist(centre, m) < rad) {
+        if (dist(centre, m) < rad + rad2) {
             r = m;
         } else {
             l = m;
@@ -125,66 +107,76 @@ int all_dmg(body_part u_l_bp, body_part u_r_bp, body_part d_l_bp, body_part d_r_
 
 }
 void damage_last_explosion(int b_idx) {
-            for (int j = 0; j < (int)persons.size(); j++) {
-                if (dist(explosions.back(), persons[j]->coords) < MAN_RAD + EXPLOSION_RAD) {
-                    int sector = detect_sector(persons[j]->coords, explosions.back(), persons[j]->orientation);
-                    is_alive[j] = !persons[j]->take_damage(
-                                count_dmg(persons[j]->body_parts[sector], bullets[b_idx].damage));
-                    //Here will be effects adding
-                }
-            }
+    for (int j = 0; j < (int)persons.size(); j++) {
+        if (dist(explosions.back(), persons[j]->coords) < MAN_RAD + EXPLOSION_RAD) {
+            int sector = detect_sector(persons[j]->coords, explosions.back(), persons[j]->orientation);
+            is_alive[j] = !persons[j]->take_damage(
+                        count_dmg(persons[j]->body_parts[sector], bullets[b_idx].damage));
+            //Here will be effects adding
+        }
+    }
 
 }
-void move_bullet(int b_idx, float time) {
+template <class T>
+
+bool move_sphere(vec3<T> start, vec3<T> &finish, T rad) {
+    
+    vec3<float>intersection = finish, curr_intersection;
+    bool res = false;
+    for (int i = 0; i < (int)persons.size(); i++) {
+        if (is_intersected(persons[i]->coords, MAN_RAD, EXPLOSION_RAD, start,
+            finish, curr_intersection)) {
+            res = true;
+            if (dist(start, intersection) > (dist(start, curr_intersection)))
+                intersection = curr_intersection;
+        }
+    }
+    vec3<float> point1, point2, point3, point4;
+    for (int i = -(int)rad - 1; i <= (int)rad + 1; i++) {
+        for (int j = -(int)rad - 1; j <= (int)rad + 1; j++) {
+            point1 = vec3<float>((int)finish.x - rad + EPS + i, -rad + EPS, (int)finish.z - rad + EPS + j);
+            point2 = vec3<float>((int)finish.x + 1 + rad - EPS + i, -rad + EPS, (int)finish.z - rad + EPS + j);
+            point3 = vec3<float>((int)finish.x - rad + EPS + i, F[(int)finish.x + i][(int)finish.z + j] + rad - EPS, 
+                                                                (int)finish.z - rad + EPS + j);
+            point4 = vec3<float>((int)finish.x - rad + EPS + i, -rad + EPS, (int)finish.z + 1 + rad - EPS + j);
+            bool res1 = intersect_seg_ortohedron(
+                            ortohedron(point1, point2, point3, point4), start, finish, curr_intersection);
+            cerr << start << ' ' << res1 << endl;
+            if (res1 and dist(start, intersection) > (dist(start, curr_intersection))) {
+                intersection = curr_intersection;
+            }
+            
+            res |= res1;
+        }
+    }
+    finish = intersection;   
+    return res;
+}
+
+bool move_bullet(int b_idx, float time) {
     if (!alive_bullets[b_idx]) {
-        return;
+        return false;
     }
     vec3<float>our_point = bullets[b_idx].in_time(time);
-    vec3<float>intersection;
-    for (int i = 0; i < (int)persons.size(); i++) {
-        if (is_intersected(persons[i]->coords, MAN_RAD, bullets[b_idx].coords,
-            our_point, intersection)) {
-            cerr << "Strike #" << i << endl;
-            explosions.push_back(intersection);
-            damage_last_explosion(b_idx);
-            alive_bullets[b_idx] = 0;
-            return;
-        }
-    }
-    vec3<float> l, r, m, min_point(-INF, -INF, -INF);
-    l = bullets[b_idx].coords;
-    r = our_point;
-    vec3<float> cube_p_d((int)r.x, (int)r.z, 0), cube_p_u((int)r.x, (int)r.z, F[(int)r.x][(int)r.z]);
-    for (int i = 0; i < 30; i++) {
-        m = (l + r) / (float)2;
-        if (vec3<float>(cube_p_d, m).crs(vec3<float>(cube_p_d, cube_p_u)).y * 
-            vec3<float>(cube_p_d, cube_p_u).crs(vec3<float>(cube_p_d, min_point)).y < 0) {
-            l = m;
-        }
-        else {
-            r = m;
-        }
-    }
-    l = bullets[b_idx].coords;
-    for (int i = 0; i < 30; i++) {
-        m = (l + r) / (float)2;
-        if (F[(int)m.x][(int)m.z] >= m.y) {
-            r = m;   
-        } else {
-            l = m;               
-        }
-    }
-
-    if (F[(int)l.x][(int)l.z] >= l.y) {
-        explosions.push_back(l);
-        alive_bullets[b_idx] = 0;
+    bool res = move_sphere(bullets[b_idx].coords, our_point, (float)EXPLOSION_RAD);
+    if (res) {
+        cerr << "Strike #" << 179 << endl;
+        explosions.push_back(our_point);
         damage_last_explosion(b_idx);
-        return;
+        alive_bullets[b_idx] = 0;
+        return false;
     }
     bullets[b_idx].coords = our_point; 
+    return true;
 }
 
-//vec3<float> ternary_search_closest(vec3<float> 
+bool move_man(int idx, float time) {
+    vec3<float> finish = persons[idx]->in_time(time);
+    bool res = move_sphere(persons[idx]->coords, finish, (float)MAN_RAD);
+    persons[idx]->move(time);
+    persons[idx]->coords = (finish);
+    return !res;
+}
 
 void attack(int man_idx, int idx) {
 
@@ -197,7 +189,7 @@ void attack(int man_idx, int idx) {
     skill_t curr = z->skills[idx];
      if (curr.is_range) {
         bullets.push_back(bullet(curr.sample));
-        bullets.back().coords = z->coords + (float)MAN_RAD * z->orientation;
+        bullets.back().coords = z->coords + ((float)MAN_RAD + (float)EXPLOSION_RAD) * z->orientation;
         bullets.back().speed = vec3<float>(z->coords, bullets.back().coords);
         bullets.back().speed.resize(sqrt(z->speed.sqlen()) + curr.sample.speed.x);
         bullets.back().damage *= count_attack(*z);
@@ -250,50 +242,6 @@ void attack(int man_idx, int idx) {
     }
 }
 
-bool move_man(int idx, float time) {
-    if (time < EPS)
-    {
-        return true;
-    }
-    vec3<float> our_point = persons[idx]->in_time(time);
-    cerr << our_point << endl;
-
-    vec3<float> low, hig;
-    low.x = (int)our_point.x, hig.x = (int)our_point.x + 1;
-
-    low.z = (int)our_point.z, hig.z = (int)our_point.z + 1;
-    low.y = 0, hig.y = F[(int)low.x][(int)low.z];
-    ternary_search_closest(low, hig, persons[idx]->coords);
-    if (dist(low, persons[idx]->coords) < MAN_RAD)
-    {
-        if (move_man(idx, time / 2) and (time > EPS))
-        {
-            move_man(idx, time / 2);
-        }
-        persons[idx]->move(time / 2);    
-        return false;
-    }
-    for (int i = 0; i < (int)persons.size(); i++)
-    {
-        if (!is_alive[i] or i == idx)
-            continue;
-        low = persons[idx]->coords;
-        hig = our_point;
-        ternary_search_closest(low, hig, persons[i]->coords);
-        if (dist(persons[i]->coords, low) < 2 * MAN_RAD)
-        {
-            if (move_man(idx, time / 2) and time > EPS)
-            {
-                move_man(idx, time / 2);
-            }
-            persons[idx]->move(time / 2);
-            return false;
-        }
-    }   
-    persons[idx]->move(time);
-    persons[idx]->coords = our_point;
-    return true;
-}
 /*
 void what_to_draw(vector<obj> &result) {
     result.clear();
@@ -318,6 +266,7 @@ void what_to_draw(vector<obj> &result) {
 */
 int main()
 {
+    cerr << plain(vec3<float>(0, 1, 0), vec3<float>(1, 0, 0), vec3<float>(0, 0, 1)) << endl;
     string a;
     //srand(time(0));
     ifstream skills;
@@ -340,7 +289,7 @@ int main()
     cerr << classes[0][0].is_range << ' ' << classes[0][0].u_l << endl;
     freopen("field", "w", stdout);
     w = h = 100;
-    F = gen_field_sun(w, h);
+    F = gen_field_empty(w, h);
     for (int i = 0; i < w; i++)
     {
         for (int j = 0; j < h; j++)
@@ -352,7 +301,7 @@ int main()
     man z = man("z", WARRIOR);
     z.coords = vec3<float>(5, 1, 11);
 
-    z.set_orientation(vec3<float>(3, 0.5, 0.5));
+    z.set_orientation(vec3<float>(-3, 0.5, 0.5));
     persons.push_back(&z);
     is_alive.push_back(1);
 
@@ -363,19 +312,18 @@ int main()
 
     sample.coords = vec3<float>(10, 1, 7);
 
-    z.set_speed(vec3<float>(1, 0, 0));
+    z.set_speed(vec3<float>(-1, 2, 4));
     
-    while (move_man(0, 0.01))
+    //while (move_man(0, 0.1))
+
     ;
 
-    cerr << z.coords << endl;
     attack(0, 0);
     cerr << z.hp << ' ' << z.mp << ' ' << count_attack(z) << endl;
     cerr << "Look at it!" << endl;
     cerr << "----------" << endl;
     cerr << bullets[0].coords << ' ' << bullets[0].speed << alive_bullets[0] << endl;
-    for (int i = 0; i < 10; i++) {
-        move_bullet(0, 0.05);
+    while(move_bullet(0, 0.05) and (bullets[0].coords.x > 1)) {
         cerr << "Bullet #0 in " << bullets[0].coords << endl; 
         if (!alive_bullets[0]) {
             cerr << explosions[0] << endl;
@@ -385,10 +333,11 @@ int main()
     
     sample.fortify(RIGHT_UP);
     attack(0, 0);
+    /*
     for (int i = 0; i < 10; i++) {
         cerr << "Bullet #1 in " << bullets[1].coords << endl; 
         move_bullet(1, 0.05);
-    }
+    } */
     cerr << sample.hp << ' ' << sample.mp << endl;
     man warrior, archer, mage;
     warrior = man("warrior", WARRIOR);
