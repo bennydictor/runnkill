@@ -141,7 +141,7 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad) {
             point4 = vec3<float>((int)finish.x - rad + EPS + i, -rad + EPS, (int)finish.z + 1 + rad - EPS + j);
             bool res1 = intersect_seg_ortohedron(
                             ortohedron(point1, point2, point3, point4), start, finish, curr_intersection);
-            cerr << start << ' ' << res1 << endl;
+            //cerr << start << ' ' << res1 << endl;
             if (res1 and dist(start, intersection) > (dist(start, curr_intersection))) {
                 intersection = curr_intersection;
             }
@@ -167,6 +167,7 @@ bool move_bullet(int b_idx, float time) {
         return false;
     }
     bullets[b_idx].coords = our_point; 
+    bullets[b_idx].speed.y -= GRAVITATION * time;
     return true;
 }
 
@@ -242,28 +243,28 @@ void attack(int man_idx, int idx) {
     }
 }
 
-/*
+
 void what_to_draw(vector<obj> &result) {
     result.clear();
     for (int i = 0; i < w; i++) {
         for (int j = 0; j < h; j++) {
-            result.push_back(obj(ORTO));
-            result.back().coord1 = vec3<float>(i, j, 0);
-            result.back().coord2 = vec3<float>(i + 1, j + 1, F[i][j]);
+            result.push_back(draw_obj(ORTO));
+            result.back().p1 = vec3<float>(i, 0, j);
+            result.back().p2 = vec3<float>(i + 1, 0, j);
+            result.back().p3 = vec3<float>(i, F[i][j], j);
+            result.back().p4 = vec3<float>(i, 0, j + 1);
         }
     }
     for (int i = 0; i < (int)persons.size(); i++) {
-        result.push_back(obj(SPHERE));
-        result.back().coord1 = persons[i].coords;
-        result.height = 1;
+        result.push_back(draw_obj(SPHERE, MAN_RAD));
+        result.back().coords = persons[i].coords;
     }
     for (int i = 0; i < (int)bullets.size(); i++) {
-        result.push_back(obj(SPHERE));
-        result.back().coord1 = bullets[i].coords'
-        result.height = 0.1;
+        result.push_back(draw_obj(SPHERE, EXPLOSION_RAD));
+        result.back().coords = bullets[i].coords;
     }
 }
-*/
+
 int main()
 {
     cerr << plain(vec3<float>(0, 1, 0), vec3<float>(1, 0, 0), vec3<float>(0, 0, 1)) << endl;
@@ -299,9 +300,9 @@ int main()
         cout << endl;
     }
     man z = man("z", WARRIOR);
-    z.coords = vec3<float>(5, 1, 11);
-
-    z.set_orientation(vec3<float>(-3, 0.5, 0.5));
+    z.coords = vec3<float>(50, 50, 11);
+    
+    z.set_orientation(vec3<float>(-3, -1.5, 0.5));
     persons.push_back(&z);
     is_alive.push_back(1);
 
@@ -314,16 +315,17 @@ int main()
 
     z.set_speed(vec3<float>(-1, 2, 4));
     
-    //while (move_man(0, 0.1))
+    while (move_man(0, 0.1))
 
     ;
 
     attack(0, 0);
-    cerr << z.hp << ' ' << z.mp << ' ' << count_attack(z) << endl;
+    z.out(cerr);
+    cin >> a;
     cerr << "Look at it!" << endl;
     cerr << "----------" << endl;
     cerr << bullets[0].coords << ' ' << bullets[0].speed << alive_bullets[0] << endl;
-    while(move_bullet(0, 0.05) and (bullets[0].coords.x > 1)) {
+    while(move_bullet(0, 0.005)) {
         cerr << "Bullet #0 in " << bullets[0].coords << endl; 
         if (!alive_bullets[0]) {
             cerr << explosions[0] << endl;

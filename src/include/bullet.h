@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <vec3.h>
+#define GRAVITATION 10
 struct bullet {
     vec3<float> speed, coords;
     std::string name;
