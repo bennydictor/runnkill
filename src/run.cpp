@@ -8,7 +8,7 @@
 #include <vector>
 #include <cmath>
 #include <ctime>
-
+#include <draw_obj.h>
 #define EXPLOSION_RAD 1e-2
 #define INF 10000000
 using namespace std;
@@ -244,15 +244,16 @@ void attack(int man_idx, int idx) {
 }
 
 
-void what_to_draw(vector<obj> &result) {
+void what_to_draw(vector<draw_obj> &result) {
     result.clear();
     for (int i = 0; i < w; i++) {
         for (int j = 0; j < h; j++) {
-            result.push_back(draw_obj(ORTO));
-            result.back().p1 = vec3<float>(i, 0, j);
-            result.back().p2 = vec3<float>(i + 1, 0, j);
-            result.back().p3 = vec3<float>(i, F[i][j], j);
-            result.back().p4 = vec3<float>(i, 0, j + 1);
+            ortohedron point;
+            point.p1 = vec3<float>(i, 0, j);
+            point.p2 = vec3<float>(i + 1, 0, j);
+            point.p3 = vec3<float>(i, F[i][j], j);
+            point.p4 = vec3<float>(i, 0, j + 1);
+            result.push_back(draw_obj(ORTO, point));
         }
     }
     for (int i = 0; i < (int)persons.size(); i++) {
