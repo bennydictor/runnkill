@@ -15,7 +15,7 @@ draw_obj::draw_obj(int t, ortohedron point) {
     Points.push_back(point.p3);
     for (int i = 0; i < 4; i++)
     {
-        Points.push_back(Points[i] + vec3<float>(point.p1, point.p4))
+        Points.push_back(Points[i] + vec3<float>(point.p1, point.p4));
     }
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
@@ -38,15 +38,16 @@ draw_obj::draw_obj(int t, float rad, vec3<float> coords) {
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
                 for (int k = 0; k < 2; k++) {
-                    points.append(segments[i * 4 + j * 2 + k]);
+                    for (int s = 0; s < (int)segments[i * 4 + j * 2 + k].size(); s++)
+                        points.push_back(segments[i * 4 + j * 2 + k][s]);
                 }
             }
         }
     }
     for (int i = 0; i < points.size(); i++) {
-        points[i].coords[0] = points[i].coords[0] * rad + coords.x;
-        points[i].coords[1] = points[i].coords[1] * rad + coords.y;
-        points[i].coords[2] = points[i].coords[2] * rad + coords.z;
+        points[i].coord[0] = points[i].coord[0] * rad + coords.x;
+        points[i].coord[1] = points[i].coord[1] * rad + coords.y;
+        points[i].coord[2] = points[i].coord[2] * rad + coords.z;
     }
 }
 
@@ -61,13 +62,13 @@ void fill_segments() {
             cur.normal[1] = cur.coord[1] = cosf(beta);
             cur.normal[2] = cur.coord[2] = sinf(beta) * sinf(alpha);
             int dx, dy, dz;
-            if (curr.coord[0] < 0) {
+            if (cur.coord[0] < 0) {
                 dx = 1;
             }
-            if (curr.coord[1] < 0) {
+            if (cur.coord[1] < 0) {
                 dy = 1;
             }
-            if (curr.coord[2] < 0) {
+            if (cur.coord[2] < 0) {
                 dz = 1;
             }
 
@@ -84,13 +85,13 @@ void fill_segments() {
             cur.normal[1] = cur.coord[1] = cosf(beta);
             cur.normal[2] = cur.coord[2] = sinf(beta) * sinf(alpha);
             int dx, dy, dz;
-            if (curr.coord[0] < 0) {
+            if (cur.coord[0] < 0) {
                 dx = 1;
             }
-            if (curr.coord[1] < 0) {
+            if (cur.coord[1] < 0) {
                 dy = 1;
             }
-            if (curr.coord[2] < 0) {
+            if (cur.coord[2] < 0) {
                 dz = 1;
             }
             int seg, pos;

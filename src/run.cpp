@@ -248,21 +248,15 @@ void what_to_draw(vector<draw_obj> &result) {
     result.clear();
     for (int i = 0; i < w; i++) {
         for (int j = 0; j < h; j++) {
-            ortohedron point;
-            point.p1 = vec3<float>(i, 0, j);
-            point.p2 = vec3<float>(i + 1, 0, j);
-            point.p3 = vec3<float>(i, F[i][j], j);
-            point.p4 = vec3<float>(i, 0, j + 1);
+            ortohedron point(vec3<float>(i, 0, j), vec3<float>(i + 1, 0, j), vec3<float>(i, F[i][j], j), vec3<float>(i, 0, j + 1));
             result.push_back(draw_obj(ORTO, point));
         }
     }
     for (int i = 0; i < (int)persons.size(); i++) {
-        result.push_back(draw_obj(SPHERE, MAN_RAD));
-        result.back().coords = persons[i].coords;
+        result.push_back(draw_obj(SPHERE, MAN_RAD, persons[i]->coords));
     }
     for (int i = 0; i < (int)bullets.size(); i++) {
-        result.push_back(draw_obj(SPHERE, EXPLOSION_RAD));
-        result.back().coords = bullets[i].coords;
+        result.push_back(draw_obj(SPHERE, EXPLOSION_RAD, bullets[i].coords));
     }
 }
 

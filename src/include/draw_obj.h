@@ -3,11 +3,16 @@
 
 #include <vector>
 #include <vec3.h>
+#include <vertex3d.h>
 
+#define SPHERE 1
+#define ORTO 0
 #define HEIGHT 16
+#define HEIGHT1 17
+
 #define WIDTH 16
 
-extern std::vector<std::vector<vec3<float> > > segments;
+extern std::vector<std::vector<vertex3d > > segments;
 extern int sphere_ibo_data[8][HEIGHT * WIDTH][4];
 
 class draw_obj {
