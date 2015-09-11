@@ -97,13 +97,13 @@ int init_resources(void) {
     rot = make_vec3(0, 0, 0);
     trans_mat(pos, mat_v);
 
-    unsigned int vs = create_shader("shaders/light_vertex.glsl", GL_VERTEX_SHADER);
+    unsigned int vs = create_shader("shaders/light.v.glsl", GL_VERTEX_SHADER);
     if (vs == -1U) {
         printl(LOG_E, "Error while initializing resources: cannot compile vertex shader.\n");
         return -1;
     }
 
-    unsigned int fs = create_shader("shaders/light_fragment.glsl", GL_FRAGMENT_SHADER);
+    unsigned int fs = create_shader("shaders/light.f.glsl", GL_FRAGMENT_SHADER);
     if (fs == -1U) {
         printl(LOG_E, "Error while initializing resources: cannot compile fragment shader.\n");
         return -1;
@@ -115,13 +115,13 @@ int init_resources(void) {
         return -1;
     }
 
-    unsigned int vs_pp = create_shader("shaders/postprocess_vertex.glsl", GL_VERTEX_SHADER);
+    unsigned int vs_pp = create_shader("shaders/postprocess.v.glsl", GL_VERTEX_SHADER);
     if (vs == -1U) {
         printl(LOG_E, "Error while initializing resources: cannot compile postprocess vertex shader.\n");
         return -1;
     }
 
-    unsigned int fs_pp = create_shader("shaders/postprocess_fragment.glsl", GL_FRAGMENT_SHADER);
+    unsigned int fs_pp = create_shader("shaders/postprocess.f.glsl", GL_FRAGMENT_SHADER);
     if (fs == -1U) {
         printl(LOG_E, "Error while initializing resources: cannot compile postprocess fragment shader.\n");
         return -1;
@@ -303,14 +303,11 @@ void update(void) {
 }
 
 void on_mouse(GLFWwindow *window, double dx, double dy) {
-    static int old_x = 0, old_y = 0;
     int x = dx;
     int y = dy;
-    unused(window);
-    mouse_dx = x - old_x;
-    mouse_dy = y - old_y;
-    old_x = x;
-    old_y = y;
+    mouse_dx = x - (screen_width / 2);
+    mouse_dy = y - (screen_height / 2);
+    glfwSetCursorPos(window, screen_width / 2, screen_height / 2);
 }
 
 void on_reshape(GLFWwindow *window, int w, int h) {
