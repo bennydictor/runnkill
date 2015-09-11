@@ -11,7 +11,7 @@
 #include <graphics/sphere_bo.h>
 #include <util/log.h>
 #include <math/vecmath.h>
-#include <math/pi.h>
+#include <math/constants.h>
 
 #define unused(X) ((void) (X))
 
@@ -20,7 +20,7 @@ unsigned int screen_width, screen_height;
 unsigned int prog, prog_pp;
 unsigned int vbo, vbo_pp;
 unsigned int fbo, rbo, fbo_texture;
-mat4 mat_m, mat_v, mat_p;
+mat4f mat_m, mat_v, mat_p;
 
 unsigned int attr_v_coord, attr_v_normal;
 unsigned int unif_v_mat_m, unif_v_mat_v, unif_v_mat_p;
@@ -28,7 +28,7 @@ unsigned int unif_v_mat_m, unif_v_mat_v, unif_v_mat_p;
 unsigned int attr_pp_v_coord;
 unsigned int unif_pp_f_texture;
 
-vec3 pos, rot;
+vec3f pos, rot;
 
 float prev_time;
 unsigned int fps;

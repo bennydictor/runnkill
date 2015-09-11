@@ -3,7 +3,7 @@
 #include <math.h>
 #include <assert.h>
 
-#include <math/pi.h>
+#include <math/constants.h>
 #include <util/log.h>
 
 
