@@ -11,12 +11,13 @@ draw_obj::draw_obj(int t, ortohedron point) {
     points.resize(8);
     Points.push_back(point.p1);
     Points.push_back(point.p2);
-    Points.push_back(point.p2 + vec3<float>(point.p1, point.p2));
+    Points.push_back(point.p2 + vec3<float>(point.p1, point.p3));
     Points.push_back(point.p3);
     for (int i = 0; i < 4; i++)
     {
         Points.push_back(Points[i] + vec3<float>(point.p1, point.p4));
     }
+    ibo_data = {0, 1, 2, 3, 0, 1, 5, 4, 0, 3, 7, 4, 6, 2, 1, 5, 6, 2, 3, 7, 6, 7, 4, 5};
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             for (int k = 0; k < 2; k++) {
@@ -38,8 +39,12 @@ draw_obj::draw_obj(int t, float rad, vec3<float> coords) {
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
                 for (int k = 0; k < 2; k++) {
-                    for (int s = 0; s < (int)segments[i * 4 + j * 2 + k].size(); s++)
+                    for (int s = 0; s < (int)segments[i * 4 + j * 2 + k].size(); s++) {
+                    
                         points.push_back(segments[i * 4 + j * 2 + k][s]);
+                        for (int _ = 0; _ < 4; _++)
+                            ibo_data.push_back(sphere_ibo_data[i * 4 + j * 2 + k][s][_]);
+                    }
                 }
             }
         }

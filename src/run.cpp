@@ -253,10 +253,12 @@ void what_to_draw(vector<draw_obj> &result) {
         }
     }
     for (int i = 0; i < (int)persons.size(); i++) {
-        result.push_back(draw_obj(SPHERE, MAN_RAD, persons[i]->coords));
+        if (is_alive[i])
+            result.push_back(draw_obj(SPHERE, MAN_RAD, persons[i]->coords));
     }
     for (int i = 0; i < (int)bullets.size(); i++) {
-        result.push_back(draw_obj(SPHERE, EXPLOSION_RAD, bullets[i].coords));
+        if (alive_bullets[i])
+            result.push_back(draw_obj(SPHERE, EXPLOSION_RAD, bullets[i].coords));
     }
 }
 
@@ -308,7 +310,7 @@ int main()
 
     sample.coords = vec3<float>(10, 1, 7);
 
-    z.set_speed(vec3<float>(-1, 2, 4));
+    z.set_speed(vec3<float>(-1, 0, 4));
     
     while (move_man(0, 0.1))
 
