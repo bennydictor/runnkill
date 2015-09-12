@@ -1,5 +1,5 @@
-#ifndef BODY_PART_H
-#define BODY_PART_H
+#ifndef GAME_BODY_PART_H
+#define GAME_BODY_PART_H
 
 #define LEFT_FRONT_UP 0 
 #define LEFT_FRONT_DOWN 1
@@ -24,4 +24,4 @@ struct body_part {
 };
 
 int count_dmg(body_part bp, int damage);
-#endif // BODY_PART_H
+#endif // GAME_BODY_PART_H

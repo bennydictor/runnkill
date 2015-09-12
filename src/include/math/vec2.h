@@ -1,5 +1,5 @@
-#ifndef VEC2_H
-#define VEC2_H
+#ifndef MATH_VEC2_H
+#define MATH_VEC2_H
 
 
 #include <vector>
@@ -75,4 +75,4 @@ std::ostream &operator<<(std::ostream &out, const vec2<T> &v) {
 }
 
 
-#endif // VEC2_H
+#endif // MATH_VEC2_H

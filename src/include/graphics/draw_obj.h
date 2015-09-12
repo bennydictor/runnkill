@@ -1,5 +1,5 @@
-#ifndef DRAW_OBJ
-#define DRAW_OBJ
+#ifndef GRAPHICS_DRAW_OBJ
+#define GRAPHICS_DRAW_OBJ
 
 #include <vector>
 #include <math/vecmath.h>
@@ -27,5 +27,4 @@ struct draw_box : public draw_obj {
     draw_box(ortohedron bounds);
 };
 
-#endif
-
+#endif // GRAPHICS_DRAW_OBJ

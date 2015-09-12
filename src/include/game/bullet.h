@@ -1,11 +1,15 @@
-#ifndef BULLET
-#define BULLET
+#ifndef GAME_BULLET_H
+#define GAME_BULLET_H
+
 #include <iostream>
 #include <game/effect.h>
 #include <vector>
 #include <string>
 #include <math/vec3.h>
+
 #define GRAVITATION 10
+
+
 struct bullet {
     vec3<float> speed, coords;
     std::string name;
@@ -18,7 +22,4 @@ struct bullet {
 };
 
 
-
-
-
-#endif //BULLET
+#endif // GAME_BULLET_H

@@ -1,13 +1,8 @@
-#ifndef SPHERE_BO_H
-#define SPHERE_BO_H
+#ifndef GRAPHICS_OBJECTS_SPHERE_H
+#define GRAPHICS_OBJECTS_SPHERE_H
 
 
 #include <graphics/vertex3d.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 
 #define HEIGHT 32
 #define HEIGHT1 (HEIGHT + 1)
@@ -18,8 +13,4 @@ extern short int sphere_ibo_data[HEIGHT][WIDTH][4];
 void init_sphere(void);
 
 
-#ifdef __cplusplus
-}
-#endif
-
-#endif // SPHERE_BO_H
+#endif // GRAPHICS_OBJECTS_SPHERE_H

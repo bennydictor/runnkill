@@ -1,10 +1,11 @@
+#ifndef GAME_SKILL_TYPE_H
+#define GAME_SKILL_TYPE_H
+
 #include <vector>
 #include <game/effect.h>
 #include <game/mod_type.h>
 #include <game/bullet.h>
 #include <iostream>
-#ifndef SKILL_TYPE
-#define SKILL_TYPE
 
 
 struct skill_t {
@@ -18,4 +19,4 @@ struct skill_t {
 };
 
 
-#endif // SKILL_TYPE
+#endif // GAME_SKILL_TYPE_H

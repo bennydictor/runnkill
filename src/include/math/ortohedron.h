@@ -1,5 +1,5 @@
-#ifndef ORTOHEDRON_H
-#define ORTOHEDRON_H
+#ifndef MATH_ORTOHEDRON_H
+#define MATH_ORTOHEDRON_H
 
 
 struct ortohedron {
@@ -12,4 +12,4 @@ struct ortohedron {
     }
 };
 
-#endif // ORTOHEDRON_H
+#endif // MATH_ORTOHEDRON_H

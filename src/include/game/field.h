@@ -1,5 +1,5 @@
-#ifndef FIELD_H
-#define FIELD_H
+#ifndef GAME_FIELD_H
+#define GAME_FIELD_H
 #define S_WIGHT 6
 #define BIG_WIGHT 14
 
@@ -11,4 +11,4 @@ int get_rand(int l, int r);
 bool** gen_field(int w, int h);
 int** gen_field_sun(int w, int h);
 int** gen_field_empty(int w, int h);
-#endif // FIELD_H
+#endif // GAME_FIELD_H

@@ -1,5 +1,5 @@
-#ifndef GEOM_H
-#define GEOM_H
+#ifndef MATH_GEOM_H
+#define MATH_GEOM_H
 
 
 #include <math/vec3.h>
@@ -94,4 +94,4 @@ bool intersect_seg_ortohedron(ortohedron A, vec3<T> seg1, vec3<T> seg2, vec3<T>&
 }
 
 
-#endif // GEOM_H
+#endif // MATH_GEOM_H

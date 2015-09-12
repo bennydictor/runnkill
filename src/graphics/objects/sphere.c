@@ -1,4 +1,4 @@
-#include <graphics/sphere_bo.h>
+#include <graphics/objects/sphere.h>
 
 #include <math.h>
 #include <assert.h>
