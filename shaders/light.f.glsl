@@ -53,7 +53,7 @@ void main() {
             vec4 light_coord = bias * f_light[i].mat_p * f_light[i].mat_v * v_mat_m * vec4(f_coord, 1);
             light_coord /= light_coord.w;
             ambient_fc += f_light[i].ambient;
-            if (lin_depth(light_coord.z) - lin_depth(texture2D(f_light[i].map, light_coord.xy).z) < .005) {
+            if (lin_depth(light_coord.z) - lin_depth(texture2D(f_light[i].map, light_coord.xy).z) < 0.005) {
                 vec3 light_position = (v_mat_v * vec4(f_light[i].coord, 1)).xyz;
                 vec3 light_direction = normalize(light_position - vertex_position);
                 float diffuse_light_intensity = max(0, dot(surface_normal, light_direction));

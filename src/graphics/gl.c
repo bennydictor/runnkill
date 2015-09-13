@@ -71,7 +71,7 @@ int init_gl(void) {
 
     light_mat_v = make_mat4();
     light_mat_p = make_mat4();
-    persp_mat(1, ((double) window_width) / ((double) window_height), .1, 100, light_mat_p);
+    persp_mat(1, 1, .1, 100, light_mat_p);
     light_pos = make_vec3(0, 5, 10);
     light_rot = make_vec3(M_PI / 8, 0, 0);
 
@@ -182,7 +182,7 @@ int init_gl(void) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     glDrawBuffer(GL_NONE);
@@ -243,6 +243,7 @@ void gl_on_display(int n, draw_obj_t *objs) {
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
     glDrawBuffer(GL_NONE);
+    glCullFace(GL_FRONT);
 
     glEnableVertexAttribArray(prog_depth_attr_v_coord);
 
@@ -271,6 +272,7 @@ void gl_on_display(int n, draw_obj_t *objs) {
     glClearDepth(1);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glDrawBuffer(GL_BACK);
+    glCullFace(GL_BACK);
 
     glEnable(GL_TEXTURE_2D);
     glActiveTexture(GL_TEXTURE0);
