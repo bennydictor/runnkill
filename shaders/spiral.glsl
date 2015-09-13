@@ -1,10 +1,12 @@
+in vec2 f_coord;
+in vec2 f_texcoord;
+out vec4 color;
+
 uniform vec2 CENTER = vec2(0, 0);
 uniform float RADIUS = 0.8;
 uniform float ANGLE = 3;
 
 uniform sampler2D f_texture;
-varying vec2 f_coord;
-varying vec2 f_texcoord;
 
 void main(void) {
     vec2 coord = f_coord;
@@ -20,5 +22,5 @@ void main(void) {
     coord += CENTER;
     coord += vec2(1, 1);
     coord /= 2;
-    gl_FragColor = texture2D(f_texture, coord);
+    color = texture2D(f_texture, coord);
 }

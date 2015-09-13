@@ -22,15 +22,15 @@ void glfw_on_reshape(GLFWwindow *win, int w, int h) {
     unused(win);
     window_width = w;
     window_height = h;
-    persp_mat(1, ((double) window_width) / ((double) window_height), .0001, 1000, mat_p);
+    persp_mat(1, ((double) window_width) / ((double) window_height), .1, 100, mat_p);
 
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo_pp);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, window_width, window_height);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_texture, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo_pp);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_pp_texture, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo_pp);
 }
 
 void glfw_on_error(int error, const char *desc) {

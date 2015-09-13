@@ -1,6 +1,6 @@
-attribute vec3 v_coord;
-varying vec2 f_coord;
-varying vec2 f_texcoord;
+in vec3 v_coord;
+out vec2 f_coord;
+out vec2 f_texcoord;
 
 
 void main() {

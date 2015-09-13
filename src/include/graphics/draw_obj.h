@@ -9,6 +9,7 @@
 struct draw_obj {
     mat4f mat_m;
     virtual unsigned int vbo() { return 0; };
+    virtual unsigned int ibo_size() { return 0; };
     virtual unsigned int *ibo() { return NULL; };
 };
 
