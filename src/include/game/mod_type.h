@@ -1,5 +1,5 @@
-#ifndef MOD_T
-#define MOD_T
+#ifndef GAME_MOD_TYPE_H
+#define GAME_MOD_TYPE_H
 
 struct mod_t {
     float intellect, def_mod, atk_mod, speed, hp, mp, strength, agility;
@@ -7,4 +7,4 @@ struct mod_t {
 };
 
 mod_t operator* (mod_t a, float b);
-#endif // MOD_T
+#endif // GAME_MOD_TYPE_H

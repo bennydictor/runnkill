@@ -1,5 +1,5 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef GAME_COMMON_H
+#define GAME_COMMON_H
 
 #define BP_AMOUNT 8
 
@@ -28,4 +28,6 @@ extern int atk_int_mods[];
 
 long long count_score(int lv1, int lv2, int dmg, int heal);
 void init_values(int &hp, int &mp, int &agi, int &strength, int &intellect, int &speed, int cl);
-#endif // COMMON_H
+
+
+#endif // GAME_COMMON_H

@@ -1,5 +1,5 @@
-#ifndef VECMATH_H
-#define VECMATH_H
+#ifndef MATH_VECMATH_H
+#define MATH_VECMATH_H
 
 
 #define INDEX3(x, y) (3 * x + y)
@@ -56,4 +56,4 @@ void persp_mat(float fov, float aspect, float z_near, float z_far, mat4f res);
 }
 #endif
 
-#endif // VECMATH_H
+#endif // MATH_VECMATH_H

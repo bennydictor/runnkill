@@ -1,5 +1,5 @@
-#ifndef LOG_H
-#define LOG_H
+#ifndef UTIL_LOG_H
+#define UTIL_LOG_H
 
 
 #include <stdio.h>
@@ -23,4 +23,4 @@ int printl(unsigned int log_level, const char* format, ...);
 }
 #endif
 
-#endif // LOG_H
+#endif // UTIL_LOG_H

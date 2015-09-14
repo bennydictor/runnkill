@@ -1,5 +1,5 @@
-#ifndef MAN
-#define MAN
+#ifndef GAME_MAN_H
+#define GAME_MAN_H
 #define MAN_RAD 1
 
 #include <game/common.h>
@@ -39,4 +39,4 @@ struct man {
 };
 
 int count_attack(man z);
-#endif // MAN
+#endif // GAME_MAN_H

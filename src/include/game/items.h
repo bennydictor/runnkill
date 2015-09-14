@@ -1,5 +1,5 @@
-#ifndef ITEMS_H
-#define ITEMS_H
+#ifndef GAME_ITEMS_H
+#define GAME_ITEMS_H
 
 
 #include <game/common.h>
@@ -14,4 +14,4 @@ public:
     bool is_wearable(std::string bp_name);
 };
 
-#endif // ITEMS_H
+#endif // GAME_ITEMS_H

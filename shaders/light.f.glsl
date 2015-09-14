@@ -10,11 +10,14 @@ uniform struct {
     float shininess;
 } f_material;
 
-uniform struct {
+uniform struct light_t {
     vec3 coord;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+    mat4 mat_v;
+    mat4 mat_p;
+    sampler2D map;
 } f_light[LIGHT_COUNT];
 
 uniform int f_light_enable[LIGHT_COUNT];
@@ -22,6 +25,17 @@ uniform int f_light_enable[LIGHT_COUNT];
 uniform mat4 v_mat_m;
 uniform mat4 v_mat_v;
 uniform mat4 v_mat_p;
+
+float lin_depth(float z) {
+    return (2.0 * 0.1) / (100 + 0.1 - z * (100 - 0.1));
+}
+
+mat4 bias = mat4(
+    0.5, 0.0, 0.0, 0.0,
+    0.0, 0.5, 0.0, 0.0,
+    0.0, 0.0, 0.5, 0.0,
+    0.5, 0.5, 0.5, 1.0
+);
 
 void main() {
     gl_FragColor.rgba = vec4(0, 0, 0, 1);
@@ -31,18 +45,23 @@ void main() {
     
     vec3 vertex_position = (v_mat_v * v_mat_m * vec4(f_coord, 1)).xyz;
     vec3 surface_normal = normalize((v_mat_v * v_mat_m * vec4(f_normal, 0)).xyz);
+
     for (int i = 0; i < LIGHT_COUNT; ++i) {
         if (f_light_enable[i] != 0) {
+            vec4 light_coord = bias * f_light[i].mat_p * f_light[i].mat_v * v_mat_m * vec4(f_coord, 1);
+            light_coord /= light_coord.w;
             ambient_fc += f_light[i].ambient;
-            vec3 light_position = (v_mat_v * vec4(f_light[i].coord, 1)).xyz;
-            vec3 light_direction = normalize(light_position - vertex_position);
-            float diffuse_light_intensity = max(0, dot(surface_normal, light_direction));
-            diffuse_fc += diffuse_light_intensity * f_light[i].diffuse;
-            vec3 half_vector = normalize(-normalize(vertex_position) + light_direction);
-            float specular_light_intensity = max(0, dot(surface_normal, half_vector));
-            if (diffuse_light_intensity != 0) {
-                specular_light_intensity = pow(specular_light_intensity, f_material.shininess);
-                specular_fc += specular_light_intensity * f_light[i].specular;
+            if (lin_depth(light_coord.z) - lin_depth(texture2D(f_light[i].map, light_coord.xy).z) < 0.005) {
+                vec3 light_position = (v_mat_v * vec4(f_light[i].coord, 1)).xyz;
+                vec3 light_direction = normalize(light_position - vertex_position);
+                float diffuse_light_intensity = max(0, dot(surface_normal, light_direction));
+                diffuse_fc += diffuse_light_intensity * f_light[i].diffuse;
+                vec3 half_vector = normalize(-normalize(vertex_position) + light_direction);
+                float specular_light_intensity = max(0, dot(surface_normal, half_vector));
+                if (diffuse_light_intensity != 0) {
+                    specular_light_intensity = pow(specular_light_intensity, f_material.shininess);
+                    specular_fc += specular_light_intensity * f_light[i].specular;
+                }
             }
         }
     }

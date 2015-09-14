@@ -1,10 +1,11 @@
-uniform vec2 CENTER = vec2(0, 0);
-uniform float RADIUS = 0.8;
-uniform float ANGLE = 3;
-
-uniform sampler2D f_texture;
 varying vec2 f_coord;
 varying vec2 f_texcoord;
+
+vec2 CENTER = vec2(0, 0);
+float RADIUS = 0.8;
+float ANGLE = 3;
+
+uniform sampler2D f_texture;
 
 void main(void) {
     vec2 coord = f_coord;

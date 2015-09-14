@@ -36,12 +36,7 @@ GLuint create_shader(const char *filename, GLenum type) {
     }
     GLuint shader = glCreateShader(type);
     const GLchar *sources[2] = {
-#ifdef GL_ES_VERSION_2_0
-        "#version 100\n"
-        "#define GLES2\n",
-#else
         "#version 120\n",
-#endif
         source
     };
     glShaderSource(shader, 2, sources, NULL);

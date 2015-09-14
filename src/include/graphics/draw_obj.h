@@ -1,5 +1,5 @@
-#ifndef DRAW_OBJ
-#define DRAW_OBJ
+#ifndef GRAPHICS_DRAW_OBJ
+#define GRAPHICS_DRAW_OBJ
 
 #include <vector>
 #include <math/vecmath.h>
@@ -9,6 +9,7 @@
 struct draw_obj {
     mat4f mat_m;
     virtual unsigned int vbo() { return 0; };
+    virtual unsigned int ibo_size() { return 0; };
     virtual unsigned int *ibo() { return NULL; };
 };
 
@@ -27,5 +28,4 @@ struct draw_box : public draw_obj {
     draw_box(ortohedron bounds);
 };
 
-#endif
-
+#endif // GRAPHICS_DRAW_OBJ

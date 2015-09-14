@@ -1,5 +1,5 @@
-#ifndef VERTEX3D_H
-#define VERTEX3D_H
+#ifndef GRAPHICS_VERTEX3D_H
+#define GRAPHICS_VERTEX3D_H
 
 
 typedef struct {
@@ -8,4 +8,4 @@ typedef struct {
 } vertex3d;
 
 
-#endif // VERTEX3D_H
+#endif // GRAPHICS_VERTEX3D_H

@@ -1,16 +1,19 @@
-#include <graphics/sphere_bo.h>
+#include <graphics/objects/sphere.h>
 
 #include <math.h>
 #include <assert.h>
 
+#include <graphics/gl.h>
 #include <math/constants.h>
 #include <util/log.h>
 
 
+unsigned int sphere_vbo;
 vertex3d sphere_vbo_data[HEIGHT1][WIDTH];
 short int sphere_ibo_data[HEIGHT][WIDTH][4];
+#define IDX(I, J, K) (WIDTH * 4 * (I) + 4 * (J) + (K))
 
-void init_sphere(void) {
+void init_sphere_object(void) {
     for (int i = 0; i < HEIGHT1; ++i) {
         for (int j = 0; j < WIDTH; ++j) {
             float alpha = j * 2 * M_PI / WIDTH;
@@ -30,4 +33,12 @@ void init_sphere(void) {
             sphere_ibo_data[i][j][3] = i* WIDTH + ((j + 1) % WIDTH);
         }
     }
+    glGenBuffers(1, &sphere_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, sphere_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sphere_vbo_data), sphere_vbo_data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void free_sphere_object(void) {
+    glDeleteBuffers(1, &sphere_vbo);
 }

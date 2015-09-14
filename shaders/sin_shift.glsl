@@ -1,5 +1,6 @@
-uniform sampler2D f_texture;
 varying vec2 f_texcoord;
+
+uniform sampler2D f_texture;
 
 void main(void) {
     vec2 texcoord = f_texcoord;

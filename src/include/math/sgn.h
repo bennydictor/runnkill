@@ -1,5 +1,5 @@
-#ifndef SGN_H
-#define SGN_H
+#ifndef MATH_SGN_H
+#define MATH_SGN_H
 
 
 template <class T>
@@ -8,4 +8,4 @@ int sgn(const T &v) {
 }
 
 
-#endif // SFN_H
+#endif // MATH_SFN_H

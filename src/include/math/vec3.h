@@ -1,5 +1,5 @@
-#ifndef VEC3_H
-#define VEC3_H
+#ifndef MATH_VEC3_H
+#define MATH_VEC3_H
 
 
 #include <iostream>
@@ -66,10 +66,10 @@ T vec3<T>::sqlen() const {
 template <class T>
 
 void vec3<T>::resize(const float s) {
-    float len = sqrt(this->sqlen());
-    x /= len;
-    y /= len;
-    z /= len;
+    float vlen = sqrt(this->sqlen());
+    x /= vlen;
+    y /= vlen;
+    z /= vlen;
     (*this) = s * (*this);
 }
 
@@ -79,5 +79,5 @@ std::ostream &operator<<(std::ostream &out, const vec3<T> &v) {
 }
 
 
-#endif // VEC3_H
+#endif // MATH_VEC3_H
 

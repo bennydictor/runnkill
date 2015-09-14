@@ -1,5 +1,5 @@
-#ifndef EFFECT_H
-#define EFFECT_H
+#ifndef GAME_EFFECT_H
+#define GAME_EFFECT_H
 
 #include <iostream>
 #include <string>
@@ -18,4 +18,4 @@ public:
 };
 
 
-#endif // EFFECT_H
+#endif // GAME_EFFECT_H
