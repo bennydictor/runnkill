@@ -1,4 +1,4 @@
-in vec3 v_coord;
+attribute vec3 v_coord;
 
 uniform mat4 v_mat_m;
 uniform mat4 v_mat_v;

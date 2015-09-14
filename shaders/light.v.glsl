@@ -1,9 +1,9 @@
  #define LIGHT_COUNT 8
-in vec3 v_coord;
-in vec3 v_normal;
+attribute vec3 v_coord;
+attribute vec3 v_normal;
 
-out vec3 f_coord;
-out vec3 f_normal;
+varying vec3 f_coord;
+varying vec3 f_normal;
 
 uniform mat4 v_mat_m;
 uniform mat4 v_mat_v;

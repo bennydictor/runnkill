@@ -1,9 +1,7 @@
  #define LIGHT_COUNT 8
 
-in vec3 f_coord;
-in vec3 f_normal;
-
-out vec4 color;
+varying vec3 f_coord;
+varying vec3 f_normal;
 
 uniform struct {
     vec3 ambient;
@@ -40,7 +38,7 @@ mat4 bias = mat4(
 );
 
 void main() {
-    color.rgba = vec4(0, 0, 0, 1);
+    gl_FragColor.rgba = vec4(0, 0, 0, 1);
     vec3 ambient_fc = vec3(0, 0, 0);
     vec3 diffuse_fc = vec3(0, 0, 0);
     vec3 specular_fc = vec3(0, 0, 0);
@@ -67,7 +65,7 @@ void main() {
             }
         }
     }
-    color.rgb = f_material.ambient * ambient_fc +
+    gl_FragColor.rgb = f_material.ambient * ambient_fc +
                        f_material.diffuse * diffuse_fc +
                        f_material.specular * specular_fc;
 }
