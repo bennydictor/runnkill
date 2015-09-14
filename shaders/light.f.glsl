@@ -29,16 +29,34 @@ uniform mat4 mat_p;
 uniform float z_near;
 uniform float z_far;
 
-float lin_depth(float z_near, float z_far, float z) {
-    return (2.0 * z_near) / (z_near + z_near - z * (z_far - z_near));
-}
-
 mat4 bias = mat4(
     0.5, 0.0, 0.0, 0.0,
     0.0, 0.5, 0.0, 0.0,
     0.0, 0.0, 0.5, 0.0,
     0.5, 0.5, 0.5, 1.0
 );
+
+float lin_depth(float z_near, float z_far, float z) {
+    return (2.0 * z_near) / (z_near + z_near - z * (z_far - z_near));
+}
+
+float shadow_radius = 1.0 / 100.0;
+int samples_count = 4;
+int total_samples = (samples_count + 1) * (samples_count + 1);
+
+float pcf(vec4 light_coord, int i) {
+    float true_depth = lin_depth(z_near, z_far, light_coord.z);
+    float ret = 0;
+    for (int x = -samples_count / 2; x <= samples_count / 2; ++x) {
+        for (int y = -samples_count / 2; y <= samples_count / 2; ++y) {
+            vec2 delta = vec2(shadow_radius * x / samples_count / 2, shadow_radius * y / samples_count / 2);
+            if (true_depth - lin_depth(light[i].z_near, light[i].z_far, texture2D(light[i].map, light_coord.xy + delta).z) < 1e-6) {
+                ret += 1.0;
+            }
+        }
+    }
+    return (ret / total_samples) * (ret / total_samples);
+}
 
 void main() {
     gl_FragColor.rgba = vec4(0, 0, 0, 1);
@@ -54,17 +72,16 @@ void main() {
             vec4 light_coord = bias * light[i].mat_p * light[i].mat_v * mat_m * vec4(f_coord, 1);
             light_coord /= light_coord.w;
             ambient_fc += light[i].ambient;
-            if (lin_depth(z_near, z_far, light_coord.z) - lin_depth(light[i].z_near, light[i].z_far, texture2D(light[i].map, light_coord.xy).z) < 1e-6) {
-                vec3 light_position = (mat_v * vec4(light[i].coord, 1)).xyz;
-                vec3 light_direction = normalize(light_position - vertex_position);
-                float diffuse_light_intensity = max(0, dot(surface_normal, light_direction));
-                diffuse_fc += diffuse_light_intensity * light[i].diffuse;
-                vec3 half_vector = normalize(-normalize(vertex_position) + light_direction);
-                float specular_light_intensity = max(0, dot(surface_normal, half_vector));
-                if (diffuse_light_intensity != 0) {
-                    specular_light_intensity = pow(specular_light_intensity, material.shininess);
-                    specular_fc += specular_light_intensity * light[i].specular;
-                }
+            float shadow = pcf(light_coord, i);
+            vec3 light_position = (mat_v * vec4(light[i].coord, 1)).xyz;
+            vec3 light_direction = normalize(light_position - vertex_position);
+            float diffuse_light_intensity = max(0, dot(surface_normal, light_direction));
+            diffuse_fc += diffuse_light_intensity * light[i].diffuse * shadow;
+            vec3 half_vector = normalize(-normalize(vertex_position) + light_direction);
+            float specular_light_intensity = max(0, dot(surface_normal, half_vector));
+            if (diffuse_light_intensity != 0) {
+                specular_light_intensity = pow(specular_light_intensity, material.shininess);
+                specular_fc += specular_light_intensity * light[i].specular * shadow;
             }
         }
     }
