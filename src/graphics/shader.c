@@ -1,4 +1,5 @@
 #include <graphics/shader.h>
+#include <graphics/gl.h>
 
 #include <stdlib.h>
 
@@ -35,8 +36,10 @@ GLuint create_shader(const char *filename, GLenum type) {
         return -1;
     }
     GLuint shader = glCreateShader(type);
+    char header[100];
+    sprintf(header, "#version 120\n#define LIGHT_COUNT %d\n", LIGHT_COUNT);
     const GLchar *sources[2] = {
-        "#version 120\n",
+        header,
         source
     };
     glShaderSource(shader, 2, sources, NULL);

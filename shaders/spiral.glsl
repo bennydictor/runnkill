@@ -5,7 +5,7 @@ vec2 CENTER = vec2(0, 0);
 float RADIUS = 0.8;
 float ANGLE = 3;
 
-uniform sampler2D f_texture;
+uniform sampler2D texture;
 
 void main(void) {
     vec2 coord = f_coord;
@@ -21,5 +21,5 @@ void main(void) {
     coord += CENTER;
     coord += vec2(1, 1);
     coord /= 2;
-    gl_FragColor = texture2D(f_texture, coord);
+    gl_FragColor = texture2D(texture, coord);
 }

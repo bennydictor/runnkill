@@ -7,15 +7,28 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#define LIGHT_COUNT 8
 
-extern unsigned int fbo_pp, rbo_pp, fbo_pp_texture;
-extern mat4f light_mat_v, light_mat_p;
-extern mat4f mat_v, mat_p;
-extern vec3f light_pos, light_rot;
-extern vec3f pos, rot;
+
+typedef struct {
+    vec3f pos;
+    vec3f rot;
+    vec3f ambient;
+    vec3f diffuse;
+    vec3f specular;
+    float fov;
+    float z_near;
+    float z_far;
+} light_t;
+
+extern light_t gl_light[LIGHT_COUNT];
+extern char gl_light_enable[LIGHT_COUNT];
+extern vec3f gl_pos, gl_rot;
+extern float gl_fov, gl_z_near, gl_z_far;
 
 int init_gl(void);
 void gl_on_display(int n, draw_obj_t *count);
+void gl_reshape(void);
 void free_gl(void);
 
 

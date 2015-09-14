@@ -1,9 +1,9 @@
 varying vec2 f_texcoord;
 
-uniform sampler2D f_texture;
+uniform sampler2D texture;
 
 void main(void) {
-    gl_FragColor = texture2D(f_texture, f_texcoord);
+    gl_FragColor = texture2D(texture, f_texcoord);
     vec2 texcoord = f_texcoord;
     texcoord += vec2(1.0, 1.0);
     texcoord.x *= 1366.0 / 2.0;
