@@ -19,7 +19,7 @@ struct man {
     int cls;
     int level, exp;
     float def_mod, atk_mod;
-    bool can_die, have_shield;
+    bool can_die, have_shield, is_running;
     vec3<float> coords, speed, orientation;
     std::vector<item_t> bag;
     std::vector<body_part> body_parts;
@@ -35,6 +35,7 @@ struct man {
     void get_effect(mod_t res);
     void fortify(int idx);
     void out(std::ostream& stream);
+    void run();
     bool take_damage(int dmg);
 };
 
