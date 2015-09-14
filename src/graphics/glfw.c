@@ -24,6 +24,10 @@ void glfw_on_reshape(GLFWwindow *win, int w, int h) {
     window_height = h;
     persp_mat(1, ((double) window_width) / ((double) window_height), .1, 100, mat_p);
 
+    glBindTexture(GL_TEXTURE_2D, fbo_pp_texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     glBindRenderbuffer(GL_RENDERBUFFER, rbo_pp);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, window_width, window_height);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -31,6 +35,7 @@ void glfw_on_reshape(GLFWwindow *win, int w, int h) {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo_pp);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_pp_texture, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo_pp);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void glfw_on_error(int error, const char *desc) {
