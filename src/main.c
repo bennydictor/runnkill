@@ -4,31 +4,17 @@
 #include <graphics/shader.h>
 #include <graphics/glfw.h>
 #include <graphics/gl.h>
+#include <graphics/ft.h>
 #include <graphics/objects/sphere.h>
 #include <graphics/objects/box.h>
 #include <util/log.h>
+#include <util/timing.h>
 #include <math/vecmath.h>
 #include <math/constants.h>
 
 #include <graphics/objects/sphere.h>
 #include <graphics/objects/pp.h>
 
-float prev_time;
-unsigned int fps;
-float last_point;
-
-float delta() {
-    ++fps;
-    float cur_time = glfwGetTime();
-    if (cur_time - last_point >= 1) {
-        printl(LOG_D, "fps: %d\n", fps);
-        fps = 0;
-        last_point = cur_time;
-    }
-    float d = cur_time - prev_time;
-    prev_time = cur_time;
-    return d;
-}
 
 draw_obj_t objects[2];
 
@@ -78,6 +64,8 @@ void update(void) {
 int main() {
     lopen("/dev/stderr");
     min_log_level = LOG_D;
+    ft_font_size = 24;
+
     gl_pos = make_vec3(-5, 3, 5);
     gl_rot = make_vec3(M_PI / 9, M_PI / 4, 0);
     gl_fov = 1;
@@ -106,10 +94,12 @@ int main() {
     gl_light[1].diffuse = make_vec3(.4, .4, .4);
     gl_light[1].specular = ones;
 
-    if (init_glfw() == -1) {
+    if (init_glfw()) {
+        printl(LOG_E, "Fatal error while initializing glfw.");
         return EXIT_FAILURE;
     }
-    if (init_gl() == -1) {
+    if (init_gl()) {
+        printl(LOG_E, "Fatal error while initializing gl.");
         free_glfw();
         return EXIT_FAILURE;
     }

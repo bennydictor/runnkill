@@ -217,9 +217,9 @@ void ortho_mat(float left, float right, float bottom, float top, float z_near, f
     res[INDEX4(0, 0)] = 2 / (right - left);
     res[INDEX4(1, 1)] = 2 / (top - bottom);
     res[INDEX4(2, 2)] = -2 / (z_far - z_near);
-    res[INDEX4(3, 0)] = -(right + left) / (right - left);
-    res[INDEX4(3, 1)] = -(top + bottom) / (top - bottom);
-    res[INDEX4(3, 2)] = -(z_far + z_near) / (z_far - z_near);
+    res[INDEX4(0, 3)] = -(right + left) / (right - left);
+    res[INDEX4(1, 3)] = -(top + bottom) / (top - bottom);
+    res[INDEX4(2, 3)] = -(z_far + z_near) / (z_far - z_near);
 }
 
 void persp_mat(float fov, float aspect, float z_near, float z_far, mat4f res) {

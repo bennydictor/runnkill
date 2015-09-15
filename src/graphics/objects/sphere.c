@@ -22,6 +22,8 @@ void init_sphere_object(void) {
             cur.normal[0] = cur.coord[0] = sinf(beta) * cosf(alpha);
             cur.normal[1] = cur.coord[1] = cosf(beta);
             cur.normal[2] = cur.coord[2] = sinf(beta) * sinf(alpha);
+            cur.texcoord[0] = ((float) j) / WIDTH;
+            cur.texcoord[1] = ((float) i) / HEIGHT;
             sphere_vbo_data[i][j] = cur;
         }
     }

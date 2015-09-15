@@ -26,21 +26,21 @@ void glfw_on_reshape(GLFWwindow *win, int w, int h) {
 }
 
 void glfw_on_error(int error, const char *desc) {
-    printl(LOG_E, "GLFW error (%d), %s\n", error, desc);
+    printl(LOG_W, "GLFW error (%d), %s\n", error, desc);
 }
 
 int init_glfw(void) {
     if(!glfwInit()) {
-        printl(LOG_E, "Failed it init GLFW\n");
-        return -1;
+        printl(LOG_W, "Failed it init GLFW\n");
+        return 1;
     }
 
     glfwSetErrorCallback(glfw_on_error);
     window = glfwCreateWindow(window_width = 1366, window_height = 768, "shpere", NULL, NULL);
     if (!window) {
-        printl(LOG_E, "Failed to create window\n");
+        printl(LOG_W, "Failed to create window\n");
         glfwTerminate();
-        return -1;
+        return 1;
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, glfw_on_reshape);
