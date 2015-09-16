@@ -134,6 +134,7 @@ void free_gl(void) {
     free_gl_depth();
     free_gl_light();
     free_gl_pp();
+    free_ft();
     free_sphere_object();
     free_box_object();
     free_pp_object();
