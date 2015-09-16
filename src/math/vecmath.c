@@ -10,21 +10,46 @@ vec3f make_vec3_0() {
     return res;
 }
 
-vec3f set_vec3(float x, float y, float z, vec3f v) {
+vec3f set_vec3f(float x, float y, float z, vec3f v) {
     v[0] = x;
     v[1] = y;
     v[2] = z;
     return v;
 }
 
-vec3f add_vec3(float x, float y, float z, vec3f v) {
+vec3f add_vec3f(float x, float y, float z, vec3f v) {
     v[0] += x;
     v[1] += y;
     v[2] += z;
     return v;
 }
 
-vec3f mul_vec3(float x, vec3f v) {
+vec3f sub_vec3f(float x, float y, float z, vec3f v) {
+    v[0] -= x;
+    v[1] -= y;
+    v[2] -= z;
+    return v;
+}
+
+vec3f set_vec3fv(vec3f dst, vec3f src) {
+    return memcpy(dst, src, 3 * sizeof(float));
+}
+
+vec3f add_vec3fv(vec3f dst, vec3f src) {
+    dst[0] += src[0];
+    dst[1] += src[0];
+    dst[2] += src[0];
+    return dst;
+}
+
+vec3f sub_vec3fv(vec3f dst, vec3f src) {
+    dst[0] -= src[0];
+    dst[1] -= src[0];
+    dst[2] -= src[0];
+    return dst;
+}
+
+vec3f mul_vec3f(float x, vec3f v) {
     v[0] *= x;
     v[1] *= x;
     v[2] *= x;

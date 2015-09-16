@@ -44,7 +44,7 @@ void prog_light_uniforms(void) {
     }
 }
 
-void prog_light_uniforms_obj(draw_obj_t obj) {
+void prog_light_uniforms_obj(draw_obj obj) {
     glUniformMatrix4fv(prog_light_unif_mat_m, 1, GL_FALSE, obj.mat_m);
     glUniform3f(glGetUniformLocation(prog_light, "material.ambient"), obj.material.ambient[0], obj.material.ambient[1], obj.material.ambient[2]);
     glUniform3fv(glGetUniformLocation(prog_light, "material.diffuse"), 1, obj.material.diffuse);
@@ -67,7 +67,7 @@ int init_gl_light(void) {
     return 0;
 }
 
-void render_light(int n, draw_obj_t *objs) {
+void render_light(int n, draw_obj *objs) {
     glUseProgram(prog_light);
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo_pp);

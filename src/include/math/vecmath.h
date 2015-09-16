@@ -1,17 +1,23 @@
 #ifndef MATH_VECMATH_H
 #define MATH_VECMATH_H
 
-
 #define INDEX3(x, y) (3 * x + y)
 #define INDEX4(x, y) (4 * x + y)
+
+#include <stdlib.h>
+
 
 typedef float* vec3f;
 
 vec3f make_vec3_0();
 vec3f make_vec3(float x, float y, float z);
-vec3f set_vec3(float x, float y, float z, vec3f v);
-vec3f add_vec3(float x, float y, float z, vec3f v);
-vec3f mul_vec3(float x, vec3f v);
+vec3f set_vec3f(float x, float y, float z, vec3f v);
+vec3f add_vec3f(float x, float y, float z, vec3f v);
+vec3f sub_vec3f(float x, float y, float z, vec3f v);
+vec3f set_vec3fv(vec3f dst, vec3f src);
+vec3f add_vec3fv(vec3f dst, vec3f src);
+vec3f sub_vec3fv(vec3f dst, vec3f src);
+vec3f mul_vec3f(float x, vec3f v);
 
 typedef float* mat4f;
 

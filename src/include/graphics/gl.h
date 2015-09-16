@@ -2,7 +2,7 @@
 #define GRAPHICS_GL_H
 
 #include <math/vecmath.h>
-#include <graphics/draw_obj_t.h>
+#include <graphics/draw_obj.h>
 #include <util/log.h>
 #include <graphics/shader.h>
 #include <graphics/vertex3d.h>
@@ -65,7 +65,7 @@ extern mat4f mat_p, mat_v;
 extern mat4f light_mat_p[LIGHT_COUNT], light_mat_v[LIGHT_COUNT];
 
 int init_gl(void);
-void gl_on_display(int n, draw_obj_t *count);
+void gl_on_display(int n, draw_obj *count);
 void gl_reshape(void);
 void free_gl(void);
 

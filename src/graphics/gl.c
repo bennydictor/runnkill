@@ -6,7 +6,7 @@
 
 #include <graphics/shader.h>
 #include <graphics/glfw.h>
-#include <graphics/draw_obj_t.h>
+#include <graphics/draw_obj.h>
 #include <math/vecmath.h>
 #include <math/constants.h>
 #include <util/timing.h>
@@ -79,6 +79,10 @@ int init_gl(void) {
         light_mat_v[i] = make_mat4();
     }
 
+    if (init_material()) {
+        printl(LOG_W, "Error while initializing gl: cannot initialize material module.\n");
+        return 1;
+    }
     if (init_gl_depth()) {
         printl(LOG_W, "Error while initializing gl: cannot initialize depth module.\n");
         return 1;
@@ -116,7 +120,7 @@ void gl_reshape(void) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void gl_on_display(int n, draw_obj_t *objs) {
+void gl_on_display(int n, draw_obj *objs) {
     matrices();
 
     render_depth(n, objs);

@@ -16,7 +16,7 @@
 #include <graphics/objects/pp.h>
 
 
-draw_obj_t objects[2];
+draw_obj objects[2];
 
 void update(void) {
     float dt = delta();

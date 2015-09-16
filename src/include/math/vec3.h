@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cmath>
 #include <math/constants.h>
+#include <math/vecmath.h>
 
 
 template <typename T>
@@ -18,6 +19,7 @@ struct vec3 {
     T sdot(const vec3<T> &v) const;
     T sqlen() const;
     void resize(const float s);
+    operator vec3f();
 };
 
 typedef vec3<long long int> vec3ll;

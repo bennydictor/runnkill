@@ -41,7 +41,7 @@ float lin_depth(float z_near, float z_far, float z) {
 }
 
 float shadow_radius = 1.0 / 100.0;
-int samples_count = 4;
+int samples_count = 2;
 int total_samples = (samples_count + 1) * (samples_count + 1);
 
 float pcf(vec4 light_coord, int i) {

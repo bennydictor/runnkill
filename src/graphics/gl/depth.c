@@ -11,7 +11,7 @@ void prog_depth_uniforms(int i) {
     glUniformMatrix4fv(prog_depth_unif_mat_p, 1, GL_FALSE, light_mat_p[i]);
 }
 
-void prog_depth_uniforms_obj(draw_obj_t obj) {
+void prog_depth_uniforms_obj(draw_obj obj) {
     glUniformMatrix4fv(prog_depth_unif_mat_m, 1, GL_FALSE, obj.mat_m);
 }
 
@@ -51,7 +51,7 @@ int init_gl_depth(void) {
     return 0;
 }
 
-void render_depth(int n, draw_obj_t *objs) {
+void render_depth(int n, draw_obj *objs) {
     glUseProgram(prog_depth);
 
     glDisable(GL_TEXTURE_2D);

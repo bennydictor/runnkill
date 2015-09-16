@@ -44,3 +44,33 @@ void init_sphere_object(void) {
 void free_sphere_object(void) {
     glDeleteBuffers(1, &sphere_vbo);
 }
+
+draw_obj make_draw_sphere1f(float radius, material_t _material) {
+    draw_obj ret;
+    ret.mat_m = make_mat4();
+    vec3f v = make_vec3(radius, radius, radius);
+    scale_mat(v, ret.mat_m);
+    free(v);
+    ret.mode = GL_QUADS;
+    ret.vbo = sphere_vbo;
+    ret.ibo = sphere_ibo_data;
+    ret.count = SPHERE_IBO_DATA_SIZE;
+    ret.material = _material;
+    return ret;
+}
+
+draw_obj make_draw_sphere3fv1f(vec3f pos, float radius, material_t _material) {
+    draw_obj ret;
+    ret.mat_m = make_mat4();
+    vec3f v = make_vec3(radius, radius, radius);
+    scale_mat(v, ret.mat_m);
+    free(v);
+    itrans_mat(pos, ret.mat_m);
+    ret.mode = GL_QUADS;
+    ret.vbo = sphere_vbo;
+    ret.ibo = sphere_ibo_data;
+    ret.count = SPHERE_IBO_DATA_SIZE;
+    ret.material = _material;
+    return ret;
+}
+
