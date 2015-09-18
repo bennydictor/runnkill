@@ -98,3 +98,11 @@ void man::out(ostream& stream) {
     stream << "My attack = " << count_attack(*this) << endl;
     stream << "I`m in " << coords << endl;
 }
+
+
+void man::put_on(item_t* item, segment) {
+    item_t* wore = body_parts[segment].put_on(item);
+    if (wore)
+        bag.push_back(wore);
+    return;
+}
