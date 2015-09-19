@@ -1,5 +1,7 @@
 #include <graphics/gl/depth.h>
 
+#define TEXTURE_SIZE 1024 * 2
+
 unsigned int prog_depth;
 unsigned int fbo_depth[LIGHT_COUNT], fbo_depth_texture[LIGHT_COUNT];
 
@@ -35,7 +37,7 @@ int init_gl_depth(void) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, TEXTURE_SIZE, TEXTURE_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         glBindFramebuffer(GL_FRAMEBUFFER, fbo_depth[i]);
@@ -65,7 +67,7 @@ void render_depth(int n, draw_obj *objs) {
     for (int i = 0; i < LIGHT_COUNT; ++i) {
         if (gl_light_enable[i]) {
             glBindFramebuffer(GL_FRAMEBUFFER, fbo_depth[i]);
-            glViewport(0, 0, 1024, 1024);
+            glViewport(0, 0, TEXTURE_SIZE, TEXTURE_SIZE);
             glClearColor(0, 0, 0, 1);
             glClearDepth(1);
             glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);

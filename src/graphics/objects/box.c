@@ -54,9 +54,15 @@ draw_obj make_draw_box(vec3f *bounds, material_t _material) {
     vec3f x = sub_vec3fv(copy_vec3(bounds[1]), bounds[0]);
     vec3f y = sub_vec3fv(copy_vec3(bounds[2]), bounds[0]);
     vec3f z = sub_vec3fv(copy_vec3(bounds[3]), bounds[0]);
-    memcpy(ret.mat_m +  0, x, 3 * sizeof(float));
-    memcpy(ret.mat_m +  4, y, 3 * sizeof(float));
-    memcpy(ret.mat_m +  8, z, 3 * sizeof(float));
+    ret.mat_m[INDEX4(0, 0)] = x[0];
+    ret.mat_m[INDEX4(1, 0)] = x[1];
+    ret.mat_m[INDEX4(2, 0)] = x[2];
+    ret.mat_m[INDEX4(0, 1)] = y[0];
+    ret.mat_m[INDEX4(1, 1)] = y[1];
+    ret.mat_m[INDEX4(2, 1)] = y[2];
+    ret.mat_m[INDEX4(0, 2)] = z[0];
+    ret.mat_m[INDEX4(1, 2)] = z[1];
+    ret.mat_m[INDEX4(2, 2)] = z[2];
     free(x);
     free(y);
     free(z);

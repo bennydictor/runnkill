@@ -9,30 +9,30 @@
 
 
 unsigned int sphere_vbo;
-vertex3d sphere_vbo_data[HEIGHT1][WIDTH];
-short int sphere_ibo_data[HEIGHT][WIDTH][4];
-#define IDX(I, J, K) (WIDTH * 4 * (I) + 4 * (J) + (K))
+vertex3d sphere_vbo_data[SPHERE_HEIGHT1][SPHERE_WIDTH];
+short int sphere_ibo_data[SPHERE_HEIGHT][SPHERE_WIDTH][4];
+#define IDX(I, J, K) (SPHERE_WIDTH * 4 * (I) + 4 * (J) + (K))
 
 void init_sphere_object(void) {
-    for (int i = 0; i < HEIGHT1; ++i) {
-        for (int j = 0; j < WIDTH; ++j) {
-            float alpha = j * 2 * M_PI / WIDTH;
-            float beta = i * M_PI / HEIGHT;
+    for (int i = 0; i < SPHERE_HEIGHT1; ++i) {
+        for (int j = 0; j < SPHERE_WIDTH; ++j) {
+            float alpha = j * 2 * M_PI / SPHERE_WIDTH;
+            float beta = i * M_PI / SPHERE_HEIGHT;
             vertex3d cur;
             cur.normal[0] = cur.coord[0] = sinf(beta) * cosf(alpha);
             cur.normal[1] = cur.coord[1] = cosf(beta);
             cur.normal[2] = cur.coord[2] = sinf(beta) * sinf(alpha);
-            cur.texcoord[0] = ((float) j) / WIDTH;
-            cur.texcoord[1] = ((float) i) / HEIGHT;
+            cur.texcoord[0] = ((float) j) / SPHERE_WIDTH;
+            cur.texcoord[1] = ((float) i) / SPHERE_HEIGHT;
             sphere_vbo_data[i][j] = cur;
         }
     }
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < WIDTH; j++) {
-            sphere_ibo_data[i][j][0] = i * WIDTH + j;
-            sphere_ibo_data[i][j][1] = (i + 1) * WIDTH + j;
-            sphere_ibo_data[i][j][2] = (i + 1) * WIDTH + ((j + 1) % WIDTH);
-            sphere_ibo_data[i][j][3] = i* WIDTH + ((j + 1) % WIDTH);
+    for (int i = 0; i < SPHERE_HEIGHT; i++) {
+        for (int j = 0; j < SPHERE_WIDTH; j++) {
+            sphere_ibo_data[i][j][0] = i * SPHERE_WIDTH + j;
+            sphere_ibo_data[i][j][1] = (i + 1) * SPHERE_WIDTH + j;
+            sphere_ibo_data[i][j][2] = (i + 1) * SPHERE_WIDTH + ((j + 1) % SPHERE_WIDTH);
+            sphere_ibo_data[i][j][3] = i* SPHERE_WIDTH + ((j + 1) % SPHERE_WIDTH);
         }
     }
     glGenBuffers(1, &sphere_vbo);

@@ -12,11 +12,11 @@
 #include <math/vecmath.h>
 #include <math/constants.h>
 
-#include <graphics/objects/sphere.h>
+#include <graphics/objects/sphere_sector.h>
 #include <graphics/objects/pp.h>
 
 
-draw_obj objects[2];
+draw_obj objects[9];
 
 void update(void) {
     float dt = delta();
@@ -58,7 +58,7 @@ void update(void) {
         gl_rot[1] -= 2 * M_PI;
     }
 
-    gl_on_display(2, objects);
+    gl_on_display(9, objects);
 }
 
 int main() {
@@ -73,6 +73,7 @@ int main() {
     gl_z_far = 100;
 
     vec3f ones = make_vec3(1, 1, 1);
+    vec3f zero = make_vec3(0, 0, 0);
 
     gl_light_enable[0] = 1;
     gl_light[0].pos = make_vec3(-3, 5, 10);
@@ -103,28 +104,20 @@ int main() {
         free_glfw();
         return EXIT_FAILURE;
     }
+
+    vec3f bounds[4] = {
+        make_vec3(-5, 0, -5),
+        make_vec3(5, 0, -5),
+        make_vec3(-5, 1, -5),
+        make_vec3(-5, 0, 5),
+    };
     
-    objects[0].mode = GL_QUADS;
-    objects[0].vbo = sphere_vbo;
-    objects[0].ibo = sphere_ibo_data;
-    objects[0].count = SPHERE_IBO_DATA_SIZE;
-    objects[0].mat_m = make_mat4();
-    vec3f v = make_vec3(0, 2, 0);
-    trans_mat(v, objects[0].mat_m);
-    free(v);
-    objects[0].material = make_material(ones, ones, ones, 128);
-    objects[1].mode = GL_QUADS;
-    objects[1].vbo = box_vbo;
-    objects[1].ibo = NULL;
-    objects[1].count = 4 * 6;
-    objects[1].mat_m = make_mat4();
-    objects[1].material = make_material(ones, ones, make_vec3(0, 0, 0), 1);
-    v = make_vec3(10, 1, 10);
-    scale_mat(v, objects[1].mat_m);
-    free(v);
-    v = make_vec3(-5, 0, -5);
-    itrans_mat(v, objects[1].mat_m);
-    free(v);
+    vec3f sphere_pos = make_vec3(0, 2, 0);
+    material_t sphere_material = make_material(ones, ones, ones, 128);
+    for (int i = 0; i < 8; ++i) {
+        objects[i] = make_draw_sphere_sector3fv1f(sphere_pos, i ? .5 : 1, i, sphere_material);
+    }
+    objects[8] = make_draw_box(bounds, make_material(ones, ones, zero, 1));
 
     while (!glfwWindowShouldClose(window)) {
         update();
