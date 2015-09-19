@@ -36,6 +36,7 @@ struct man {
     void fortify(int idx);
     void out(std::ostream& stream);
     void run();
+    void put_on(item_t* item, int idx);
     bool take_damage(int dmg);
 };
 

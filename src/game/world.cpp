@@ -11,6 +11,7 @@
 #include <ctime>
 #include <graphics/objects/box.h>
 #include <graphics/objects/sphere.h>
+#include <graphics/objects/sphere_sector.h>
 #define EXPLOSION_RAD 1e-2
 #define INF 10000000
 using namespace std;
@@ -254,14 +255,15 @@ void what_to_draw(vector<draw_obj> &result) {
             result.push_back(make_draw_box(bounds, default_material));
         }
     }
-    /*
+    
     for (int i = 0; i < (int)persons.size(); i++) {
-        result.push_back(draw_sphere_sector(persons[i]->coords, MAN_RAD));
+        result.push_back(make_draw_sphere3fv1f(persons[i]->coords, MAN_RAD, default_material));
         for (int j = 0; j < BP_AMOUNT; j++) {
-            result.push_back(draw_sphere_sector(persons[i]->coords, 1.5 * MAN_RAD));
+            if (persons[i]->body_parts[j].is_fortified)
+                result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, j, 1.5 * MAN_RAD, default_material));
         }
     }
-    */
+    
     for (int i = 0; i < (int)bullets.size(); i++) {
         result.push_back(make_draw_sphere3fv1f(bullets[i].coords, EXPLOSION_RAD, default_material));
     }

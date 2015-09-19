@@ -110,3 +110,13 @@ void man::run() {
         body_parts[LEFT_FRONT_UP].is_fortified = true;
     }
 }
+
+void man::put_on(item_t* item, int idx) {
+    item_t* wore = body_parts[idx].put_on(item);
+    if (wore)
+    {
+        get_effect(wore->effects * -1);
+        bag.push_back(wore);
+    }
+    get_effect(item->effects);
+}

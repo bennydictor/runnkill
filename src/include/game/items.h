@@ -5,14 +5,13 @@
 #include <game/common.h>
 #include <string>
 
-class item_t {
+struct item_t {
     std::string type;
     mod_t effects;
-    int strength, agi, intellect, speed, defense;
+    int strength, agi, intellect, speed;
+    float defense_coeff;
     item_t(std::string _type) : type(_type) {}
-
-public:
-    bool is_wearable(std::string bp_name);
+    
 };
 
 #endif // GAME_ITEMS_H
