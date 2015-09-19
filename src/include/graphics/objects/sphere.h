@@ -4,9 +4,9 @@
 #include <graphics/vertex3d.h>
 #include <graphics/draw_obj.h>
 
-#define HEIGHT 32
-#define HEIGHT1 (HEIGHT + 1)
-#define WIDTH (2 * HEIGHT)
+#define SPHERE_HEIGHT 32
+#define SPHERE_HEIGHT1 (SPHERE_HEIGHT + 1)
+#define SPHERE_WIDTH (2 * SPHERE_HEIGHT)
 
 #ifdef __cplusplus
 extern "C" {
@@ -14,9 +14,9 @@ extern "C" {
 
 
 extern unsigned int sphere_vbo;
-extern vertex3d sphere_vbo_data[HEIGHT1][WIDTH];
-#define SPHERE_IBO_DATA_SIZE (HEIGHT * WIDTH * 4)
-extern short int sphere_ibo_data[HEIGHT][WIDTH][4];
+extern vertex3d sphere_vbo_data[SPHERE_HEIGHT1][SPHERE_WIDTH];
+#define SPHERE_IBO_DATA_SIZE (SPHERE_HEIGHT * SPHERE_WIDTH * 4)
+extern short int sphere_ibo_data[SPHERE_HEIGHT][SPHERE_WIDTH][4];
 void init_sphere_object(void);
 void free_sphere_object(void);
 draw_obj make_draw_sphere1f(float radius, material_t _material);

@@ -37,15 +37,15 @@ vec3f set_vec3fv(vec3f dst, vec3f src) {
 
 vec3f add_vec3fv(vec3f dst, vec3f src) {
     dst[0] += src[0];
-    dst[1] += src[0];
-    dst[2] += src[0];
+    dst[1] += src[1];
+    dst[2] += src[2];
     return dst;
 }
 
 vec3f sub_vec3fv(vec3f dst, vec3f src) {
     dst[0] -= src[0];
-    dst[1] -= src[0];
-    dst[2] -= src[0];
+    dst[1] -= src[1];
+    dst[2] -= src[2];
     return dst;
 }
 
