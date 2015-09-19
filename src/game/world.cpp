@@ -9,7 +9,8 @@
 #include <vector>
 #include <cmath>
 #include <ctime>
-#include <graphics/draw_obj.h>
+#include <graphics/objects/box.h>
+#include <graphics/objects/sphere.h>
 #define EXPLOSION_RAD 1e-2
 #define INF 10000000
 using namespace std;
@@ -250,17 +251,21 @@ void what_to_draw(vector<draw_obj> &result) {
     for (int i = 0; i < w; i++) {
         for (int j = 0; j < h; j++) {
             ortohedron bounds(vec3<float>(i, 0, j), vec3<float>(i + 1, 0, j), vec3<float>(i, F[i][j], j), vec3<float>(i, 0, j + 1));
-            result.push_back(draw_box(bounds));
+            result.push_back(make_draw_box(bounds, default_material));
         }
     }
     for (int i = 0; i < (int)persons.size(); i++) {
+<<<<<<< HEAD
         result.push_back(draw_sphere_sector(persons[i]->coords, MAN_RAD));
         for (int j = 0; j < BP_AMOUNT; j++) {
             result.push_back(draw_sphere_sector(persons[i]->coords, 1.5 * MAN_RAD));
         }
+=======
+        result.push_back(make_draw_sphere3fv1f(persons[i]->coords, MAN_RAD, default_material));
+>>>>>>> benny
     }
     for (int i = 0; i < (int)bullets.size(); i++) {
-        result.push_back(draw_sphere_sector(bullets[i].coords, EXPLOSION_RAD));
+        result.push_back(make_draw_sphere3fv1f(bullets[i].coords, EXPLOSION_RAD, default_material));
     }
 
 }

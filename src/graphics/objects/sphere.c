@@ -22,6 +22,8 @@ void init_sphere_object(void) {
             cur.normal[0] = cur.coord[0] = sinf(beta) * cosf(alpha);
             cur.normal[1] = cur.coord[1] = cosf(beta);
             cur.normal[2] = cur.coord[2] = sinf(beta) * sinf(alpha);
+            cur.texcoord[0] = ((float) j) / WIDTH;
+            cur.texcoord[1] = ((float) i) / HEIGHT;
             sphere_vbo_data[i][j] = cur;
         }
     }
@@ -42,3 +44,33 @@ void init_sphere_object(void) {
 void free_sphere_object(void) {
     glDeleteBuffers(1, &sphere_vbo);
 }
+
+draw_obj make_draw_sphere1f(float radius, material_t _material) {
+    draw_obj ret;
+    ret.mat_m = make_mat4();
+    vec3f v = make_vec3(radius, radius, radius);
+    scale_mat(v, ret.mat_m);
+    free(v);
+    ret.mode = GL_QUADS;
+    ret.vbo = sphere_vbo;
+    ret.ibo = sphere_ibo_data;
+    ret.count = SPHERE_IBO_DATA_SIZE;
+    ret.material = _material;
+    return ret;
+}
+
+draw_obj make_draw_sphere3fv1f(vec3f pos, float radius, material_t _material) {
+    draw_obj ret;
+    ret.mat_m = make_mat4();
+    vec3f v = make_vec3(radius, radius, radius);
+    scale_mat(v, ret.mat_m);
+    free(v);
+    itrans_mat(pos, ret.mat_m);
+    ret.mode = GL_QUADS;
+    ret.vbo = sphere_vbo;
+    ret.ibo = sphere_ibo_data;
+    ret.count = SPHERE_IBO_DATA_SIZE;
+    ret.material = _material;
+    return ret;
+}
+

@@ -11,12 +11,10 @@ body_part::body_part(string _name, float _mod) {
     item = NULL;
 }
 
-bool body_part::put_on(item_t* thing) {
-    if (thing->is_wearable(name)) {
-        item = thing;
-        return true;
-    }
-    return false;
+void body_part::put_on(item_t* thing) {
+    ret = item;
+    item = thing;
+    return ret;
 }
 
 item_t* body_part::put_off() {

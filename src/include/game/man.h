@@ -21,7 +21,7 @@ struct man {
     float def_mod, atk_mod;
     bool can_die, have_shield, is_running;
     vec3<float> coords, speed, orientation;
-    std::vector<item_t> bag;
+    std::vector<item_t*> bag;
     std::vector<body_part> body_parts;
     std::vector<effect> effects;
     std::vector<skill_t> skills;

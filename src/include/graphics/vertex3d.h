@@ -4,6 +4,7 @@
 
 typedef struct {
     float coord[3];
+    float texcoord[2];
     float normal[3];
 } vertex3d;
 

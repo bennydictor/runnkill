@@ -1,4 +1,5 @@
 #include <graphics/shader.h>
+#include <graphics/gl.h>
 
 #include <stdlib.h>
 
@@ -9,7 +10,7 @@
 
 
 void print_status_log(GLuint id) {
-    GLint log_len = 0;
+    int log_len = 0;
     if (glIsShader(id)) {
         glGetShaderiv(id, GL_INFO_LOG_LENGTH, &log_len);
     } else if (glIsProgram(id)) {
@@ -28,43 +29,45 @@ void print_status_log(GLuint id) {
     free(log);
 }
 
-GLuint create_shader(const char *filename, GLenum type) {
-    GLchar *source = read_file(filename);
+unsigned int create_shader(const char *filename, GLenum type) {
+    char *source = read_file(filename);
     if (source == NULL) {
         printl(LOG_W, "Error while compiling shader %s: source cannot be read.\n", filename);
-        return -1;
+        return 1;
     }
-    GLuint shader = glCreateShader(type);
-    const GLchar *sources[2] = {
-        "#version 120\n",
+    unsigned int shader = glCreateShader(type);
+    char header[100];
+    sprintf(header, "#version 120\n#define LIGHT_COUNT %d\n", LIGHT_COUNT);
+    const char *sources[2] = {
+        header,
         source
     };
     glShaderSource(shader, 2, sources, NULL);
     free(source);
     glCompileShader(shader);
-    GLint compile_status = GL_FALSE;
+    int compile_status = GL_FALSE;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status);
     if (compile_status == GL_FALSE) {
         printl(LOG_W, "Error while compiling shader %s:\n", filename);
         print_status_log(shader);
         glDeleteShader(shader);
-        return -1;
+        return 1;
     }
     return shader;
 }
 
-GLuint create_program(GLuint vs, GLuint fs) {
-    GLuint prog = glCreateProgram();
+unsigned int create_program(unsigned int vs, unsigned int fs) {
+    unsigned int prog = glCreateProgram();
     glAttachShader(prog, vs);
     glAttachShader(prog, fs);
     glLinkProgram(prog);
-    GLint link_status = GL_FALSE;
+    int link_status = GL_FALSE;
     glGetProgramiv(prog, GL_LINK_STATUS, &link_status);
     if (link_status == GL_FALSE) {
         printl(LOG_W, "Error while linking program:\n");
         print_status_log(prog);
         glDeleteProgram(prog);
-        return -1;
+        return 1;
     }
     return prog;
 }

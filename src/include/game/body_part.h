@@ -19,7 +19,7 @@ struct body_part {
     bool is_fortified;
     body_part(std::string _name, float _mod);
 
-    bool put_on(item_t* thing);
+    item_t* put_on(item_t* thing);
     item_t* put_off();
 };
 
