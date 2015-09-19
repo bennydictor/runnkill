@@ -14,6 +14,7 @@
 #include <graphics/vertex3d.h>
 #include <graphics/ft.h>
 #include <graphics/objects/sphere.h>
+#include <graphics/objects/sphere_sector.h>
 #include <graphics/objects/box.h>
 #include <graphics/objects/pp.h>
 
@@ -69,6 +70,7 @@ int init_gl(void) {
     }
 
     init_sphere_object();
+    init_sphere_sector_object();
     init_box_object();
     init_pp_object();
 
@@ -140,6 +142,7 @@ void free_gl(void) {
     free_gl_pp();
     free_ft();
     free_sphere_object();
+    free_sphere_sector_object();
     free_box_object();
     free_pp_object();
     free(mat_v);

@@ -50,7 +50,7 @@ float pcf(vec4 light_coord, int i) {
     for (int x = -samples_count / 2; x <= samples_count / 2; ++x) {
         for (int y = -samples_count / 2; y <= samples_count / 2; ++y) {
             vec2 delta = vec2(shadow_radius * x / samples_count / 2, shadow_radius * y / samples_count / 2);
-            if (true_depth - lin_depth(light[i].z_near, light[i].z_far, texture2D(light[i].map, light_coord.xy + delta).z) < 1e-6) {
+            if (true_depth - lin_depth(light[i].z_near, light[i].z_far, texture2D(light[i].map, light_coord.xy + delta).z) < 4e-7) {
                 ret += 1.0;
             }
         }
