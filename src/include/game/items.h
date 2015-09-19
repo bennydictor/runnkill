@@ -1,7 +1,7 @@
 #ifndef GAME_ITEMS_H
 #define GAME_ITEMS_H
 
-#include <game/mod_t.h>
+#include <game/mod_type.h>
 #include <game/common.h>
 #include <string>
 

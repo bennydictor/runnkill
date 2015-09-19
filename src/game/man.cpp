@@ -99,7 +99,6 @@ void man::out(ostream& stream) {
     stream << "I`m in " << coords << endl;
 }
 
-<<<<<<< HEAD
 void man::run() {
     is_running = true;
     for (int i = 0; i < body_parts.size(); i++)
@@ -110,12 +109,4 @@ void man::run() {
     {
         body_parts[LEFT_FRONT_UP].is_fortified = true;
     }
-=======
-
-void man::put_on(item_t* item, segment) {
-    item_t* wore = body_parts[segment].put_on(item);
-    if (wore)
-        bag.push_back(wore);
-    return;
->>>>>>> benny
 }

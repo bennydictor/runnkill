@@ -11,8 +11,8 @@ body_part::body_part(string _name, float _mod) {
     item = NULL;
 }
 
-void body_part::put_on(item_t* thing) {
-    ret = item;
+item_t* body_part::put_on(item_t* thing) {
+    item_t* ret = item;
     item = thing;
     return ret;
 }

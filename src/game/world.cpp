@@ -254,16 +254,14 @@ void what_to_draw(vector<draw_obj> &result) {
             result.push_back(make_draw_box(bounds, default_material));
         }
     }
+    /*
     for (int i = 0; i < (int)persons.size(); i++) {
-<<<<<<< HEAD
         result.push_back(draw_sphere_sector(persons[i]->coords, MAN_RAD));
         for (int j = 0; j < BP_AMOUNT; j++) {
             result.push_back(draw_sphere_sector(persons[i]->coords, 1.5 * MAN_RAD));
         }
-=======
-        result.push_back(make_draw_sphere3fv1f(persons[i]->coords, MAN_RAD, default_material));
->>>>>>> benny
     }
+    */
     for (int i = 0; i < (int)bullets.size(); i++) {
         result.push_back(make_draw_sphere3fv1f(bullets[i].coords, EXPLOSION_RAD, default_material));
     }
