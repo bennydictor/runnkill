@@ -21,7 +21,7 @@ const int len = 1;
 vector<bullet> bullets;
 vector<man*> persons;
 vector<bool> is_alive, alive_bullets;
-vector<vec3<float> > explosions;
+vector<pair<vec3<float>, float> > explosions;
 int** F;
 int w, h;
 
@@ -111,8 +111,8 @@ int all_dmg(body_part u_l_bp, body_part u_r_bp, body_part d_l_bp, body_part d_r_
 }
 void damage_last_explosion(int b_idx) {
     for (int j = 0; j < (int)persons.size(); j++) {
-        if (dist(explosions.back(), persons[j]->coords) < MAN_RAD + EXPLOSION_RAD) {
-            int sector = detect_sector(persons[j]->coords, explosions.back(), persons[j]->orientation);
+        if (dist(explosions.back().first, persons[j]->coords) < MAN_RAD + explosions.back().second) {
+            int sector = detect_sector(persons[j]->coords, explosions.back().first, persons[j]->orientation);
             is_alive[j] = !persons[j]->take_damage(
                         count_dmg(persons[j]->body_parts[sector], bullets[b_idx].damage));
             //Here will be effects adding
@@ -161,10 +161,10 @@ bool move_bullet(int b_idx, float time) {
         return false;
     }
     vec3<float>our_point = bullets[b_idx].in_time(time);
-    bool res = move_sphere(bullets[b_idx].coords, our_point, (float)EXPLOSION_RAD);
+    bool res = move_sphere(bullets[b_idx].coords, our_point, (float)bullets[b_idx].rad);
     if (res) {
         cerr << "Strike #" << 179 << endl;
-        explosions.push_back(our_point);
+        explosions.push_back(make_pair(our_point, bullets[b_idx].exp_rad));
         damage_last_explosion(b_idx);
         alive_bullets[b_idx] = 0;
         return false;
