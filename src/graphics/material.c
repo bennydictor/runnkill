@@ -1,10 +1,22 @@
 #include <graphics/material.h>
 
-material_t default_material;
+material_t default_material, bullet_material, shield_material;
 
 int init_material(void) {
     default_material.diffuse = default_material.ambient = make_vec3(1, 1, 1);
-    default_material.specular = make_vec3(0, 0, 0);
+    default_material.specular = make_vec3(0.2, 0.2, 0.2);
+    bullet_material.diffuse = make_vec3(1, 0, 0);
+    bullet_material.ambient = make_vec3(0, 1, 0);
+    bullet_material.specular = make_vec3(1, 0.5, 0);
+    shield_material.diffuse = shield_material.ambient = make_vec3(0, 0.1, 0.5);
+    shield_material.specular = make_vec3(0, 0.9, 0.5);
+    return 0;
+}
+
+int init_bullet_material(void) {
+    bullet_material.diffuse = make_vec3(1, 0, 0);
+    bullet_material.ambient = make_vec3(0, 1, 0);
+    bullet_material.specular = make_vec3(1, 0.5, 0);
     return 0;
 }
 
