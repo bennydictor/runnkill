@@ -3,15 +3,18 @@
 
 #include <game/mod_type.h>
 #include <game/common.h>
+#include <graphics/material.h>
+#include <math/vecmath.h>
 #include <string>
+#include <iostream>
 
 struct item_t {
-    std::string type;
     mod_t effects;
     int strength, agi, intellect, speed;
+    material_t material;
     float defense_coeff;
-    item_t(std::string _type) : type(_type) {}
-    
+    void set_material(vec3f ambient, vec3f diffuse, vec3f specular);
+    void in(std::istream& in); 
 };
 
 #endif // GAME_ITEMS_H

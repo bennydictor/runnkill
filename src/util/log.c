@@ -7,7 +7,6 @@
 #include <string.h>
 
 
-
 #define LOG_MESGS_SIZE 4
 
 char* mesgs[LOG_MESGS_SIZE] = {
@@ -65,7 +64,7 @@ int printl(unsigned int log_level, const char* format, ...) {
     nfptr += header_len;
     
     for (const char *i = format; *i; ++i) {
-        *nfptr++ = *i;
+        *(nfptr++) = *i;
         if (cr_cnt > 0 && *i == '\n') {
             strcpy(nfptr, header);
             nfptr += header_len;
@@ -74,7 +73,7 @@ int printl(unsigned int log_level, const char* format, ...) {
     }
     *nfptr = '\n';
     while (nfptr > nformat && *nfptr == '\n' && nfptr[-1] == '\n') {
-        *nfptr-- = 0;
+        *(nfptr--) = 0;
     }
 
     va_list args;

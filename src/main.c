@@ -74,6 +74,9 @@ int main() {
 
     vec3f ones = make_vec3(1, 1, 1);
     vec3f zero = make_vec3(0, 0, 0);
+    vec3f red_y = make_vec3(1, 0.5, 0);
+    vec3f green = make_vec3(0.1, 1, 0);
+    vec3f blue = make_vec3(0, 0.1, 1);
 
     gl_light_enable[0] = 1;
     gl_light[0].pos = make_vec3(-3, 5, 10);
@@ -113,7 +116,7 @@ int main() {
     };
     
     vec3f sphere_pos = make_vec3(0, 2, 0);
-    material_t sphere_material = make_material(ones, ones, ones, 128);
+    material_t sphere_material = make_material(ones, blue, green, 128);
     for (int i = 0; i < 8; ++i) {
         objects[i] = make_draw_sphere_sector3fv1f(sphere_pos, i ? .5 : 1, i, sphere_material);
     }
