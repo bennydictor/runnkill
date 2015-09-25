@@ -66,6 +66,8 @@ extern mat4f light_mat_p[LIGHT_COUNT], light_mat_v[LIGHT_COUNT];
 
 int init_gl(void);
 void gl_on_display(int n, draw_obj *count);
+void gl_matrices(void);
+void gl_light_matrices(void);
 void gl_reshape(void);
 void free_gl(void);
 

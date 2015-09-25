@@ -32,8 +32,7 @@ float gl_fov, gl_z_near, gl_z_far;
 mat4f mat_p, mat_v;
 mat4f light_mat_p[LIGHT_COUNT], light_mat_v[LIGHT_COUNT];
 
-void matrices() {
-    persp_mat(gl_fov, ((double) window_width) / ((double) window_height), gl_z_near, gl_z_far, mat_p);
+void gl_matrices(void) {
     id_mat4(mat_v);
     gl_pos[0] *= -1;
     gl_pos[1] *= -1;
@@ -44,6 +43,9 @@ void matrices() {
     gl_pos[2] *= -1;
     irot_y_mat(gl_rot[1], mat_v);
     irot_x_mat(gl_rot[0], mat_v);
+}
+
+void gl_light_matrices(void) {
     for (int i = 0; i < LIGHT_COUNT; ++i) {
         if (gl_light_enable[i]) {
             persp_mat(gl_light[i].fov, 1, gl_light[i].z_near, gl_light[i].z_far, light_mat_p[i]);
@@ -101,6 +103,8 @@ int init_gl(void) {
         printl(LOG_W, "Error while initializing gl: cannot initialize ft.\n");
         return 1;
     }
+    gl_matrices();
+    gl_light_matrices();
 
     return 0;
 }
@@ -123,8 +127,6 @@ void gl_reshape(void) {
 }
 
 void gl_on_display(int n, draw_obj *objs) {
-    matrices();
-
     render_depth(n, objs);
     render_light(n, objs);
     render_pp();

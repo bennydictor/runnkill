@@ -58,6 +58,7 @@ void update(void) {
         gl_rot[1] -= 2 * M_PI;
     }
 
+    gl_matrices();
     gl_on_display(9, objects);
 }
 
