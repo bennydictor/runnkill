@@ -149,4 +149,10 @@ void free_gl(void) {
     free_pp_object();
     free(mat_v);
     free(mat_p);
+    free(gl_pos);
+    free(gl_rot);
+    for (int i = 0; i < LIGHT_COUNT; ++i) {
+        free(light_mat_v[i]);
+        free(light_mat_p[i]);
+    }
 }

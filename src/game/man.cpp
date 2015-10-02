@@ -101,7 +101,7 @@ void man::out(ostream& stream) {
 
 void man::run() {
     is_running = true;
-    for (int i = 0; i < body_parts.size(); i++)
+    for (int i = 0; i < (int) body_parts.size(); i++)
     {
         body_parts[i].is_fortified = false;
     }

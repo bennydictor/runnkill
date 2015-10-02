@@ -14,9 +14,10 @@
 
 #include <graphics/objects/sphere_sector.h>
 #include <graphics/objects/pp.h>
+#include <graphics/call_gl_on_display.h>
 
+#include <game/world.h>
 
-draw_obj objects[9];
 
 void update(void) {
     float dt = delta();
@@ -59,7 +60,7 @@ void update(void) {
     }
 
     gl_matrices();
-    gl_on_display(9, objects);
+    call_gl_on_display(dt);
 }
 
 int main() {
@@ -73,11 +74,7 @@ int main() {
     gl_z_near = .1;
     gl_z_far = 100;
 
-    vec3f ones = make_vec3(1, 1, 1);
-    vec3f zero = make_vec3(0, 0, 0);
-    vec3f red_y = make_vec3(1, 0.5, 0);
-    vec3f green = make_vec3(0.1, 1, 0);
-    vec3f blue = make_vec3(0, 0.1, 1);
+    float ones[] = {1, 1, 1};
 
     gl_light_enable[0] = 1;
     gl_light[0].pos = make_vec3(-3, 5, 10);
@@ -109,28 +106,20 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    vec3f bounds[4] = {
-        make_vec3(-5, 0, -5),
-        make_vec3(5, 0, -5),
-        make_vec3(-5, 1, -5),
-        make_vec3(-5, 0, 5),
-    };
-    
-    vec3f sphere_pos = make_vec3(0, 2, 0);
-    material_t sphere_material = make_material(ones, blue, green, 128);
-    for (int i = 0; i < 8; ++i) {
-        objects[i] = make_draw_sphere_sector3fv1f(sphere_pos, i ? .5 : 1, i, sphere_material);
+    if (init_world()) {
+        printl(LOG_E, "Fatal error while initializing world.");
+        free_gl();
+        free_glfw();
+        return EXIT_FAILURE;
     }
-    objects[8] = make_draw_box(bounds, make_material(ones, ones, zero, 1));
 
     while (!glfwWindowShouldClose(window)) {
         update();
     }
 
-    free(objects[0].mat_m);
-    free(objects[1].mat_m);
-
     free_gl();
     free_glfw();
+    free_world();
+    lclose();
     return EXIT_SUCCESS;
 }

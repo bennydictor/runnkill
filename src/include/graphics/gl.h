@@ -1,6 +1,10 @@
 #ifndef GRAPHICS_GL_H
 #define GRAPHICS_GL_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <math/vecmath.h>
 #include <graphics/draw_obj.h>
 #include <util/log.h>
@@ -71,5 +75,8 @@ void gl_light_matrices(void);
 void gl_reshape(void);
 void free_gl(void);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif // GRAPHICS_GL_H

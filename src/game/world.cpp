@@ -1,3 +1,4 @@
+#include <game/world.h>
 #include <iostream>
 #include <game/man.h>
 #include <game/field.h>
@@ -249,7 +250,7 @@ void attack(int man_idx, int idx) {
 }
 
 
-void what_to_draw(vector<draw_obj> &result) {
+void world_draw_objs(vector<draw_obj> &result) {
     result.clear();
     for (int i = 0; i < w; i++) {
         for (int j = 0; j < h; j++) {
@@ -291,6 +292,7 @@ void in_skills() {
     }
     in.close();
 }
+
 void in_items() {
     fstream in;
     in.open("items");
@@ -302,14 +304,18 @@ void in_items() {
     }
 }
 
-void init_world() {
+int init_world(void) {
     w = h = 200;
     F = gen_field_sun(w, h);
     in_skills();
     in_items();
+    return 0;
 }
 
-void in_time(float dt) {
+void free_world(void) {
+}
+
+void world_update(float dt) {
     for (int i = 0; i < (int)persons.size(); i++) {
         if (is_alive[i])
             move_man(i, dt);
