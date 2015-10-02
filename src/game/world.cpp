@@ -11,6 +11,7 @@
 #include <ctime>
 #include <graphics/objects/box.h>
 #include <graphics/objects/sphere.h>
+#include <graphics/objects/sphere_sector.h>
 #define EXPLOSION_RAD 1e-2
 #define INF 10000000
 using namespace std;
@@ -20,7 +21,9 @@ const int len = 1;
 vector<bullet> bullets;
 vector<man*> persons;
 vector<bool> is_alive, alive_bullets;
-vector<vec3<float> > explosions;
+vector<pair<vec3<float>, float> > explosions;
+vector<vector<skill_t > > default_skills;
+vector<item_t> default_items;
 int** F;
 int w, h;
 
@@ -110,8 +113,8 @@ int all_dmg(body_part u_l_bp, body_part u_r_bp, body_part d_l_bp, body_part d_r_
 }
 void damage_last_explosion(int b_idx) {
     for (int j = 0; j < (int)persons.size(); j++) {
-        if (dist(explosions.back(), persons[j]->coords) < MAN_RAD + EXPLOSION_RAD) {
-            int sector = detect_sector(persons[j]->coords, explosions.back(), persons[j]->orientation);
+        if (dist(explosions.back().first, persons[j]->coords) < MAN_RAD + explosions.back().second) {
+            int sector = detect_sector(persons[j]->coords, explosions.back().first, persons[j]->orientation);
             is_alive[j] = !persons[j]->take_damage(
                         count_dmg(persons[j]->body_parts[sector], bullets[b_idx].damage));
             //Here will be effects adding
@@ -160,10 +163,10 @@ bool move_bullet(int b_idx, float time) {
         return false;
     }
     vec3<float>our_point = bullets[b_idx].in_time(time);
-    bool res = move_sphere(bullets[b_idx].coords, our_point, (float)EXPLOSION_RAD);
+    bool res = move_sphere(bullets[b_idx].coords, our_point, (float)bullets[b_idx].rad);
     if (res) {
         cerr << "Strike #" << 179 << endl;
-        explosions.push_back(our_point);
+        explosions.push_back(make_pair(our_point, bullets[b_idx].exp_rad));
         damage_last_explosion(b_idx);
         alive_bullets[b_idx] = 0;
         return false;
@@ -254,10 +257,65 @@ void what_to_draw(vector<draw_obj> &result) {
             result.push_back(make_draw_box(bounds, default_material));
         }
     }
+    
     for (int i = 0; i < (int)persons.size(); i++) {
         result.push_back(make_draw_sphere3fv1f(persons[i]->coords, MAN_RAD, default_material));
+        for (int j = 0; j < BP_AMOUNT; j++) {
+            if (persons[i]->body_parts[j].is_fortified)
+                result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, j, 1.5 * MAN_RAD, shield_material));
+            else if (persons[i]->body_parts[j].item)
+                result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, j, 1.1 * MAN_RAD, persons[i]->body_parts[j].item->material));
+        }
     }
+    
     for (int i = 0; i < (int)bullets.size(); i++) {
-        result.push_back(make_draw_sphere3fv1f(bullets[i].coords, EXPLOSION_RAD, default_material));
+        result.push_back(make_draw_sphere3fv1f(bullets[i].coords, bullets[i].rad, bullet_material));
     }
 }
+
+void in_skills() {
+    fstream in;
+    in.open("skills");
+    string garbage;
+    int amount;
+    char type;
+    for (int i = 0; i < 3; i++) {
+        in >> garbage;
+        in >> amount;
+        default_skills[i].resize(amount);
+        for (int j = 0; j < amount; j++) {
+            in >> type;
+            default_skills[i][j].is_range = (type == 'R');
+            default_skills[i][j].in_damage(in);
+        }
+    }
+    in.close();
+}
+void in_items() {
+    fstream in;
+    in.open("items");
+    int am;
+    in >> am;
+    default_items.resize(am);
+    for (int j = 0; j < am; j++) {
+        default_items[j].in(in);
+    }
+}
+
+void init_world() {
+    w = h = 200;
+    F = gen_field_sun(w, h);
+    in_skills();
+    in_items();
+}
+
+void in_time(float dt) {
+    for (int i = 0; i < (int)persons.size(); i++) {
+        if (is_alive[i])
+            move_man(i, dt);
+    }
+    for (int i = 0; i < (int)bullets.size(); i++) {
+        if (alive_bullets[i])
+            move_bullet(i, dt);
+    }
+}   

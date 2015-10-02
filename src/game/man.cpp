@@ -57,7 +57,7 @@ vec3<float> man::in_time(float time) {
     if (have_shield) {
         amount_of_f--;
     }
-    return coords + (float)((time) * (1 - (float)0.2 * amount_of_f)) * speed;
+    return coords + (float)(((time) * (1 - (float)0.2 * amount_of_f)) * (is_running ? (have_shield ? 1.6 : 2) : 1)) * speed;
 }
 
 void man::move(float time) {
@@ -97,4 +97,26 @@ void man::out(ostream& stream) {
     stream << hp << ' ' << mp << endl;
     stream << "My attack = " << count_attack(*this) << endl;
     stream << "I`m in " << coords << endl;
+}
+
+void man::run() {
+    is_running = true;
+    for (int i = 0; i < body_parts.size(); i++)
+    {
+        body_parts[i].is_fortified = false;
+    }
+    if (have_shield)
+    {
+        body_parts[LEFT_FRONT_UP].is_fortified = true;
+    }
+}
+
+void man::put_on(item_t* item, int idx) {
+    item_t* wore = body_parts[idx].put_on(item);
+    if (wore)
+    {
+        get_effect(wore->effects * -1);
+        bag.push_back(wore);
+    }
+    get_effect(item->effects);
 }

@@ -4,7 +4,6 @@
 #include <math.h>
 #include <string.h>
 
-
 vec3f make_vec3_0() {
     vec3f res = malloc(3 * sizeof(float));
     return res;

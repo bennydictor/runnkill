@@ -11,12 +11,10 @@ body_part::body_part(string _name, float _mod) {
     item = NULL;
 }
 
-bool body_part::put_on(item_t* thing) {
-    if (thing->is_wearable(name)) {
-        item = thing;
-        return true;
-    }
-    return false;
+item_t* body_part::put_on(item_t* thing) {
+    item_t* ret = item;
+    item = thing;
+    return ret;
 }
 
 item_t* body_part::put_off() {
@@ -26,5 +24,10 @@ item_t* body_part::put_off() {
 }
 
 int count_dmg(body_part bp, int atk) {
-    return bp.mod * (1 - 0.9 * bp.is_fortified) * atk;
+    if (bp.is_fortified)
+        return bp.mod * 0.1 * atk;
+    else if (bp.item)
+        return bp.mod * bp.item->defense_coeff * atk;
+    else
+        return bp.mod * atk;
 }

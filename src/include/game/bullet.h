@@ -15,7 +15,7 @@ struct bullet {
     std::string name;
     std::vector<effect> effects;
     float damage;
-
+    float rad, exp_rad;
     bullet();
     void in (std::istream& stream);
     vec3<float> in_time(float time);
