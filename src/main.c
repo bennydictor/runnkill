@@ -112,7 +112,6 @@ int main() {
         free_glfw();
         return EXIT_FAILURE;
     }
-
     while (!glfwWindowShouldClose(window)) {
         update();
     }

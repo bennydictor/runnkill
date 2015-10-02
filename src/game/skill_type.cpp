@@ -1,7 +1,7 @@
 #include <vector>
 #include <game/effect.h>
 #include <game/skill_type.h>
-
+#include <iostream>
 using namespace std;
 
 void skill_t::in_damage(istream& stream) {

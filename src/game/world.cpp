@@ -280,6 +280,7 @@ void in_skills() {
     string garbage;
     int amount;
     char type;
+    default_skills.resize(3);
     for (int i = 0; i < 3; i++) {
         in >> garbage;
         in >> amount;
@@ -302,6 +303,7 @@ void in_items() {
     for (int j = 0; j < am; j++) {
         default_items[j].in(in);
     }
+    in.close();
 }
 
 int init_world(void) {
