@@ -21,6 +21,7 @@ const int len = 1;
 vector<bullet> bullets;
 vector<man*> persons;
 vector<bool> is_alive, alive_bullets;
+vector<float> animations;
 vector<pair<vec3<float>, float> > explosions;
 vector<vector<skill_t > > default_skills;
 vector<item_t> default_items;
@@ -177,6 +178,8 @@ bool move_bullet(int b_idx, float time) {
 }
 
 bool move_man(int idx, float time) {
+    if (animations[idx] > 0)
+        return true;
     vec3<float> finish = persons[idx]->in_time(time);
     bool res = move_sphere(persons[idx]->coords, finish, (float)MAN_RAD);
     persons[idx]->move(time);
@@ -187,7 +190,7 @@ bool move_man(int idx, float time) {
 void attack(int man_idx, int idx) {
 
     man* z = persons[man_idx];
-    if ((int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp) {
+    if (animations[man_idx] > 0 or (int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp) {
         cerr << "You missed!" << endl;
         return;
     }
@@ -201,6 +204,7 @@ void attack(int man_idx, int idx) {
         bullets.back().damage *= count_attack(*z);
         alive_bullets.push_back(1);
         cerr << "You shoot" << endl;
+        animations[man_idx] += curr.a_time;
     } else {
         cerr << "you try to beat" << endl;
         for (size_t i = 0; i < persons.size(); i++) {
@@ -242,6 +246,7 @@ void attack(int man_idx, int idx) {
                     }
                 }
                 is_alive[i] = !persons[i]->take_damage(damage);
+                animations[man_idx] += z->skills[idx].a_time;
                 //Here will be effects adding
             }
         }
@@ -311,11 +316,14 @@ void init_world() {
 
 void in_time(float dt) {
     for (int i = 0; i < (int)persons.size(); i++) {
-        if (is_alive[i])
+        if (is_alive[i]) {
             move_man(i, dt);
+            animations[i] = max(0.0f, animations[i] - dt);
+        }
     }
     for (int i = 0; i < (int)bullets.size(); i++) {
         if (alive_bullets[i])
             move_bullet(i, dt);
     }
 }   
+

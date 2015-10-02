@@ -13,6 +13,7 @@ void skill_t::in_damage(istream& stream) {
         stream >> u_l >> u_r >> d_l >> d_r;
     }
     int amount_of_effects;
+    stream >> a_time;
     stream >> amount_of_effects;
     string eff_name;
     for (int i = 0; i < amount_of_effects; i++) {

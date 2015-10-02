@@ -15,6 +15,7 @@ struct skill_t {
     bullet sample;
     bool is_range;
     float dmg, u_l, u_r, d_l, d_r;
+    float a_time;
     void in_damage(std::istream& stream);
 };
 
