@@ -110,7 +110,7 @@ int init_gl(void) {
 }
 
 void gl_reshape(void) {
-    persp_mat(1, ((double) window_width) / ((double) window_height), .1, 100, mat_p);
+    persp_mat(1, ((double) window_width) / ((double) window_height), gl_z_near, gl_z_far, mat_p);
 
     glBindTexture(GL_TEXTURE_2D, fbo_pp_texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);

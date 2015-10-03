@@ -6,6 +6,9 @@
 
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef float* vec3f;
 
@@ -45,5 +48,9 @@ mat4f mul_mat4mm(mat4f a, mat4f b, mat4f res);
 
 mat4f ortho_mat(float left, float right, float top, float bottom, float z_near, float z_far, mat4f res);
 mat4f persp_mat(float fov, float aspect, float z_near, float z_far, mat4f res);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // MATH_VECMATH_H

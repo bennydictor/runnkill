@@ -44,7 +44,7 @@ float shadow_radius = 1.0 / 100.0;
 int samples_count = 2;
 
 bool in_shadow(float true_depth, int i, vec2 coord) {
-    return true_depth - lin_depth(light[i].z_near, light[i].z_far, texture2D(light[i].map, coord).r) > 5e-7;
+    return true_depth - lin_depth(light[i].z_near, light[i].z_far, texture2D(light[i].map, coord).r) > 1e10;
 }
 
 float pcf(vec4 light_coord, int i) {

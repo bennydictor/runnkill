@@ -1,5 +1,5 @@
-#ifndef SPHERE_BO_H
-#define SPHERE_BO_H
+#ifndef GRAPHICS_OBJECTS_BOX_H
+#define GRAPHICS_OBJECTS_BOX_H
 
 #include <graphics/vertex3d.h>
 #include <graphics/draw_obj.h>
@@ -21,4 +21,4 @@ draw_obj make_draw_box(vec3f *bounds, material_t _material);
 }
 #endif
 
-#endif // SPHERE_BO_H
+#endif // GRAPHICS_OBJECTS_BOX_H

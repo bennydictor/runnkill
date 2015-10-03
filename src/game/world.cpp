@@ -7,10 +7,12 @@
 #include <game/skill_type.h>
 #include <game/bullet.h>
 #include <math/geom.h>
+#include <util/log.h>
 #include <vector>
 #include <cmath>
 #include <ctime>
 #include <graphics/objects/box.h>
+#include <graphics/objects/field.h>
 #include <graphics/objects/sphere.h>
 #include <graphics/objects/sphere_sector.h>
 #define EXPLOSION_RAD 1e-2
@@ -18,6 +20,8 @@
 using namespace std;
 
 const int len = 1;
+int world_max_height;
+draw_obj world_map;
 
 vector<bullet> bullets;
 vector<man*> persons;
@@ -252,12 +256,13 @@ void attack(int man_idx, int idx) {
 
 void world_draw_objs(vector<draw_obj> &result) {
     result.clear();
-    for (int i = 0; i < w; i++) {
+    /*for (int i = 0; i < w; i++) {
         for (int j = 0; j < h; j++) {
-            ortohedron bounds(vec3<float>(i, 0, j), vec3<float>(i + 1, 0, j), vec3<float>(i, F[i][j], j), vec3<float>(i, 0, j + 1));
+            ortohedron bounds(vec3<float>(i, 0, j), vec3<float>(i + 1, 0, j), vec3<float>(i, F[i][j] + 1, j), vec3<float>(i, 0, j + 1));
             result.push_back(make_draw_box(bounds, default_material));
         }
-    }
+    }*/
+    result.push_back(world_map);
     
     for (int i = 0; i < (int)persons.size(); i++) {
         result.push_back(make_draw_sphere3fv1f(persons[i]->coords, MAN_RAD, default_material));
@@ -309,12 +314,21 @@ void in_items() {
 int init_world(void) {
     w = h = 200;
     F = gen_field_sun(w, h);
+    world_max_height = 0;
+    for (int i = 0; i < w; ++i) {
+        for (int j = 0; j < h; ++j) {
+            world_max_height = max(world_max_height, F[i][j]);
+        }
+    }
+    init_field_object(w, h, F);
+    world_map = make_draw_field(default_material);
     in_skills();
     in_items();
     return 0;
 }
 
 void free_world(void) {
+    free_field_object();
 }
 
 void world_update(float dt) {
