@@ -75,6 +75,11 @@ writeopts:
 	@echo 'DEBUG=$(DEBUG)' >.opts
 	@echo 'PROFILE=$(PROFILE)' >>.opts
 
+analysis:
+	PROFILE=1 $(MAKE) all
+	./$(APP)
+	gprof ./$(APP) >analysis
+
 dummy:
 
 tar: clean
@@ -82,6 +87,6 @@ tar: clean
 	@mv ../$(APP).tar.gz $(APP).tar.gz
 
 clean:
-	@rm -rf $(OBJDIR) $(APP)
+	@rm -rf $(OBJDIR) $(APP) gmon.out analysis
 
-.PHONY: all tar clean writeopts dummy
+.PHONY: all tar clean writeopts analysis dummy
