@@ -77,12 +77,12 @@ int main() {
     float ones[] = {1, 1, 1};
 
     gl_light_enable[0] = 1;
-    gl_light[0].pos = make_vec3(-10, 7, 0);
-    gl_light[0].rot = make_vec3(9 * M_PI / 8, 0, 0);
+    gl_light[0].pos = make_vec3(100, 100, 100);
+    gl_light[0].rot = make_vec3(3 * M_PI / 2, 0, 0);
     gl_light[0].fov = 1;
     gl_light[0].z_near = .1;
     gl_light[0].z_far = 1000;
-    gl_light[0].ambient = make_vec3(.1, .1, .1);
+    gl_light[0].ambient = make_vec3(.3, .3, .3);
     gl_light[0].diffuse = make_vec3(.4, .4, .4);
     gl_light[0].specular = ones;
 

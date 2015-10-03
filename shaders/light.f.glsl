@@ -95,7 +95,7 @@ void main() {
             diffuse_fc += diffuse_light_intensity * light[i].diffuse * shadow;
             vec3 half_vector = normalize(-normalize(vertex_position) + light_direction);
             float specular_light_intensity = max(0, dot(surface_normal, half_vector));
-            if (diffuse_light_intensity != 0) {
+            if (diffuse_light_intensity > 1e-9) {
                 specular_light_intensity = pow(specular_light_intensity, material.shininess);
                 specular_fc += specular_light_intensity * light[i].specular * shadow;
             }
