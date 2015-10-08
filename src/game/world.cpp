@@ -324,6 +324,20 @@ int init_world(void) {
     world_map = make_draw_field(default_material);
     in_skills();
     in_items();
+    int i = 0;
+    int j = 0;
+    while (F[i][j] != 0)
+    {
+        j++;
+        if (j == h)
+        {
+            j = 0;
+            i++:
+        }
+    }
+    persons.push_back(man(derrior, 1));
+    is_alive.push_back(1);
+    persons[i]->coords = vec3<float>(i, 1, j);
     return 0;
 }
 
@@ -341,3 +355,19 @@ void world_update(float dt) {
             move_bullet(i, dt);
     }
 }   
+
+
+void man_update(int man_idx, bool* pressed, vec3<float> curr_orientation) {
+    persons[man_idx]->set_orientation(curr_orientation);
+    if (!is_alive[man_idx])
+        return;
+    if (pressed[__W] and pressed[__S])
+        pressed[__W] = pressed[__S] = false;
+    if (pressed[__A] and pressed[__D])
+        pressed[__A] = pressed[__D] = false;
+    float angle = (float)(pressed[__D] + 2 * pressed[S] + 3 * pressed[__A]) / (pressed[__W] + pressed[__D] + pressed[__S] + pressed[__A]);
+    persons[man_idx]->set_speed(persons[man_idx]->orientation * persons[man_idx]->abs_speed);
+    persons[man_idx]->speed.rotate(angle);
+    if (pressed[SPACE])
+        attack(man_idx, 0);
+}
