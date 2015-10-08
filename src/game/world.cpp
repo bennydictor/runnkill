@@ -183,6 +183,10 @@ bool move_bullet(int b_idx, float time) {
 
 bool move_man(int idx, float time) {
     vec3<float> finish = persons[idx]->in_time(time);
+    if (finish == persons[idx]->coords)
+    {
+        return true;
+    }
     bool res = move_sphere(persons[idx]->coords, finish, (float)MAN_RAD);
     persons[idx]->move(time);
     persons[idx]->coords = (finish);
@@ -262,10 +266,10 @@ void world_draw_objs(vector<draw_obj> &result) {
             result.push_back(make_draw_box(bounds, default_material));
         }
     }*/
+    //cout << persons.size() << endl;
     result.push_back(world_map);
-    
     for (int i = 0; i < (int)persons.size(); i++) {
-        result.push_back(make_draw_sphere3fv1f(persons[i]->coords, MAN_RAD, default_material));
+        result.push_back(make_draw_sphere3fv1f(persons[i]->coords, MAN_RAD, man_material));
         for (int j = 0; j < BP_AMOUNT; j++) {
             if (persons[i]->body_parts[j].is_fortified)
                 result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, j, 1.5 * MAN_RAD, shield_material));
@@ -274,6 +278,7 @@ void world_draw_objs(vector<draw_obj> &result) {
         }
     }
     
+    //cout << BP_AMOUNT << endl;
     for (int i = 0; i < (int)bullets.size(); i++) {
         result.push_back(make_draw_sphere3fv1f(bullets[i].coords, bullets[i].rad, bullet_material));
     }
@@ -324,20 +329,20 @@ int init_world(void) {
     world_map = make_draw_field(default_material);
     in_skills();
     in_items();
-    int i = 0;
-    int j = 0;
+    int i = rand() % w;
+    int j = rand() % h;
     while (F[i][j] != 0)
     {
         j++;
         if (j == h)
         {
             j = 0;
-            i++:
+            i++;
         }
     }
-    persons.push_back(man(derrior, 1));
+    persons.push_back(new man("Derrior", 1));
     is_alive.push_back(1);
-    persons[i]->coords = vec3<float>(i, 1, j);
+    persons[0]->coords = vec3<float>(i, 2, j);
     return 0;
 }
 
@@ -365,8 +370,8 @@ void man_update(int man_idx, bool* pressed, vec3<float> curr_orientation) {
         pressed[__W] = pressed[__S] = false;
     if (pressed[__A] and pressed[__D])
         pressed[__A] = pressed[__D] = false;
-    float angle = (float)(pressed[__D] + 2 * pressed[S] + 3 * pressed[__A]) / (pressed[__W] + pressed[__D] + pressed[__S] + pressed[__A]);
-    persons[man_idx]->set_speed(persons[man_idx]->orientation * persons[man_idx]->abs_speed);
+    float angle = (float)(pressed[__D] + 2 * pressed[__S] + 3 * pressed[__A]) / (pressed[__W] + pressed[__D] + pressed[__S] + pressed[__A]) * M_PI / 4;
+    persons[man_idx]->set_speed((float)persons[man_idx]->abs_speed * persons[man_idx]->orientation);
     persons[man_idx]->speed.rotate(angle);
     if (pressed[SPACE])
         attack(man_idx, 0);
