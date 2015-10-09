@@ -7,9 +7,10 @@
 using namespace std;
 
 
-void call_gl_on_display(float dt) {
+void call_gl_on_display(float dt, char *but) {
     vector<draw_obj> res;
     world_update(dt);
     world_draw_objs(res);
+    man_update(0, but, vec3<float>(gl_rot[0], gl_rot[1], 0));
     gl_on_display(res.size(), res.data());
 }

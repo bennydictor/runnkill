@@ -269,12 +269,12 @@ void world_draw_objs(vector<draw_obj> &result) {
     //cout << persons.size() << endl;
     result.push_back(world_map);
     for (int i = 0; i < (int)persons.size(); i++) {
-        result.push_back(make_draw_sphere3fv1f(persons[i]->coords, MAN_RAD, man_material));
+        result.push_back(make_draw_sphere3fv1f(persons[i]->coords + vec3<float>(.5, -.5, .5), MAN_RAD, man_material));
         for (int j = 0; j < BP_AMOUNT; j++) {
             if (persons[i]->body_parts[j].is_fortified)
-                result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, j, 1.5 * MAN_RAD, shield_material));
+                result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords + vec3<float>(.5, -.5, .5), j, 1.5 * MAN_RAD, shield_material));
             else if (persons[i]->body_parts[j].item)
-                result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, j, 1.1 * MAN_RAD, persons[i]->body_parts[j].item->material));
+                result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords + vec3<float>(.5, -.5, .5), j, 1.1 * MAN_RAD, persons[i]->body_parts[j].item->material));
         }
     }
     
@@ -362,7 +362,7 @@ void world_update(float dt) {
 }   
 
 
-void man_update(int man_idx, bool* pressed, vec3<float> curr_orientation) {
+void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     persons[man_idx]->set_orientation(curr_orientation);
     if (!is_alive[man_idx])
         return;

@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-void call_gl_on_display(float dt);
+void call_gl_on_display(float dt, char *but);
 
 #ifdef __cplusplus
 }

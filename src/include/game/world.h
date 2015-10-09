@@ -14,7 +14,7 @@
 #define SPACE 4
 void world_draw_objs(std::vector<draw_obj> &res);
 void world_update(float dt);
-void man_update(int man_idx, bool* pressed, vec3<float> curr_orientation);
+void man_update(int man_idx, char* pressed, vec3<float> curr_orientation);
 
 extern "C" {
 #endif

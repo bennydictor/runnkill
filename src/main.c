@@ -60,7 +60,14 @@ void update(void) {
     }
 
     gl_matrices();
-    call_gl_on_display(dt);
+    char but[] = {
+        glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS,
+        glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS,
+        glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS,
+        glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS,
+        glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS,
+    };
+    call_gl_on_display(dt, but);
 }
 
 int main() {
