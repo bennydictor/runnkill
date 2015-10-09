@@ -343,6 +343,7 @@ int init_world(void) {
     in_items();
     int i = rand() % w;
     int j = rand() % h;
+    i = j = 1;
     while (F[i][j] != 0)
     {
         j++;
@@ -354,7 +355,7 @@ int init_world(void) {
     }
     persons.push_back(new man("Derrior", 1));
     is_alive.push_back(1);
-    persons[0]->coords = vec3<float>((float)100 + 0.5, 2, (float)100 - 0.5);
+    persons[0]->coords = vec3<float>((float) 1 + 0.5, 2, (float)1 - 0.5);
     persons[0]->set_speed(vec3<float>(0, 0, 0));
     return 0;
 }
