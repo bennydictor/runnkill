@@ -79,12 +79,19 @@ void vec3<T>::resize(const float s) {
     z /= vlen;
     (*this) = s * (*this);
 }
-
 template <class T>
 void vec3<T>::rotate(const float s) {
     T new_x, new_z;
-    new_x = cos(s) * x - sin(s) * z;
-    new_z = sin(s) * x + cos(s) * z;
+    float cosf = cos(std::min((float)(2 * M_PI - s), s));
+    float sinf;
+    if (-M_PI < 2 * s and 2 * s <= M_PI)
+        sinf = sin(s);
+    else if (2 * s > 3 * M_PI)
+        sinf = -sin(2 * M_PI - s);
+    else
+        sinf = -sin(s - M_PI);
+    new_z = cosf * x - sinf * z;
+    new_x = sinf * x + cosf * z;
     x = new_x;
     z = new_z;
 }

@@ -68,13 +68,14 @@ template <class T>
 
 bool intersect_seg_facet(vec3<T> plain1, vec3<T> plain2, vec3<T> plain3, vec3<T> seg1, vec3<T> seg2, vec3<T>& res) {
     vec3<T> plain4 = plain2 + vec3<T>(plain1, plain3);
-//    std::cerr << ' ' << plain1 << ' ' << plain2 << ' ' << plain3 << ' ' << plain4 << '|' << seg1 << ' ' << seg2 << ';' << res << '\n';
+    std::cerr << ' ' << plain1 << ' ' << plain2 << ' ' << plain3 << ' ' << plain4 << '|' << seg1 << ' ' << seg2 << ';' << res << '\n';
     vec3<T> res1;
     if (!intersect_seg_plain(plain1, plain2, plain3, seg1, seg2, res1)) {
         return false;
     }
     bool ret = in_angle(plain1, plain2, plain3, res1) and in_angle(plain4, plain3, plain2, res1);
-    if (ret) res = res1;
+    if (ret and dist(seg1, res) > dist(seg1, res1))
+        res = res1;
     return ret;
 }
 
@@ -82,13 +83,15 @@ bool intersect_seg_facet(vec3<T> plain1, vec3<T> plain2, vec3<T> plain3, vec3<T>
 template <class T>
 
 bool intersect_seg_ortohedron(ortohedron A, vec3<T> seg1, vec3<T> seg2, vec3<T>& res) {
+    res = seg2;
     bool ret1 = intersect_seg_facet(A.p1, A.p2, A.p3, seg1, seg2, res) or
         intersect_seg_facet(A.p1, A.p2, A.p4, seg1, seg2, res) or
         intersect_seg_facet(A.p1, A.p3, A.p4, seg1, seg2, res);
     vec3<T> p5 = A.p2 + vec3<T>(A.p1, A.p3) + vec3<T>(A.p1, A.p4);
+    std::cout << p5 << ret1 << std::endl;
     bool ret2 = intersect_seg_facet(p5, A.p2 + vec3<T>(A.p1, A.p3), A.p3 + vec3<T>(A.p1, A.p4), seg1, seg2, res) or
-        intersect_seg_facet(p5, A.p2 + vec3<T>(A.p1, A.p3) , A.p4 + vec3<T>(A.p1, A.p2), seg1, seg2, res) or
-        intersect_seg_facet(p5, A.p3 + vec3<T>(A.p1, A.p4) , A.p4 + vec3<T>(A.p1, A.p2), seg1, seg2, res); 
+        intersect_seg_facet(p5, A.p2 + vec3<T>(A.p1, A.p3), A.p4 + vec3<T>(A.p1, A.p2), seg1, seg2, res) or
+        intersect_seg_facet(p5, A.p3 + vec3<T>(A.p1, A.p4), A.p4 + vec3<T>(A.p1, A.p2), seg1, seg2, res); 
     return (ret1 | ret2);
 
 }

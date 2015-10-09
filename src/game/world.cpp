@@ -127,6 +127,11 @@ void damage_last_explosion(int b_idx) {
     }
 
 }
+int get_element(int** F, int i, int j) {
+    i = min(w - 1, max(i, 0));
+    j = min(h - 1, max(j, 0));
+    return F[i][j];
+}
 template <class T>
 
 bool move_sphere(vec3<T> start, vec3<T> &finish, T rad) {
@@ -146,20 +151,23 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad) {
         for (int j = -(int)rad - 1; j <= (int)rad + 1; j++) {
             point1 = vec3<float>((int)finish.x - rad + EPS + i, -rad + EPS, (int)finish.z - rad + EPS + j);
             point2 = vec3<float>((int)finish.x + 1 + rad - EPS + i, -rad + EPS, (int)finish.z - rad + EPS + j);
-            point3 = vec3<float>((int)finish.x - rad + EPS + i, F[(int)finish.x + i][(int)finish.z + j] + rad - EPS, 
+            point3 = vec3<float>((int)finish.x - rad + EPS + i, get_element(F, (int)finish.x + i, (int)finish.z + j) + rad - EPS, 
                                                                 (int)finish.z - rad + EPS + j);
             point4 = vec3<float>((int)finish.x - rad + EPS + i, -rad + EPS, (int)finish.z + 1 + rad - EPS + j);
+            cout << finish << ' ' << point1 << ' ' << point2 << ' ' << point3 << ' ' << point4 << endl;
             bool res1 = intersect_seg_ortohedron(
                             ortohedron(point1, point2, point3, point4), start, finish, curr_intersection);
             //cerr << start << ' ' << res1 << endl;
             if (res1 and dist(start, intersection) > (dist(start, curr_intersection))) {
-                intersection = curr_intersection;
+                
+                cout << (intersection = curr_intersection) << endl;
             }
             
             res |= res1;
         }
     }
     finish = intersection;   
+    cout << finish << endl;
     return res;
 }
 
@@ -183,11 +191,15 @@ bool move_bullet(int b_idx, float time) {
 
 bool move_man(int idx, float time) {
     vec3<float> finish = persons[idx]->in_time(time);
+    cout << "--" << finish << endl;
+    cout << '-' << persons[idx]->coords << endl;
+   // return false;
     if (finish == persons[idx]->coords)
     {
+        cout << '!' << endl;
         return true;
     }
-    bool res = move_sphere(persons[idx]->coords, finish, (float)MAN_RAD);
+    bool res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD));
     persons[idx]->move(time);
     persons[idx]->coords = (finish);
     return !res;
@@ -342,7 +354,8 @@ int init_world(void) {
     }
     persons.push_back(new man("Derrior", 1));
     is_alive.push_back(1);
-    persons[0]->coords = vec3<float>(i, 2, j);
+    persons[0]->coords = vec3<float>((float)100 + 0.5, 2, (float)100 - 0.5);
+    persons[0]->set_speed(vec3<float>(0, 0, 0));
     return 0;
 }
 
@@ -364,15 +377,26 @@ void world_update(float dt) {
 
 void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     persons[man_idx]->set_orientation(curr_orientation);
+    cout << persons[man_idx]->orientation << endl;
     if (!is_alive[man_idx])
         return;
     if (pressed[__W] and pressed[__S])
         pressed[__W] = pressed[__S] = false;
     if (pressed[__A] and pressed[__D])
         pressed[__A] = pressed[__D] = false;
-    float angle = (float)(pressed[__D] + 2 * pressed[__S] + 3 * pressed[__A]) / (pressed[__W] + pressed[__D] + pressed[__S] + pressed[__A]) * M_PI / 4;
-    persons[man_idx]->set_speed((float)persons[man_idx]->abs_speed * persons[man_idx]->orientation);
-    persons[man_idx]->speed.rotate(angle);
-    if (pressed[SPACE])
-        attack(man_idx, 0);
+    if (0 == pressed[__W] + pressed[__D] + pressed[__S] + pressed[__A])
+    {
+        persons[man_idx]->set_speed(vec3<float>(0, 0, 0));
+    }
+    else
+    {
+        float angle = (float)((pressed[__A] + 2 * pressed[__S] + 3 * pressed[__D]) / max(1, pressed[__W] + pressed[__D] + pressed[__S] + pressed[__A])) * M_PI / 2;
+        persons[man_idx]->set_speed((float)persons[man_idx]->abs_speed * persons[man_idx]->orientation);
+        cout << "V " << persons[man_idx]->speed << endl;
+        persons[man_idx]->speed.rotate(angle);
+        cout << "v " << (angle > M_PI) << ' ' << persons[man_idx]->speed << endl;
+        cout << "speed improved" << endl;
+        if (pressed[SPACE])
+            attack(man_idx, 0);
+    }
 }
