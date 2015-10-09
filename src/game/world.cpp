@@ -280,7 +280,7 @@ void world_draw_objs(vector<draw_obj> &result) {
     }*/
     //cout << persons.size() << endl;
     result.push_back(world_map);
-    for (int i = 0; i < (int)persons.size(); i++) {
+    for (int i = 1; i < (int)persons.size(); i++) {
         result.push_back(make_draw_sphere3fv1f(persons[i]->coords + vec3<float>(.5, -.5, .5), MAN_RAD, man_material));
         for (int j = 0; j < BP_AMOUNT; j++) {
             if (persons[i]->body_parts[j].is_fortified)
@@ -358,6 +358,12 @@ int init_world(void) {
     persons[0]->coords = vec3<float>((float) 1 + 0.5, 2, (float)1 - 0.5);
     persons[0]->set_speed(vec3<float>(0, 0, 0));
     return 0;
+}
+
+void world_get_coords(vec3f coord) {
+    coord[0] = persons[0]->coords.x + .5;
+    coord[1] = persons[0]->coords.y;
+    coord[2] = persons[0]->coords.z + .5;
 }
 
 void free_world(void) {
