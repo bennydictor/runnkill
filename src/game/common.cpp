@@ -22,7 +22,7 @@ int init_mp[] = {10, 20, 70};
 int init_agi[] = {9, 15, 6};
 int init_strength[] = {15, 9, 6};
 int init_int[] = {3, 6, 15};
-int init_speed[] = {4, 6, 5};
+int init_speed[] = {4, 7, 5};
 
 int atk_strength_mods[] = {4, 2, 1};
 int atk_agi_mods[] = {2, 3, 1};

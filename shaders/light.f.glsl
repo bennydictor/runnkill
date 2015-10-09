@@ -42,15 +42,31 @@ float lin_depth(float z_near, float z_far, float z) {
 
 float shadow_radius = 1.0 / 100.0;
 int samples_count = 2;
-int total_samples = (samples_count + 1) * (samples_count + 1);
+
+bool in_shadow(float true_depth, int i, vec2 coord) {
+    return true_depth - lin_depth(light[i].z_near, light[i].z_far, texture2D(light[i].map, coord).r) > 1e10;
+}
 
 float pcf(vec4 light_coord, int i) {
     float true_depth = lin_depth(z_near, z_far, light_coord.z);
+    bool smp[4];
+    smp[0] = in_shadow(true_depth, i, light_coord.xy + vec2(-shadow_radius, -shadow_radius));
+    smp[1] = in_shadow(true_depth, i, light_coord.xy + vec2(-shadow_radius, +shadow_radius));
+    smp[2] = in_shadow(true_depth, i, light_coord.xy + vec2(+shadow_radius, +shadow_radius));
+    smp[3] = in_shadow(true_depth, i, light_coord.xy + vec2(+shadow_radius, -shadow_radius));
+    if (smp[0] && smp[1] && smp[2] && smp[3]) {
+        return 0.0;
+    }
+    if (!smp[0] && !smp[1] && !smp[2] && !smp[3]) {
+        return 1.0;
+    }
     float ret = 0;
+    int total_samples = 0;
     for (int x = -samples_count / 2; x <= samples_count / 2; ++x) {
         for (int y = -samples_count / 2; y <= samples_count / 2; ++y) {
+            ++total_samples;
             vec2 delta = vec2(shadow_radius * x / samples_count / 2, shadow_radius * y / samples_count / 2);
-            if (true_depth - lin_depth(light[i].z_near, light[i].z_far, texture2D(light[i].map, light_coord.xy + delta).z) < 4e-7) {
+            if (!in_shadow(true_depth, i, light_coord.xy + delta)) {
                 ret += 1.0;
             }
         }
@@ -79,7 +95,7 @@ void main() {
             diffuse_fc += diffuse_light_intensity * light[i].diffuse * shadow;
             vec3 half_vector = normalize(-normalize(vertex_position) + light_direction);
             float specular_light_intensity = max(0, dot(surface_normal, half_vector));
-            if (diffuse_light_intensity != 0) {
+            if (diffuse_light_intensity > 1e-9) {
                 specular_light_intensity = pow(specular_light_intensity, material.shininess);
                 specular_fc += specular_light_intensity * light[i].specular * shadow;
             }

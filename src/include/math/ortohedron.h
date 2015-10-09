@@ -12,6 +12,8 @@ struct ortohedron {
     vec3f vec_table[4];
     ortohedron(vec3<float> a, vec3<float> b, vec3<float> c, vec3<float> d);
     operator vec3f *();
+
+    ~ortohedron();
 };
 
 #else

@@ -14,33 +14,34 @@
 
 #include <graphics/objects/sphere_sector.h>
 #include <graphics/objects/pp.h>
+#include <graphics/call_gl_on_display.h>
 
+#include <game/world.h>
 
-draw_obj objects[9];
 
 void update(void) {
     float dt = delta();
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        gl_pos[0] += sin(gl_rot[1]) * dt;
-        gl_pos[2] -= cos(gl_rot[1]) * dt;
+        gl_pos[0] += sin(gl_rot[1]) * dt * 10;
+        gl_pos[2] -= cos(gl_rot[1]) * dt * 10;
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        gl_pos[0] -= sin(gl_rot[1]) * dt;
-        gl_pos[2] += cos(gl_rot[1]) * dt;
+        gl_pos[0] -= sin(gl_rot[1]) * dt * 10;
+        gl_pos[2] += cos(gl_rot[1]) * dt * 10;
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        gl_pos[0] -= cos(gl_rot[1]) * dt;
-        gl_pos[2] -= sin(gl_rot[1]) * dt;
+        gl_pos[0] -= cos(gl_rot[1]) * dt * 10;
+        gl_pos[2] -= sin(gl_rot[1]) * dt * 10;
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        gl_pos[0] += cos(gl_rot[1]) * dt;
-        gl_pos[2] += sin(gl_rot[1]) * dt;
+        gl_pos[0] += cos(gl_rot[1]) * dt * 10;
+        gl_pos[2] += sin(gl_rot[1]) * dt * 10;
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        gl_pos[1] += dt;
+        gl_pos[1] += dt * 10;
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        gl_pos[1] -= dt;
+        gl_pos[1] -= dt * 10;
     }
     gl_rot[0] += cursor_dy / 100.0;
     gl_rot[1] += cursor_dx / 100.0;
@@ -58,7 +59,15 @@ void update(void) {
         gl_rot[1] -= 2 * M_PI;
     }
 
-    gl_on_display(9, objects);
+    gl_matrices();
+    char but[] = {
+        glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS,
+        glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS,
+        glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS,
+        glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS,
+        glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS,
+    };
+    call_gl_on_display(dt, but);
 }
 
 int main() {
@@ -70,33 +79,19 @@ int main() {
     gl_rot = make_vec3(M_PI / 9, M_PI / 4, 0);
     gl_fov = 1;
     gl_z_near = .1;
-    gl_z_far = 100;
+    gl_z_far = 1000;
 
-    vec3f ones = make_vec3(1, 1, 1);
-    vec3f zero = make_vec3(0, 0, 0);
-    vec3f red_y = make_vec3(1, 0.5, 0);
-    vec3f green = make_vec3(0.1, 1, 0);
-    vec3f blue = make_vec3(0, 0.1, 1);
+    float ones[] = {1, 1, 1};
 
     gl_light_enable[0] = 1;
-    gl_light[0].pos = make_vec3(-3, 5, 10);
-    gl_light[0].rot = make_vec3(M_PI / 8, 0, 0);
+    gl_light[0].pos = make_vec3(100, 100, 100);
+    gl_light[0].rot = make_vec3(3 * M_PI / 2, 0, 0);
     gl_light[0].fov = 1;
     gl_light[0].z_near = .1;
-    gl_light[0].z_far = 100;
-    gl_light[0].ambient = make_vec3(.1, .1, .1);
+    gl_light[0].z_far = 1000;
+    gl_light[0].ambient = make_vec3(.3, .3, .3);
     gl_light[0].diffuse = make_vec3(.4, .4, .4);
     gl_light[0].specular = ones;
-
-    gl_light_enable[1] = 1;
-    gl_light[1].pos = make_vec3(+3, 5, 10);
-    gl_light[1].rot = make_vec3(M_PI / 8, 0, 0);
-    gl_light[1].fov = 1;
-    gl_light[1].z_near = .1;
-    gl_light[1].z_far = 100;
-    gl_light[1].ambient = make_vec3(.1, .1, .1);
-    gl_light[1].diffuse = make_vec3(.4, .4, .4);
-    gl_light[1].specular = ones;
 
     if (init_glfw()) {
         printl(LOG_E, "Fatal error while initializing glfw.");
@@ -107,29 +102,17 @@ int main() {
         free_glfw();
         return EXIT_FAILURE;
     }
-
-    vec3f bounds[4] = {
-        make_vec3(-5, 0, -5),
-        make_vec3(5, 0, -5),
-        make_vec3(-5, 1, -5),
-        make_vec3(-5, 0, 5),
-    };
-    
-    vec3f sphere_pos = make_vec3(0, 2, 0);
-    material_t sphere_material = make_material(ones, blue, green, 128);
-    for (int i = 0; i < 8; ++i) {
-        objects[i] = make_draw_sphere_sector3fv1f(sphere_pos, i ? .5 : 1, i, sphere_material);
+    if (init_world()) {
+        printl(LOG_E, "Fatal error while initializing world.");
+        return EXIT_FAILURE;
     }
-    objects[8] = make_draw_box(bounds, make_material(ones, ones, zero, 1));
-
     while (!glfwWindowShouldClose(window)) {
         update();
     }
 
-    free(objects[0].mat_m);
-    free(objects[1].mat_m);
-
+    free_world();
     free_gl();
     free_glfw();
+    lclose();
     return EXIT_SUCCESS;
 }

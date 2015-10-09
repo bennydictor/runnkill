@@ -26,6 +26,7 @@ man::man(string _name, int cl) {
     }
     init_values(hp, mp, agility, strength, intellect, abs_speed, cl);
     exp = level = 0;
+    speed = vec3<float>(abs_speed, 0, 0);
 }
 
 void man::set_speed(vec3<float> spd) {
@@ -57,7 +58,9 @@ vec3<float> man::in_time(float time) {
     if (have_shield) {
         amount_of_f--;
     }
-    return coords + (float)(((time) * (1 - (float)0.2 * amount_of_f)) * (is_running ? (have_shield ? 1.6 : 2) : 1)) * speed;
+    vec3<float> ret = coords + (float)((time * (1 - (float)0.2 * amount_of_f)) * (is_running ? (have_shield ? 1.6 : 2) : 1)) * speed;
+    cout << ret << ' ' << speed << endl;
+    return ret;
 }
 
 void man::move(float time) {
@@ -101,7 +104,7 @@ void man::out(ostream& stream) {
 
 void man::run() {
     is_running = true;
-    for (int i = 0; i < body_parts.size(); i++)
+    for (int i = 0; i < (int) body_parts.size(); i++)
     {
         body_parts[i].is_fortified = false;
     }
