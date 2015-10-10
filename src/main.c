@@ -43,7 +43,7 @@ void update(void) {
         glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS,
         glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS,
         glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS,
-        glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS,
+        glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS,
     };
     call_gl_on_display(dt, but);
 }
