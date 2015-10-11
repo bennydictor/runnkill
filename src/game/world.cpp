@@ -127,12 +127,12 @@ void damage_last_explosion(int b_idx) {
     }
 
 }
-int get_element(int** F, int i, int j) {
+int get_element(int** __F, int i, int j) {
     if (i < 0 or i > w - 1 or j < 0 or j > h - 1)
         return 0;
     i = min(w - 1, max(i, 0));
     j = min(h - 1, max(j, 0));
-    return F[i][j];
+    return __F[i][j];
 }
 template <class T>
 
@@ -208,13 +208,13 @@ bool move_man(int idx, float time) {
     //cout << "--" << finish << endl;
     //cout << '-' << persons[idx]->coords << endl;
    // return false;
+    persons[idx]->move(time);
     if (finish == persons[idx]->coords)
     {
        // cout << '!' << endl;
         return true;
     }
     bool res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD));
-    persons[idx]->move(time);
     persons[idx]->coords = (finish);
     return !res;
 }
@@ -222,21 +222,23 @@ bool move_man(int idx, float time) {
 void attack(int man_idx, int idx) {
 
     man* z = persons[man_idx];
-    if ((int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp) {
+    if (z->busy > 0 or (int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp) {
         cerr << "You missed!" << endl;
         return;
     }
     cerr << "Well, " << endl;
     skill_t curr = z->skills[idx];
      if (curr.is_range) {
+        z->busy += curr.busy_time;
         bullets.push_back(bullet(curr.sample));
-        bullets.back().coords = z->coords + ((float)MAN_RAD + (float)EXPLOSION_RAD) * z->orientation;
+        bullets.back().coords = z->coords + ((float)MAN_RAD + 2 * (float)curr.sample.rad) * z->orientation;
         bullets.back().speed = vec3<float>(z->coords, bullets.back().coords);
         bullets.back().speed.resize(sqrt(z->speed.sqlen()) + curr.sample.speed.x);
         bullets.back().damage *= count_attack(*z);
         alive_bullets.push_back(1);
         cerr << "You shoot" << endl;
     } else {
+        z->busy += curr.busy_time;
         cerr << "you try to beat" << endl;
         for (size_t i = 0; i < persons.size(); i++) {
             if ((int)i != man_idx and dist(persons[i]->coords, z->coords) < len and 
@@ -348,7 +350,7 @@ void in_items() {
 }
 
 int init_world(void) {
-    w = h = 200;
+    w = h = 100;
     F = gen_field_sun(w, h);
     world_max_height = 0;
     for (int i = 0; i < w; ++i) {
@@ -362,7 +364,6 @@ int init_world(void) {
     in_items();
     int i = rand() % w;
     int j = rand() % h;
-    i = j = 1;
     while (F[i][j] != 0)
     {
         j++;
@@ -374,7 +375,7 @@ int init_world(void) {
     }
     persons.push_back(new man("Derrior", 1));
     is_alive.push_back(1);
-    persons[0]->coords = vec3<float>((float) -1 + 0.5, 1, (float)-1 - 0.5);
+    persons[0]->coords = vec3<float>((float)i + 0.5, MAN_RAD, (float)j + 0.5);
     persons[0]->set_speed(vec3<float>(0, 0, 0));
     persons[0]->skills.push_back(default_skills[1][0]);
     cout << persons[0]->skills.size() << endl;
@@ -384,9 +385,9 @@ int init_world(void) {
 }
 
 void world_get_coords(vec3f coord) {
-    coord[0] = persons[0]->coords.x - 5 * persons[0]->orientation.x;
-    coord[1] = persons[0]->coords.y - persons[0]->orientation.y + 1;
-    coord[2] = persons[0]->coords.z - 5 * persons[0]->orientation.z;
+    coord[0] = persons[0]->coords.x - 5 * (persons[0]->orientation.x);
+    coord[1] = persons[0]->coords.y + (1 - persons[0]->orientation.y);
+    coord[2] = persons[0]->coords.z - 5 * (persons[0]->orientation.z);
 }
 
 void free_world(void) {

@@ -172,22 +172,25 @@ int** gen_field_sun(int w, int h) {
             res[i][j] = arr[i / 2][j / 2];
         }
     }
-    for (int i = 1; i < w - 1; i++)
+    for (int _ = 0; _ < 2; _++)
     {
-        for (int j = 1; j < h - 1; j++)
+        for (int i = 1; i < w - 1; i++)
         {
-            if ((!(res[i - 1][j] || res[i][j - 1]) or !(res[i - 1][j] || res[i][j + 1])
-             or !(res[i + 1][j] || res[i][j - 1]) or !(res[i + 1][j] || res[i][j + 1])) and (res[i][j] == 2))
-                res[i][j] = -1;
-        }
-    }
-    for (int i = 1; i < w - 1; i++)
-    {
-        for (int j = 1; j < h - 1; j++)
-        {
-            if (res[i][j] == -1)
+            for (int j = 1; j < h - 1; j++)
             {
-                res[i][j] = 0;
+                if ((!(res[i - 1][j] || res[i][j - 1]) or !(res[i - 1][j] || res[i][j + 1])
+                 or !(res[i + 1][j] || res[i][j - 1]) or !(res[i + 1][j] || res[i][j + 1])) and (res[i][j] == 2))
+                    res[i][j] = -1;
+            }
+        }
+        for (int i = 1; i < w - 1; i++)
+        {
+            for (int j = 1; j < h - 1; j++)
+            {
+                if (res[i][j] == -1)
+                {
+                    res[i][j] = 0;
+                }
             }
         }
     }

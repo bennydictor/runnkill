@@ -18,7 +18,7 @@ struct man {
     std::string name;
     int cls;
     int level, exp;
-    float def_mod, atk_mod;
+    float def_mod, atk_mod, busy;
     bool can_die, have_shield, is_running;
     vec3<float> coords, speed, orientation;
     std::vector<item_t*> bag;
