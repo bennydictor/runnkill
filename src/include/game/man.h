@@ -1,6 +1,6 @@
 #ifndef GAME_MAN_H
 #define GAME_MAN_H
-#define MAN_RAD .5
+#define MAN_RAD .4
 
 #include <game/common.h>
 #include <game/items.h>

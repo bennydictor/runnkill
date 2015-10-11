@@ -59,7 +59,7 @@ vec3<float> man::in_time(float time) {
         amount_of_f--;
     }
     vec3<float> ret = coords + (float)((time * (1 - (float)0.2 * amount_of_f)) * (is_running ? (have_shield ? 1.6 : 2) : 1)) * speed;
-    cout << ret << ' ' << speed << endl;
+    //cout << ret << ' ' << speed << endl;
     return ret;
 }
 

@@ -21,28 +21,6 @@
 
 void update(void) {
     float dt = delta();
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        gl_pos[0] += sin(gl_rot[1]) * dt * 10;
-        gl_pos[2] -= cos(gl_rot[1]) * dt * 10;
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        gl_pos[0] -= sin(gl_rot[1]) * dt * 10;
-        gl_pos[2] += cos(gl_rot[1]) * dt * 10;
-    }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        gl_pos[0] -= cos(gl_rot[1]) * dt * 10;
-        gl_pos[2] -= sin(gl_rot[1]) * dt * 10;
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        gl_pos[0] += cos(gl_rot[1]) * dt * 10;
-        gl_pos[2] += sin(gl_rot[1]) * dt * 10;
-    }
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        gl_pos[1] += dt * 10;
-    }
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        gl_pos[1] -= dt * 10;
-    }
     gl_rot[0] += cursor_dy / 100.0;
     gl_rot[1] += cursor_dx / 100.0;
     cursor_dx = cursor_dy = 0;
@@ -65,7 +43,7 @@ void update(void) {
         glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS,
         glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS,
         glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS,
-        glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS,
+        glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS,
     };
     call_gl_on_display(dt, but);
 }

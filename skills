@@ -1,15 +1,15 @@
 class_0
 1
-    0 -10
     M
+    0 -10
     0.8 0.8 0.8 0.5
     0
     
 class_1
 1
-    0 -10
     R
-    1 1 0.05
+    0 -10
+    0 10 0.05
     0
 
 class_2
@@ -22,7 +22,7 @@ class_2
 class X
 <amount of skills>
     <type M or R>
-    <u_l u_r d_l d_r if M, else one dmg>
+    <u_l u_r d_l d_r if M, else one dmg spd size>
     <amount of effects>
         <time>
         <hp mp>
