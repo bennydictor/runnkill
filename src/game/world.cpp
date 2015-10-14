@@ -304,7 +304,9 @@ void world_draw_objs(vector<draw_obj> &result) {
                 if (persons[i]->body_parts[j].is_fortified)
                     result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, j, 1.5 * MAN_RAD, shield_material));
                 else if (persons[i]->body_parts[j].item)
-                    result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, j, 1.1 * MAN_RAD, persons[i]->body_parts[j].item->material));
+                {
+                    result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, j, 8 * MAN_RAD, persons[i]->body_parts[j].item->material));
+                }
             }
         }
     }
@@ -378,6 +380,7 @@ int init_world(void) {
     persons[0]->coords = vec3<float>((float)i + 0.5, MAN_RAD, (float)j + 0.5);
     persons[0]->set_speed(vec3<float>(0, 0, 0));
     persons[0]->skills.push_back(default_skills[1][0]);
+    persons[0]->body_parts[0].put_on(new item_t(default_items[0]));
     cout << persons[0]->skills.size() << endl;
     cout << persons[0]->skills[0].is_range << endl;
     cout << (default_skills[1][0].is_range) << endl;
@@ -395,13 +398,13 @@ void free_world(void) {
 }
 
 void world_update(float dt) {
-    for (int i = 0; i < (int)persons.size(); i++) {
-        if (is_alive[i])
-            move_man(i, dt);
-    }
     for (int i = 0; i < (int)bullets.size(); i++) {
         if (alive_bullets[i])
             move_bullet(i, dt);
+    }
+    for (int i = 0; i < (int)persons.size(); i++) {
+        if (is_alive[i])
+            move_man(i, dt);
     }
 }   
 
