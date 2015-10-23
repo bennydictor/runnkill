@@ -87,13 +87,10 @@ bool intersect_seg_ortohedron(ortohedron A, vec3<T> seg1, vec3<T> seg2, vec3<T>&
         intersect_seg_facet(A.p1, A.p2, A.p4, seg1, seg2, res) or
         intersect_seg_facet(A.p1, A.p3, A.p4, seg1, seg2, res);
     vec3<T> p5 = A.p2 + vec3<T>(A.p1, A.p3) + vec3<T>(A.p1, A.p4);
-    std::cout << ret1 << ' ';
     bool ret2 = intersect_seg_facet(p5, A.p2 + vec3<T>(A.p1, A.p3), A.p3 + vec3<T>(A.p1, A.p4), seg1, seg2, res) or
         intersect_seg_facet(p5, A.p2 + vec3<T>(A.p1, A.p3), A.p4 + vec3<T>(A.p1, A.p2), seg1, seg2, res) or
         intersect_seg_facet(p5, A.p3 + vec3<T>(A.p1, A.p4), A.p4 + vec3<T>(A.p1, A.p2), seg1, seg2, res); 
-    std::cout << (ret1 || ret2);
-    return (ret1 || ret2);
-
+    return ret1 || ret2;
 }
 
 

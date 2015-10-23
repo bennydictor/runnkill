@@ -90,8 +90,8 @@ void vec3<T>::rotate(const float s) {
         sinf = -sin(2 * M_PI - s);
     else
         sinf = -sin(s - M_PI);
-    new_z = cosf * x - sinf * z;
-    new_x = sinf * x + cosf * z;
+    new_x = cosf * x - sinf * z;
+    new_z = sinf * x + cosf * z;
     x = new_x;
     z = new_z;
 }

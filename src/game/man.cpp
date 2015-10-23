@@ -25,7 +25,7 @@ man::man(string _name, int cl) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
     init_values(hp, mp, agility, strength, intellect, abs_speed, cl);
-    exp = level = 0;
+    busy = exp = level = 0;
     speed = vec3<float>(abs_speed, 0, 0);
 }
 
@@ -73,6 +73,7 @@ void man::move(float time) {
             this->get_effect(effects[i].mods_two_side * -1);
         }
     }
+    busy = max((float)0, busy - time);
 }
 
 bool man::take_damage(int dmg) {

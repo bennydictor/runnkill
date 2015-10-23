@@ -14,7 +14,7 @@ struct skill_t {
     mod_t cost;
     bullet sample;
     bool is_range;
-    float dmg, u_l, u_r, d_l, d_r;
+    float busy_time, dmg, u_l, u_r, d_l, d_r;
     void in_damage(std::istream& stream);
 };
 
