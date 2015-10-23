@@ -305,7 +305,7 @@ void world_draw_objs(vector<draw_obj> &result) {
                     result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, 1.5 * MAN_RAD, j, shield_material));
                 else if (persons[i]->body_parts[j].item)
                 {
-                    result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, 8 * MAN_RAD, j, persons[i]->body_parts[j].item->material));
+                    result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, 1.1 * MAN_RAD, j, persons[i]->body_parts[j].item->material));
                 }
             }
         }
