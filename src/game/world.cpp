@@ -302,10 +302,10 @@ void world_draw_objs(vector<draw_obj> &result) {
             //cout << persons[i]->coords << endl;
             for (int j = 0; j < BP_AMOUNT; j++) {
                 if (persons[i]->body_parts[j].is_fortified)
-                    result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, j, 1.5 * MAN_RAD, shield_material));
+                    result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, 1.5 * MAN_RAD, j, shield_material));
                 else if (persons[i]->body_parts[j].item)
                 {
-                    result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, j, 8 * MAN_RAD, persons[i]->body_parts[j].item->material));
+                    result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, 8 * MAN_RAD, j, persons[i]->body_parts[j].item->material));
                 }
             }
         }
