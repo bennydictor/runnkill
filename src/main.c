@@ -14,39 +14,10 @@
 
 #include <graphics/objects/sphere_sector.h>
 #include <graphics/objects/pp.h>
-#include <graphics/call_gl_on_display.h>
+#include <controller.h>
 
 #include <game/world.h>
 
-
-void update(void) {
-    float dt = delta();
-    gl_rot[0] += cursor_dy / 100.0;
-    gl_rot[1] += cursor_dx / 100.0;
-    cursor_dx = cursor_dy = 0;
-    if (gl_rot[0] < -M_PI / 2) {
-        gl_rot[0] = -M_PI / 2;
-    }
-    if (gl_rot[0] > +M_PI / 2) {
-        gl_rot[0] = +M_PI / 2;
-    }
-    if (gl_rot[1] < -2 * M_PI) {
-        gl_rot[1] += 2 * M_PI;
-    }
-    if (gl_rot[1] > +2 * M_PI) {
-        gl_rot[1] -= 2 * M_PI;
-    }
-
-    gl_matrices();
-    char but[] = {
-        glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS,
-        glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS,
-        glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS,
-        glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS,
-        glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS,
-    };
-    call_gl_on_display(dt, but);
-}
 
 int main() {
     lopen("/dev/stderr");
@@ -85,7 +56,7 @@ int main() {
         return EXIT_FAILURE;
     }
     while (!glfwWindowShouldClose(window)) {
-        update();
+        controller();
     }
 
     free_world();

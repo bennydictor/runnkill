@@ -22,6 +22,8 @@
 #include <graphics/gl/light.h>
 #include <graphics/gl/pp.h>
 
+#include <game/world.h>
+
 #define unused(X) ((void) (X))
 
 char gl_light_enable[LIGHT_COUNT];
@@ -126,7 +128,7 @@ void gl_reshape(void) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void gl_on_display(int n, draw_obj *objs) {
+void gl_update(int n, draw_obj *objs) {
     render_depth(n, objs);
     render_light(n, objs);
     render_pp();
@@ -137,6 +139,32 @@ void gl_on_display(int n, draw_obj *objs) {
     glfwSwapBuffers(window);
     glfwPollEvents();
 }
+
+void gl_callback(char *evs) {
+    gl_rot[0] += cursor_dy / 100.0;
+    gl_rot[1] += cursor_dx / 100.0;
+    cursor_dx = cursor_dy = 0;
+    if (gl_rot[0] < -M_PI / 2) {
+        gl_rot[0] = -M_PI / 2;
+    }
+    if (gl_rot[0] > +M_PI / 2) {
+        gl_rot[0] = +M_PI / 2;
+    }
+    if (gl_rot[1] < -2 * M_PI) {
+        gl_rot[1] += 2 * M_PI;
+    }
+    if (gl_rot[1] > +2 * M_PI) {
+        gl_rot[1] -= 2 * M_PI;
+    }
+
+    gl_matrices();
+    evs[WORLD_MOVE_FORWARD_EVENT]   = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
+    evs[WORLD_MOVE_RIGHT_EVENT]     = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
+    evs[WORLD_MOVE_BACKWARD_EVENT]  = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
+    evs[WORLD_MOVE_LEFT_EVENT]      = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
+    evs[WORLD_ATTACK_EVENT]         = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
+}
+
 
 void free_gl(void) {
     free_gl_depth();

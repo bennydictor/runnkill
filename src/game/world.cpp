@@ -286,7 +286,7 @@ void attack(int man_idx, int idx) {
 }
 
 
-void world_draw_objs(vector<draw_obj> &result) {
+void world_callback(vector<draw_obj> &result, vec3f coord) {
     result.clear();
     /*for (int i = 0; i < w; i++) {
         for (int j = 0; j < h; j++) {
@@ -316,6 +316,10 @@ void world_draw_objs(vector<draw_obj> &result) {
         if (alive_bullets[i])
         result.push_back(make_draw_sphere3fv1f(bullets[i].coords, bullets[i].rad, bullet_material));
     }
+
+    coord[0] = persons[0]->coords.x - 5 * (persons[0]->orientation.x);
+    coord[1] = persons[0]->coords.y + (1 - persons[0]->orientation.y);
+    coord[2] = persons[0]->coords.z - 5 * (persons[0]->orientation.z);
 }
 
 void in_skills() {
@@ -388,17 +392,11 @@ int init_world(void) {
     return 0;
 }
 
-void world_get_coords(vec3f coord) {
-    coord[0] = persons[0]->coords.x - 5 * (persons[0]->orientation.x);
-    coord[1] = persons[0]->coords.y + (1 - persons[0]->orientation.y);
-    coord[2] = persons[0]->coords.z - 5 * (persons[0]->orientation.z);
-}
-
 void free_world(void) {
     free_field_object();
 }
 
-void world_update(float dt) {
+void world_update(float dt, char *evs, vec3f rot) {
     for (int i = 0; i < (int)bullets.size(); i++) {
         if (alive_bullets[i])
             move_bullet(i, dt);
@@ -407,6 +405,7 @@ void world_update(float dt) {
         if (is_alive[i])
             move_man(i, dt);
     }
+    man_update(0, evs, vec3<float>(sinf(rot[1]), -rot[0] * 2 + 0.1, -cosf(rot[1])));
 }   
 
 
@@ -417,24 +416,24 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     //cout << persons[man_idx]->orientation << endl;
     if (!is_alive[man_idx])
         return;
-    if (pressed[__W] and pressed[__S])
-        pressed[__W] = pressed[__S] = false;
-    if (pressed[__A] and pressed[__D])
-        pressed[__A] = pressed[__D] = false;
-    if (0 == pressed[__W] + pressed[__D] + pressed[__S] + pressed[__A])
+    if (pressed[WORLD_MOVE_FORWARD_EVENT] and pressed[WORLD_MOVE_BACKWARD_EVENT])
+        pressed[WORLD_MOVE_FORWARD_EVENT] = pressed[WORLD_MOVE_BACKWARD_EVENT] = false;
+    if (pressed[WORLD_MOVE_LEFT_EVENT] and pressed[WORLD_MOVE_RIGHT_EVENT])
+        pressed[WORLD_MOVE_LEFT_EVENT] = pressed[WORLD_MOVE_RIGHT_EVENT] = false;
+    if (0 == pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT])
     {
         persons[man_idx]->set_speed(vec3<float>(0, 0, 0));
     }
     else
     {
-        float angle = (pressed[__D] + 2 * pressed[__S] + 3 * pressed[__A] + 4 * pressed[__W] * pressed[__A]) * M_PI / 2;
-        angle /= pressed[__W] + pressed[__D] + pressed[__S] + pressed[__A];
+        float angle = (pressed[WORLD_MOVE_RIGHT_EVENT] + 2 * pressed[WORLD_MOVE_BACKWARD_EVENT] + 3 * pressed[WORLD_MOVE_LEFT_EVENT] + 4 * pressed[WORLD_MOVE_FORWARD_EVENT] * pressed[WORLD_MOVE_LEFT_EVENT]) * M_PI / 2;
+        angle /= pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT];
         persons[man_idx]->set_speed((float)persons[man_idx]->abs_speed * move_orientation);
         //cout << "V " << persons[man_idx]->speed << endl;
         persons[man_idx]->speed.rotate(angle);
         //cout << "v " << (angle > M_PI) << ' ' << persons[man_idx]->speed << endl;
         //cout << "speed improved" << endl;
     }
-        if (pressed[SPACE])
+        if (pressed[WORLD_ATTACK_EVENT])
             attack(man_idx, 0);
 }
