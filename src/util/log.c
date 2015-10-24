@@ -18,7 +18,7 @@ char* mesgs[LOG_MESGS_SIZE] = {
 
 unsigned int min_log_level = 0;
 static FILE* log_file_fd;
-static time_t begin_t;
+time_t begin_t;
 
 FILE* lopen(const char* path) {
     time(&begin_t);
@@ -29,7 +29,7 @@ int lclose() {
     return fclose(log_file_fd);
 }
 
-static void print_header(char *buf, int time, int level) {
+void printl_header(char *buf, int time, int level) {
     sprintf(buf, "[%010d] ", time);
     buf += strlen(buf);
     if (level < LOG_MESGS_SIZE) {
@@ -48,7 +48,7 @@ int printl(unsigned int log_level, const char* format, ...) {
     int log_time = difftime(current_t, begin_t);
 
     char header[20];
-    print_header(header, log_time, log_level);
+    printl_header(header, log_time, log_level);
     int header_len = strlen(header);
     int cr_cnt = 0;
     for (const char *i = format; *i; ++i) {

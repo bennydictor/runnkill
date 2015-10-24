@@ -7,7 +7,7 @@
 #include <game/skill_type.h>
 #include <game/bullet.h>
 #include <math/geom.h>
-#include <util/log.h>
+#include <util/logstream.h>
 #include <vector>
 #include <cmath>
 #include <ctime>
