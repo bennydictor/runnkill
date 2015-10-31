@@ -1,5 +1,6 @@
 #include <game/man.h>
 #include <game/common.h>
+#include <cstdlib>
 
 using namespace std;
 man::man() {
@@ -13,6 +14,7 @@ man::man() {
     }
     init_values(hp, mp, agility, strength, intellect, abs_speed, cls);
     exp = level = 0;
+    number = rand();
 }
 man::man(string _name, int cl) {
     name = _name;

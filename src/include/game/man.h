@@ -13,11 +13,12 @@
 #include <math/vec2.h>
 #include <math/vec3.h>
 #include <iostream>
+#include <cstdlib>
 
 struct man {
     std::string name;
     int cls;
-    int level, exp;
+    int level, exp, number;
     float def_mod, atk_mod, busy;
     bool can_die, have_shield, is_running;
     vec3<float> coords, speed, orientation;
