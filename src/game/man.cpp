@@ -29,6 +29,7 @@ man::man(string _name, int cl) {
     init_values(hp, mp, agility, strength, intellect, abs_speed, cl);
     busy = exp = level = 0;
     speed = vec3<float>(abs_speed, 0, 0);
+    number = rand();
 }
 
 void man::set_speed(vec3<float> spd) {

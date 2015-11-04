@@ -98,6 +98,7 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
         }
     }
     if (dist(centre, l) >= rad + rad2 - EPS or dist(centre, l) < EPS) {
+        cout << "loch" << endl;
         return false;
     }
     l = begin;
@@ -109,6 +110,7 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
             l = m;
         }
     }
+    cout << "ne loch" << endl;
     res = l;
     return true;
 }
@@ -194,6 +196,7 @@ bool intersect_sector_ball(vec3<float> centre, float rad1, float rad2, int i, ve
 }
 
 void damage_last_explosion(int b_idx) {
+    cout << explosions.back().first << endl;
     for (int j = 0; j < (int)persons.size(); j++) {
         if (dist(explosions.back().first, persons[j]->coords) < MAN_RAD + explosions.back().second) {
             int sector = detect_sector(persons[j]->coords, explosions.back().first, persons[j]->orientation);
@@ -206,7 +209,7 @@ void damage_last_explosion(int b_idx) {
 }
 int get_element(int** __F, int i, int j) {
     if (i < 0 or i > w - 1 or j < 0 or j > h - 1)
-        return 0;
+        return -INF;
     i = min(w - 1, max(i, 0));
     j = min(h - 1, max(j, 0));
     return __F[i][j];
@@ -274,7 +277,7 @@ bool move_bullet(int b_idx, float time) {
     if (!alive_bullets[b_idx]) {
         return false;
     }
-    if (bullets[b_idx].coords.y < -10) {
+    if (bullets[b_idx].coords.y < -100) {
         explosions.push_back(make_pair(bullets[b_idx].coords, bullets[b_idx].exp_rad));
         damage_last_explosion(b_idx);
         alive_bullets[b_idx] = 0;
@@ -504,6 +507,16 @@ int init_world(void) {
     for (int _ = 0; _ < 8; _++)
 
         persons[0]->fortify(_);
+
+    persons.push_back(new man("Benny", 1));
+    is_alive.push_back(1);
+    persons[1]->coords = vec3<float>(-10 + (float)i + 0.5, MAN_RAD, -10 + (float)j + 0.5);
+    persons[1]->set_speed(vec3<float>(0, 0, 0));
+    persons[1]->skills.push_back(default_skills[1][0]);
+    persons[1]->body_parts[0].put_on(new item_t(default_items[0]));
+    for (int _ = 0; _ < 1; _++)
+
+        persons[1]->fortify(_);
     cout << persons[0]->skills.size() << endl;
     cout << persons[0]->skills[0].is_range << endl;
     cout << (default_skills[1][0].is_range) << endl;
