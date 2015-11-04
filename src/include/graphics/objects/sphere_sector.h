@@ -22,6 +22,7 @@ void init_sphere_sector_object(void);
 void free_sphere_sector_object(void);
 draw_obj make_draw_sphere_sector1f(float radius, int s, material_t _material);
 draw_obj make_draw_sphere_sector3fv1f(vec3f pos, float radius, int s, material_t _material);
+draw_obj make_draw_sphere_sector3fv2f(vec3f pos, float rot, float radius, int s, material_t _material);
 
 
 #ifdef __cplusplus

@@ -138,7 +138,7 @@ bool _in_sector(vec3<float> centre, vec3<float> a, vec3<float> b, vec3<float> c,
 bool in_sector(vec3<float> centre, int i, vec3<float> orientation, vec3<float> point)
 {
     vec3<float> a = sector_points_a[i], b = sector_points_b[i], c = sector_points_c[i];
-    float s = atan2(orientation.z, orientation.x);
+    float s = atan2(orientation.x, orientation.z);
     a.rotate(s);
     b.rotate(s);
     c.rotate(s);
@@ -232,6 +232,7 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag) {
                 if (persons[i]->body_parts[j].is_fortified and 
                     intersect_sector_ball(persons[i]->coords, rad, MAN_RAD * 1.5, j,
                                           persons[i]->orientation, start, finish, curr_intersection)) {
+                    
                     res = true;
                     if (dist(start, intersection) > (dist(start, curr_intersection)))
                         intersection = curr_intersection;
@@ -392,12 +393,13 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
         if (is_alive[i]) {
             result.push_back(make_draw_sphere3fv1f(persons[i]->coords, MAN_RAD, man_material));
             //cout << persons[i]->coords << endl;
+            float alpha = atan2(persons[i]->orientation.x, persons[i]->orientation.z);
             for (int j = 0; j < BP_AMOUNT; j++) {
                 if (persons[i]->body_parts[j].is_fortified)
-                    result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, 1.5 * MAN_RAD, j, shield_material));
+                    result.push_back(make_draw_sphere_sector3fv2f(persons[i]->coords, alpha, 1.5 * MAN_RAD, j, shield_material));
                 else if (persons[i]->body_parts[j].item)
                 {
-                    result.push_back(make_draw_sphere_sector3fv1f(persons[i]->coords, 1.1 * MAN_RAD, j, persons[i]->body_parts[j].item->material));
+                    result.push_back(make_draw_sphere_sector3fv2f(persons[i]->coords, alpha, 1.1 * MAN_RAD, j, persons[i]->body_parts[j].item->material));
                 }
             }
         }

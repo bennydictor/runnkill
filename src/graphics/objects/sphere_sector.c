@@ -156,3 +156,18 @@ draw_obj make_draw_sphere_sector3fv1f(vec3f pos, float radius, int s, material_t
     return ret;
 }
 
+draw_obj make_draw_sphere_sector3fv2f(vec3f pos, float rot, float radius, int s, material_t _material) {
+    draw_obj ret;
+    ret.mat_m = make_mat4();
+    vec3f v = make_vec3(radius * SIGN_BIT(s, 2), radius * SIGN_BIT(s, 1), radius * SIGN_BIT(s, 0));
+    scale_mat(v, ret.mat_m);
+    free(v);
+    irot_y_mat(rot, ret.mat_m);
+    itrans_mat(pos, ret.mat_m);
+    ret.mode = GL_TRIANGLES;
+    ret.vbo = sphere_sector_vbo;
+    ret.ibo = sphere_sector_ibo_data;
+    ret.count = SPHERE_SECTOR_IBO_DATA_SIZE;
+    ret.material = _material;
+    return ret;
+}
