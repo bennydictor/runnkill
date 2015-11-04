@@ -79,7 +79,7 @@ void render_depth(int n, draw_obj *objs) {
                 glBindBuffer(GL_ARRAY_BUFFER, objs[j].vbo);
                 glVertexAttribPointer(prog_depth_attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
                 if (objs[j].ibo) {
-                    glDrawElements(objs[j].mode, objs[j].count, GL_UNSIGNED_SHORT, objs[j].ibo);
+                    glDrawElements(objs[j].mode, objs[j].count, GL_UNSIGNED_INT, objs[j].ibo);
                 } else {
                     glDrawArrays(objs[j].mode, 0, objs[j].count);
                 }

@@ -8,6 +8,7 @@ unsigned int prog_light;
 
 unsigned int prog_light_attr_v_coord, prog_light_attr_v_normal;
 unsigned int prog_light_unif_z_near, prog_light_unif_z_far;
+unsigned int prog_light_unif_fog_near, prog_light_unif_fog_far;
 unsigned int prog_light_unif_mat_m, prog_light_unif_mat_v, prog_light_unif_mat_p;
 
 void prog_light_uniforms(void) {
@@ -16,6 +17,8 @@ void prog_light_uniforms(void) {
     glUniformMatrix4fv(prog_light_unif_mat_p, 1, GL_FALSE, mat_p);
     glUniform1f(prog_light_unif_z_near, gl_z_near);
     glUniform1f(prog_light_unif_z_far, gl_z_far);
+    glUniform1f(prog_light_unif_fog_near, 15);
+    glUniform1f(prog_light_unif_fog_far, 20);
     for (int i = 0; i < LIGHT_COUNT; ++i) {
         sprintf(unif_name, "light_enable[%d]", i);
         glUniform1i(glGetUniformLocation(prog_light, unif_name), gl_light_enable[i]);
@@ -61,8 +64,10 @@ int init_gl_light(void) {
     INIT_UNIF(prog_light, mat_m);
     INIT_UNIF(prog_light, mat_v);
     INIT_UNIF(prog_light, mat_p);
-    INIT_UNIF(prog_light, z_near);
-    INIT_UNIF(prog_light, z_far);
+    INIT_UNIF(prog_light, fog_near);
+    INIT_UNIF(prog_light, fog_far);
+    //INIT_UNIF(prog_light, z_near);
+    //INIT_UNIF(prog_light, z_far);
 
     return 0;
 }
@@ -73,6 +78,8 @@ void render_light(int n, draw_obj *objs) {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo_pp);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
     glDrawBuffer(GL_BACK);
     glReadBuffer(GL_BACK);
     glViewport(0, 0, window_width, window_height);
@@ -94,7 +101,7 @@ void render_light(int n, draw_obj *objs) {
         glVertexAttribPointer(prog_light_attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
         glVertexAttribPointer(prog_light_attr_v_normal, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, normal));
         if (objs[i].ibo) {
-            glDrawElements(objs[i].mode, objs[i].count, GL_UNSIGNED_SHORT, objs[i].ibo);
+            glDrawElements(objs[i].mode, objs[i].count, GL_UNSIGNED_INT, objs[i].ibo);
         } else {
             glDrawArrays(objs[i].mode, 0, objs[i].count);
         }

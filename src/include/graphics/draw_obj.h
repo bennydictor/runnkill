@@ -12,7 +12,11 @@ typedef struct {
     unsigned int vbo;
     unsigned int count;
     material_t material;
+    char free_mat_m;
+    char free_ibo;
 } draw_obj;
+
+void free_draw_obj(draw_obj obj);
 
 
 #endif // GRAPHICS_DRAW_OBJ

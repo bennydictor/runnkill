@@ -129,7 +129,7 @@ void gl_reshape(void) {
 }
 
 void gl_update(int n, draw_obj *objs) {
-    render_depth(n, objs);
+    //render_depth(n, objs);
     render_light(n, objs);
     render_pp();
     char fps_string[20];

@@ -26,6 +26,9 @@ uniform mat4 mat_m;
 uniform mat4 mat_v;
 uniform mat4 mat_p;
 
+uniform float fog_near;
+uniform float fog_far;
+
 uniform float z_near;
 uniform float z_far;
 
@@ -88,7 +91,7 @@ void main() {
             vec4 light_coord = bias * light[i].mat_p * light[i].mat_v * mat_m * vec4(f_coord, 1);
             light_coord /= light_coord.w;
             ambient_fc += light[i].ambient;
-            float shadow = pcf(light_coord, i);
+            float shadow = 1; //pcf(light_coord, i);
             vec3 light_position = (mat_v * vec4(light[i].coord, 1)).xyz;
             vec3 light_direction = normalize(light_position - vertex_position);
             float diffuse_light_intensity = max(0, dot(surface_normal, light_direction));
@@ -104,4 +107,10 @@ void main() {
     gl_FragColor.rgb = material.ambient * ambient_fc +
                        material.diffuse * diffuse_fc +
                        material.specular * specular_fc;
+    if (length(vertex_position) > fog_far) {
+        gl_FragColor.rgb *= 0;
+    }
+    if (length(vertex_position) > fog_near) {
+        gl_FragColor.rgb *= 1 - (length(vertex_position) - fog_near) / (fog_far - fog_near);
+    }
 }

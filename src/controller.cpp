@@ -14,4 +14,7 @@ void controller(void) {
     vector<draw_obj> res;
     world_callback(res, gl_pos);
     gl_update(res.size(), res.data());
+    for (draw_obj obj : res) {
+        free_draw_obj(obj);
+    }
 }

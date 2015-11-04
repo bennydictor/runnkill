@@ -15,13 +15,14 @@
 #include <graphics/objects/field.h>
 #include <graphics/objects/sphere.h>
 #include <graphics/objects/sphere_sector.h>
+#include <cassert>
 #define EXPLOSION_RAD 1e-2
 #define INF 10000000
 using namespace std;
 
 const int len = 1;
 int world_max_height;
-draw_obj world_map;
+draw_obj **world_map;
 
 vector<bullet> bullets;
 vector<man*> persons;
@@ -33,7 +34,7 @@ vec3<float> sector_points_a[8];
 vec3<float> sector_points_b[8];
 vec3<float> sector_points_c[8];
 int** F;
-int w, h;
+int w, h, chunk;
 
 template <class T>
 
@@ -98,7 +99,6 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
         }
     }
     if (dist(centre, l) >= rad + rad2 - EPS or dist(centre, l) < EPS) {
-        cout << "loch" << endl;
         return false;
     }
     l = begin;
@@ -110,7 +110,6 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
             l = m;
         }
     }
-    cout << "ne loch" << endl;
     res = l;
     return true;
 }
@@ -391,7 +390,11 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
         }
     }*/
     //cout << persons.size() << endl;
-    result.push_back(world_map);
+    for (int i = max(0, (int) (persons[0]->coords.x / chunk + .5) - 2); i < min(w / chunk, (int) (persons[0]->coords.x / chunk + .5) + 2); ++i) {
+        for (int j = max(0, (int) (persons[0]->coords.z / chunk + .5) - 2); j < min(h / chunk, (int) (persons[0]->coords.z / chunk + .5) + 2); ++j) {
+            result.push_back(world_map[i][j]);
+        }
+    }
     for (int i = 0; i < (int)persons.size(); i++) {
         if (is_alive[i]) {
             result.push_back(make_draw_sphere3fv1f(persons[i]->coords, MAN_RAD, man_material));
@@ -454,6 +457,13 @@ void in_items() {
 
 int init_world(void) {
     w = h = 100;
+    chunk = 10;
+    world_map = new draw_obj*[w / chunk];
+    for (int i = 0; i < w / chunk; ++i) {
+        world_map[i] = new draw_obj[h / chunk];
+    }
+    assert(w % chunk == 0);
+    assert(h % chunk == 0);
     F = gen_field_sun(w, h);
     world_max_height = 0;
     for (int i = 0; i < w; ++i) {
@@ -462,7 +472,12 @@ int init_world(void) {
         }
     }
     init_field_object(w, h, F);
-    world_map = make_draw_field(default_material);
+    for (int i = 0; i < w; i += chunk) {
+        for (int j = 0; j < h; j += chunk) {
+            world_map[i / chunk][j / chunk] = make_draw_subfield(i, j, i + chunk, j + chunk, default_material);
+            cout << "chunk: [" << i << "-" << i + chunk << ")["<< j << "-" << j + chunk << ")" << endl;
+        }
+    }
     in_skills();
     in_items();
     for (int i = 0; i < 4; i++)
@@ -524,6 +539,10 @@ int init_world(void) {
 }
 
 void free_world(void) {
+    for (int i = 0; i < w / chunk; ++i) {
+        delete[] world_map[i];
+    }
+    delete[] world_map;
     free_field_object();
 }
 

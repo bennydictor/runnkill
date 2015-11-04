@@ -1,6 +1,7 @@
 #include <graphics/objects/field.h>
 #include <graphics/gl.h>
 #include <string.h>
+#include <assert.h>
 
 int field_w, field_h;
 unsigned int field_vbo;
@@ -66,6 +67,29 @@ draw_obj make_draw_field(material_t _material) {
     ret.ibo = NULL;
     ret.count = field_w * field_h * 4 * 6;
     ret.material = _material;
+    ret.free_mat_m = 0;
+    ret.free_ibo = 0;
     return ret;
+}
 
+draw_obj make_draw_subfield(int x1, int y1, int x2, int y2, material_t _material) {
+    draw_obj ret;
+    ret.mat_m = make_mat4();
+    id_mat4(ret.mat_m);
+    ret.mode = GL_QUADS;
+    ret.vbo = field_vbo;
+    ret.ibo = malloc((x2 - x1) * (y2 - y1) * 4 * 6 * sizeof(unsigned int));
+    int idx = 0;
+    for (int i = x1; i < x2; ++i) {
+        for (int j = y1; j < y2; ++j) {
+            for (int k = 0; k < 4 * 6; ++k) {
+                ((unsigned int *) ret.ibo)[idx++] = 4 * 6 * (i * field_h + j) + k;
+            }
+        }
+    }
+    ret.count = (x2 - x1) * (y2 - y1) * 4 * 6;
+    ret.material = _material;
+    ret.free_mat_m = 0;
+    ret.free_ibo = 0;
+    return ret;
 }

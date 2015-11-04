@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 extern int world_max_height;
-extern draw_obj world_map;
+extern draw_obj **world_map;
 int init_world(void);
 void world_update(float dt, char *evs, vec3f rot);
 void free_world(void);

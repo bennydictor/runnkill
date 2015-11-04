@@ -10,7 +10,7 @@
 
 unsigned int sphere_vbo;
 vertex3d sphere_vbo_data[SPHERE_HEIGHT1][SPHERE_WIDTH];
-short int sphere_ibo_data[SPHERE_HEIGHT][SPHERE_WIDTH][4];
+unsigned int sphere_ibo_data[SPHERE_HEIGHT][SPHERE_WIDTH][4];
 #define IDX(I, J, K) (SPHERE_WIDTH * 4 * (I) + 4 * (J) + (K))
 
 void init_sphere_object(void) {
@@ -56,6 +56,8 @@ draw_obj make_draw_sphere1f(float radius, material_t _material) {
     ret.ibo = sphere_ibo_data;
     ret.count = SPHERE_IBO_DATA_SIZE;
     ret.material = _material;
+    ret.free_mat_m = 1;
+    ret.free_ibo = 0;
     return ret;
 }
 
@@ -71,6 +73,8 @@ draw_obj make_draw_sphere3fv1f(vec3f pos, float radius, material_t _material) {
     ret.ibo = sphere_ibo_data;
     ret.count = SPHERE_IBO_DATA_SIZE;
     ret.material = _material;
+    ret.free_mat_m = 1;
+    ret.free_ibo = 0;
     return ret;
 }
 

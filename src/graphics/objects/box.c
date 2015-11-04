@@ -72,5 +72,7 @@ draw_obj make_draw_box(vec3f *bounds, material_t _material) {
     ret.ibo = NULL;
     ret.count = 4 * 6;
     ret.material = _material;
+    ret.free_mat_m = 1;
+    ret.free_ibo = 0;
     return ret;
 }

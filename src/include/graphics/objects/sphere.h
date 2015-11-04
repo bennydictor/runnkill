@@ -16,7 +16,7 @@ extern "C" {
 extern unsigned int sphere_vbo;
 extern vertex3d sphere_vbo_data[SPHERE_HEIGHT1][SPHERE_WIDTH];
 #define SPHERE_IBO_DATA_SIZE (SPHERE_HEIGHT * SPHERE_WIDTH * 4)
-extern short int sphere_ibo_data[SPHERE_HEIGHT][SPHERE_WIDTH][4];
+extern unsigned int sphere_ibo_data[SPHERE_HEIGHT][SPHERE_WIDTH][4];
 void init_sphere_object(void);
 void free_sphere_object(void);
 draw_obj make_draw_sphere1f(float radius, material_t _material);

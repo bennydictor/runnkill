@@ -8,7 +8,7 @@
 
 unsigned int sphere_sector_vbo;
 vertex3d sphere_sector_vbo_data[SPHERE_SECTOR_HEIGHT1 * SPHERE_SECTOR_WIDTH1 + SPHERE_SECTOR_WIDTH1 + 2 * SPHERE_SECTOR_HEIGHT1 + 3];
-short int sphere_sector_ibo_data[SPHERE_SECTOR_IBO_DATA_SIZE];
+unsigned int sphere_sector_ibo_data[SPHERE_SECTOR_IBO_DATA_SIZE];
 
 void init_sphere_sector_object(void) {
     int idx = 0;
@@ -138,6 +138,8 @@ draw_obj make_draw_sphere_sector1f(float radius, int s, material_t _material) {
     ret.ibo = sphere_sector_ibo_data;
     ret.count = SPHERE_SECTOR_IBO_DATA_SIZE;
     ret.material = _material;
+    ret.free_mat_m = 1;
+    ret.free_ibo = 0;
     return ret;
 }
 
@@ -153,6 +155,8 @@ draw_obj make_draw_sphere_sector3fv1f(vec3f pos, float radius, int s, material_t
     ret.ibo = sphere_sector_ibo_data;
     ret.count = SPHERE_SECTOR_IBO_DATA_SIZE;
     ret.material = _material;
+    ret.free_mat_m = 1;
+    ret.free_ibo = 0;
     return ret;
 }
 
@@ -169,5 +173,7 @@ draw_obj make_draw_sphere_sector3fv2f(vec3f pos, float rot, float radius, int s,
     ret.ibo = sphere_sector_ibo_data;
     ret.count = SPHERE_SECTOR_IBO_DATA_SIZE;
     ret.material = _material;
+    ret.free_mat_m = 1;
+    ret.free_ibo = 0;
     return ret;
 }
