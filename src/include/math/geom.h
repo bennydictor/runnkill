@@ -22,6 +22,11 @@ T dist(vec3<T> point, vec3<T> left, vec3<T> right) {
 }
 
 template <class T>
+T dist_to_plain(vec3<T> plain, T d, vec3<T> point)
+{
+    return (point.dot(plain) + d) / dist(vec3<T>(0, 0, 0), plain);
+}
+template <class T>
 vec3<T> plain(vec3<T> p1, vec3<T> p2, vec3<T> p3) {
     return vec3<T>(p1, p2).crs(vec3<T>(p1, p3));
 }

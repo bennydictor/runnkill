@@ -19,6 +19,7 @@ struct bullet {
     bullet();
     void in (std::istream& stream);
     vec3<float> in_time(float time);
+    int owner;
 };
 
 
