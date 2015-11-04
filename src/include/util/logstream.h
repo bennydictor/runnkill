@@ -2,16 +2,34 @@
 #define UTIL_LOGSTREAM_H
 
 #include <util/log.h>
-
 #include <ostream>
+#include <string>
+#include <sstream>
 
 class _set_log_level_func;
 
 class logstream {
+    std::stringstream ss;
+    std::string buf;
     std::ostream &out;
     unsigned int log_level = LOG_D;
+
+    void flush_ss() {
+        buf += ss.str();
+        ss.str("");
+        if (buf.rfind("\n") != std::string::npos) {
+            time_t current_t;
+            time(&current_t);
+            int log_time = difftime(current_t, begin_t);
+            char header[20];
+            printl_header(header, log_time, log_level);
+            out << header << buf.substr(0, buf.rfind("\n") + 1);
+            buf = buf.substr(buf.rfind("\n") + 1);
+        }
+    }
+
 public:
-    logstream(std::ostream &_out) : out(_out) {}
+    logstream(std::ostream &_out) : ss(), out(_out) {}
     
     void set_log_level(unsigned int ll) {
         log_level = ll;
@@ -22,17 +40,14 @@ public:
         if (log_level < min_log_level) {
             return *this;
         }
-        time_t current_t;
-        time(&current_t);
-        int log_time = difftime(current_t, begin_t);
-        char header[20];
-        printl_header(header, log_time, log_level);
-        out << header << t;
+        ss << t;
+        flush_ss();
         return *this;
     }
 
     logstream &operator<<(std::ostream &(*f)(std::ostream &)) {
-        f(out);
+        f(ss);
+        flush_ss();
         return *this;
     }
 
