@@ -93,9 +93,9 @@ int count_attack(man z) {
 }
 
 void man::fortify(int idx) {
-    if (idx == RIGHT_UP or body_parts[(idx - 2 + BP_AMOUNT) % BP_AMOUNT].is_fortified or 
+    body_parts[idx].is_fortified = true;
+    if (idx == LEFT_FRONT_UP or body_parts[(idx - 2 + BP_AMOUNT) % BP_AMOUNT].is_fortified or 
                            body_parts[(idx + 2 + BP_AMOUNT) % BP_AMOUNT].is_fortified) {
-        body_parts[idx].is_fortified = true;
     }
 }
 

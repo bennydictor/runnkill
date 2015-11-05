@@ -16,7 +16,7 @@
 #include <graphics/objects/pp.h>
 #include <controller.h>
 
-#include <game/world.h>
+#include <game/init_world.h>
 
 
 int main() {
@@ -57,6 +57,9 @@ int main() {
     }
     while (!glfwWindowShouldClose(window)) {
         controller();
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+            break;
+        }
     }
 
     free_world();

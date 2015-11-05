@@ -19,6 +19,7 @@ void item_t::set_material(vec3f ambient, vec3f diffuse, vec3f specular) {
     material.ambient = ambient;
     material.diffuse = diffuse;
     material.specular = specular;
+    material.shininess = 128;
 }
 
 void item_t::in(std::istream& stream) {
