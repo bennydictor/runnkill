@@ -16,7 +16,8 @@
 #include <graphics/objects/sphere.h>
 #include <graphics/objects/sphere_sector.h>
 #include <cassert>
-#define EXPLOSION_RAD 1e-2
+#define EXPLOSION_RADIUS 1
+#define EXPLOSION_TIME .3
 #define INF 10000000
 using namespace std;
 
@@ -287,7 +288,7 @@ bool move_bullet(int b_idx, float time) {
     bool res = move_sphere(bullets[b_idx].coords, our_point, (float)bullets[b_idx].rad, bullets[b_idx].owner, true);
     if (res) {
         cerr << "Strike #" << 179 << endl;
-        explosions.push_back(make_pair(our_point, bullets[b_idx].exp_rad));
+        explosions.push_back(make_pair(our_point, EXPLOSION_TIME));
         damage_last_explosion(b_idx);
         alive_bullets[b_idx] = 0;
         return false;
@@ -330,6 +331,7 @@ void attack(int man_idx, int idx) {
         bullets.back().speed.resize(sqrt(z->speed.sqlen()) + curr.sample.speed.x);
         bullets.back().damage *= count_attack(*z);
         bullets.back().owner = z->number;
+        bullets.back().exp_rad = 3;
         alive_bullets.push_back(1);
         cerr << "You shoot" << endl;
     } else {
@@ -409,6 +411,9 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
                 }
             }
         }
+    }
+    for (int i = 0; i < (int) explosions.size(); ++i) {
+        result.push_back(make_draw_sphere3fv1f(explosions[i].first, EXPLOSION_RADIUS * powf(EXPLOSION_TIME - explosions[i].second, 1.0 / 3), explosion_material));
     }
     
     //cout << BP_AMOUNT << endl;
@@ -554,6 +559,16 @@ void world_update(float dt, char *evs, vec3f rot) {
     for (int i = 0; i < (int)persons.size(); i++) {
         if (is_alive[i])
             move_man(i, dt);
+    }
+    vector<pair<vec3<float>, float>> nexp = explosions;
+    explosions.clear();
+    for (int i = 0; i < (int)nexp.size(); ++i) {
+        if (nexp[i].second > 0) {
+            explosions.push_back(nexp[i]);
+        }
+    }
+    for (int i = 0; i < (int)explosions.size(); i++) {
+        explosions[i].second -= dt;
     }
     man_update(0, evs, vec3<float>(sinf(rot[1]), -rot[0] * 2 + 0.1, -cosf(rot[1])));
 }   
