@@ -293,8 +293,10 @@ bool move_man(int idx, float time) {
     bool res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, true);
     if (res)
     {
-        cout << finish << persons[idx]->in_time(time) << endl;   
-        persons[idx]->coords = persons[idx]->coords + 0.9f * vec3<float>(persons[idx]->coords, finish);
+        //cout << persons[idx]->coords << finish << persons[idx]->in_time(time) << endl;   
+        vec3<float> to_move(persons[idx]->coords, finish); 
+        to_move.resize(sqrt(to_move.sqlen()) - 0.1);
+        persons[idx]->coords = persons[idx]->coords + to_move;
     }
     else
     {
