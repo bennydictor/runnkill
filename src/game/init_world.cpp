@@ -83,7 +83,6 @@ int init_world(void) {
 
     int i = rand() % w;
     int j = rand() % h;
-    i = j = 1;
     while (F[i][j] != 0)
     {
         j++;
@@ -93,16 +92,17 @@ int init_world(void) {
             i++;
         }
     }
+    cout << "i j: " << i << " " << j << endl;
     persons.push_back(new man("Derrior", 1));
     is_alive.push_back(1);
-    persons[0]->coords = vec3<float>((float)i + 0.5, MAN_RAD, (float)j + 0.5);
+    persons[0]->coords = vec3<float>((float)1 + 0.5, MAN_RAD, (float)1 + 0.5);
     persons[0]->set_speed(vec3<float>(0, 0, 0));
     persons[0]->skills.push_back(default_skills[1][0]);
     persons[0]->body_parts[0].put_on(new item_t(default_items[0]));
 
     persons.push_back(new man("Benny", 1));
     is_alive.push_back(1);
-    persons[1]->coords = vec3<float>(-10 + (float)i + 0.5, MAN_RAD, -10 + (float)j + 0.5);
+    persons[1]->coords = vec3<float>((float)i + 0.5, MAN_RAD,(float)j + 0.5);
     persons[1]->set_speed(vec3<float>(0, 0, 0));
     persons[1]->skills.push_back(default_skills[1][0]);
     persons[1]->body_parts[0].put_on(new item_t(default_items[0]));

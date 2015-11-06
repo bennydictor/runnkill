@@ -10,7 +10,7 @@ float delta(void) {
     ++cur_fps;
     float cur_time = glfwGetTime();
     if (cur_time - last_point >= 1) {
-        printl(LOG_D, "fps: %d\n", fps = cur_fps);
+        fps = cur_fps;
         cur_fps = 0;
         last_point = cur_time;
     }
