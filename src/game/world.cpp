@@ -245,7 +245,7 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag) {
             point4 = vec3<float>((int)finish.x - rad + EPS + i, -rad + EPS, (int)finish.z + 1 + rad - EPS + j);
             bool res1 = intersect_seg_ortohedron(
                             ortohedron(point1, point2, point3, point4), start, finish, curr_intersection);
-            if (res1 and dist(start, intersection) > (dist(start, curr_intersection))) {
+            if (dist(start, intersection) > (dist(start, curr_intersection))) {
                 
 
                 (intersection = curr_intersection);
@@ -254,10 +254,7 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag) {
             res |= res1;
         }
     }
-    if (!res)
-        finish = start + vec3<float>(start, intersection);   
-    else
-        finish = start;
+    finish = intersection;
     return res;
 }
 
@@ -294,7 +291,15 @@ bool move_man(int idx, float time) {
         return true;
     }
     bool res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, true);
-    persons[idx]->coords = (finish);
+    if (res)
+    {
+        cout << finish << persons[idx]->in_time(time) << endl;   
+        persons[idx]->coords = persons[idx]->coords + 0.9f * vec3<float>(persons[idx]->coords, finish);
+    }
+    else
+    {
+        persons[idx]->coords = (finish);
+    }
     return !res;
 }
 
