@@ -76,9 +76,10 @@ int detect_sector(vec3<T> centre, vec3<T> point, vec3<T> orientation) {
     return ret[x > 0][y > 0][z > 0];
 }
 
-bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin, vec3<float> end, vec3<float>& res) {
+bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin, vec3<float>& end, vec3<float>& res) {
     vec3<float> l, r, m1, m2, m;
     l = begin;
+    
     r = end;
     for (int i = 0; i < 40; i++) {
         m1 = ((float)2 * l + r) / (float)3;
@@ -101,7 +102,9 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
             l = m;
         }
     }
-    res = l;
+    end = l;
+    res = vec3<float>(end, centre);
+    res.resize(rad);
     return true;
 }
 
@@ -173,7 +176,7 @@ bool intersect_sector_ball(vec3<float> centre, float rad1, float rad2, int i, ve
 
     for (int _ = 0; _ < 30; _++) {
         m = (l + r) / (float)2;
-        if (dist(centre, m) < rad1 + rad2)
+        if (dist(centre, m) > rad1 + rad2)
             r = m;
         else
             l = m;
@@ -207,54 +210,56 @@ int get_element(int** __F, int i, int j) {
 }
 template <class T>
 
-bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag) {
+bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag, vec3<T>& touch) {
     
     vec3<float>intersection = finish, curr_intersection;
     bool res = false;
     curr_intersection = finish;
+    vec3<float> curr_finish = finish;
     for (int i = 0; i < (int)persons.size(); i++) {
         if (persons[i]->number != owner)
         {
             if (is_intersected(persons[i]->coords, rad, MAN_RAD, start,
-                               finish, curr_intersection)) {
+                               curr_finish, curr_intersection)) {
                 res = true;
-                if (dist(start, intersection) > (dist(start, curr_intersection)))
-                    intersection = curr_intersection;
+                intersection = curr_intersection;
             }
             for (int j = 0; Flag and j < BP_AMOUNT; j++)
             {
                 if (persons[i]->body_parts[j].is_fortified and 
                     intersect_sector_ball(persons[i]->coords, rad, MAN_RAD * 1.5, j,
-                                          persons[i]->orientation, start, finish, curr_intersection)) {
+                                          persons[i]->orientation, start, curr_finish, curr_intersection)) {
                     
                     res = true;
-                    if (dist(start, intersection) > (dist(start, curr_intersection)))
-                        intersection = curr_intersection;
+                    intersection = curr_intersection;
                 }
             }
         }
     }
-  
     vec3<float> point1, point2, point3, point4;
-    for (int i = -(int)rad - 1; i <= (int)rad + 1; i++) {
-        for (int j = -(int)rad - 1; j <= (int)rad + 1; j++) {
-            point1 = vec3<float>((int)finish.x - rad + EPS + i, -rad + EPS, (int)finish.z - rad + EPS + j);
-            point2 = vec3<float>((int)finish.x + 1 + rad - EPS + i, -rad + EPS, (int)finish.z - rad + EPS + j);
-            point3 = vec3<float>((int)finish.x - rad + EPS + i, get_element(F, (int)finish.x + i, (int)finish.z + j) + rad - EPS, 
-                                                                (int)finish.z - rad + EPS + j);
-            point4 = vec3<float>((int)finish.x - rad + EPS + i, -rad + EPS, (int)finish.z + 1 + rad - EPS + j);
-            bool res1 = intersect_seg_ortohedron(
-                            ortohedron(point1, point2, point3, point4), start, finish, curr_intersection);
-            if (dist(start, intersection) > (dist(start, curr_intersection))) {
-                
-
+    for (int k = 0; k < 1; k++) {
+        for (int i = -(int)rad - 1; i <= (int)rad + 1; i++) {
+            for (int j = -(int)rad - 1; j <= (int)rad + 1; j++) {
+                point1 = vec3<float>((int)finish.x + i, EPS, (int)finish.z + EPS + j);
+                point2 = vec3<float>((int)finish.x + 1 + EPS + i, EPS, (int)finish.z + EPS + j);
+                point3 = vec3<float>((int)finish.x + EPS + i, get_element(F, (int)finish.x + i, (int)finish.z + j) + EPS, 
+                                                                    (int)finish.z + EPS + j);
+                point4 = vec3<float>((int)finish.x + EPS + i, + EPS, (int)finish.z + 1 + EPS + j);
+                ortohedron curr(point1, point2, point3, point4);
+                bool res1 = intersect_segment_sphere_ortohedron(
+                                curr, start, curr_finish, rad, curr_intersection);
                 (intersection = curr_intersection);
+                res |= res1;
+                /*
+                if (res)
+                    cout << point1 << point2 << point3 << point4 << finish << endl;
+                cout << res << endl;
+                */
             }
-            
-            res |= res1;
         }
     }
-    finish = intersection;
+    finish = curr_finish;
+    touch = intersection;
     return res;
 }
 
@@ -262,7 +267,7 @@ bool move_bullet(int b_idx, float time) {
     if (!alive_bullets[b_idx]) {
         return false;
     }
-    if (bullets[b_idx].coords.y < -100) {
+    if (bullets[b_idx].coords.y > 100) {
         explosions.push_back(make_pair(bullets[b_idx].coords, bullets[b_idx].exp_rad));
         damage_last_explosion(b_idx);
         alive_bullets[b_idx] = 0;
@@ -270,9 +275,10 @@ bool move_bullet(int b_idx, float time) {
     }
         
     vec3<float>our_point = bullets[b_idx].in_time(time);
-    bool res = move_sphere(bullets[b_idx].coords, our_point, (float)bullets[b_idx].rad, bullets[b_idx].owner, true);
+    vec3<float> touch_point;
+    bool res = move_sphere(bullets[b_idx].coords, our_point, (float)bullets[b_idx].rad, bullets[b_idx].owner, true, touch_point);
     if (res) {
-        cerr << "Strike #" << 179 << endl;
+//        cerr << "Strike #" << 179 << endl;
         explosions.push_back(make_pair(our_point, EXPLOSION_TIME));
         damage_last_explosion(b_idx);
         alive_bullets[b_idx] = 0;
@@ -290,13 +296,13 @@ bool move_man(int idx, float time) {
     {
         return true;
     }
-    bool res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, true);
+    vec3<float> touch_point;
+    bool res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, false, touch_point);
     if (res)
     {
         //cout << persons[idx]->coords << finish << persons[idx]->in_time(time) << endl;   
         vec3<float> to_move(persons[idx]->coords, finish); 
-        to_move.resize(sqrt(to_move.sqlen()) - 0.1);
-        persons[idx]->coords = persons[idx]->coords + to_move;
+        persons[idx]->coords = finish;
     }
     else
     {
@@ -417,10 +423,18 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
 
 
 void world_update(float dt, char *evs, vec3f rot) {
+    vector<bullet> new_bullets;
+    vector<bool> new_alive_bullets;
     for (int i = 0; i < (int)bullets.size(); i++) {
-        if (alive_bullets[i])
+        if (alive_bullets[i]) {
             move_bullet(i, dt);
+            new_bullets.push_back(bullets[i]);
+            new_alive_bullets.push_back(alive_bullets[i]);
+        }
     }
+    cout << bullets.size() << endl;
+    bullets = new_bullets; 
+    alive_bullets = new_alive_bullets;
     for (int i = 0; i < (int)persons.size(); i++) {
         if (is_alive[i])
             move_man(i, dt);
