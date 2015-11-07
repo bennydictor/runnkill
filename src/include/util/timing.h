@@ -5,11 +5,9 @@
 extern "C" {
 #endif
 
-float prev_time;
-float last_point;
 unsigned int fps;
 
-float delta(void);
+double delta(void);
 
 #ifdef __cplusplus
 }
