@@ -17,7 +17,15 @@
 #include <controller.h>
 
 #include <game/init_world.h>
+#include <signal.h>
 
+char interrupt;
+void signal_handler(int signum) {
+    if (signum == SIGINT) {
+        printl(LOG_I, "Catched SIGINT");
+    }
+    interrupt = 1;
+}
 
 int main() {
     lopen("/dev/stderr");
@@ -27,7 +35,8 @@ int main() {
         printl(LOG_E, "Fatal error while initializing world.");
         return EXIT_FAILURE;
     }
-    for (;;) {
+    signal(SIGINT, signal_handler);
+    while (!interrupt) {
         controller();
     }
 
