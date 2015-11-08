@@ -428,7 +428,6 @@ void world_update(float dt, char *evs, vec3f rot) {
     for (int i = 0; i < (int)explosions.size(); i++) {
         explosions[i].second -= dt;
     }
-    man_update(0, evs, vec3<float>(sinf(rot[1]), -rot[0] * 2 + 0.1, -cosf(rot[1])));
 }   
 
 
