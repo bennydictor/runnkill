@@ -276,7 +276,7 @@ bool intersect_segment_sphere_ortohedron(ortohedron& a, vec3<T> start, vec3<T> &
             low = mid;
         }
     }
-    finish = hig;
+    finish = low;
     //std::cout << 'o' << finish << res << std::endl;
     return true;
 }

@@ -72,7 +72,7 @@ int detect_sector(vec3<T> centre, vec3<T> point, vec3<T> orientation) {
         {{"LEFT_BACK_DOWN", "RIGHT_BACK_DOWN"}, {"LEFT_BACK_UP", "RIGHT_BACK_UP"}},
         {{"LEFT_FRONT_DOWN", "RIGHT_FRONT_DOWN"}, {"LEFT_FRONT_UP", "RIGHT_FRONT_UP"}},
     };
-    cout << "your number is " << names[x > 0][y > 0][z > 0] << endl;
+    //cout << "your number is " << names[x > 0][y > 0][z > 0] << endl;
     return ret[x > 0][y > 0][z > 0];
 }
 
@@ -137,7 +137,7 @@ bool in_sector(vec3<float> centre, int i, vec3<float> orientation, vec3<float> p
     a.rotate(s);
     b.rotate(s);
     c.rotate(s);
-    cout <<"Our Sector has " << a << ' ' << b << ' ' << c << endl;
+    //cout <<"Our Sector has " << a << ' ' << b << ' ' << c << endl;
     return _in_sector(centre, a + centre, b + centre, c + centre, point);
 }
 
@@ -190,7 +190,7 @@ bool intersect_sector_ball(vec3<float> centre, float rad1, float rad2, int i, ve
 }
 
 void damage_last_explosion(int b_idx) {
-    cout << explosions.back().first << endl;
+    //cout << explosions.back().first << endl;
     for (int j = 0; j < (int)persons.size(); j++) {
         if (dist(explosions.back().first, persons[j]->coords) < MAN_RAD + explosions.back().second) {
             int sector = detect_sector(persons[j]->coords, explosions.back().first, persons[j]->orientation);
@@ -290,24 +290,50 @@ bool move_bullet(int b_idx, float time) {
 }
 
 bool move_man(int idx, float time) {
+    //cout << persons[idx]->speed << endl;
     vec3<float> finish = persons[idx]->in_time(time);
-    persons[idx]->move(time);
+    float beg_dist = dist(persons[idx]->coords, finish);
     if (finish == persons[idx]->coords)
     {
+        persons[idx]->speed.y -= (time) * GRAVITATION;
         return true;
     }
+    persons[idx]->touch_ground = false;
     vec3<float> touch_point;
     bool res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, false, touch_point);
     if (res)
     {
         //cout << persons[idx]->coords << finish << persons[idx]->in_time(time) << endl;   
-        vec3<float> to_move(persons[idx]->coords, finish); 
+        //cout << persons[idx]->speed << endl;
         persons[idx]->coords = finish;
+        vec3<float> our_plain = vec3<float>(persons[idx]->coords, touch_point);
+        float d = -our_plain.dot(persons[idx]->coords);
+        vec3<float> tmp_point = persons[idx]->coords + persons[idx]->speed, normal = our_plain;
+        normal.resize(dist_to_plain(our_plain, d, tmp_point) * -2);
+        float _res = dist_to_plain(our_plain, d, tmp_point) * dist_to_plain(our_plain, d, tmp_point + normal); 
+        if (_res > EPS)
+            normal = -1.0f * normal;
+        /*
+        else if (abs(_res) < EPS)
+            persons[idx]->coords = persons[idx]->coords + (float)0.01 * persons[idx]->speed;
+        */
+        persons[idx]->speed = vec3<float>(persons[idx]->coords, tmp_point + normal) / 2.0f;
+        float time_2 =  time * (1 - (dist(persons[idx]->coords, finish) / beg_dist) - 0.1);
+        persons[idx]->move(time - time_2);
+        vec3<float> rvector(persons[idx]->coords, touch_point);
+        persons[idx]->speed.y -= (time - time_2) * GRAVITATION;
+        move_man(idx, time_2);
+        rvector.resize(1);
+        if (rvector.y - EPS <= -1)
+            persons[idx]->touch_ground = true;
     }
     else
     {
         persons[idx]->coords = (finish);
+        persons[idx]->move(time);
+        persons[idx]->speed.y -= (time) * GRAVITATION;
     }
+
     return !res;
 }
 
@@ -456,24 +482,26 @@ void world_update(float dt, char *evs, vec3f rot) {
 void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     persons[man_idx]->set_orientation(curr_orientation);
     vec3<float> move_orientation = curr_orientation;
-    move_orientation.y = 0;
     if (!is_alive[man_idx])
         return;
     if (pressed[WORLD_MOVE_FORWARD_EVENT] and pressed[WORLD_MOVE_BACKWARD_EVENT])
         pressed[WORLD_MOVE_FORWARD_EVENT] = pressed[WORLD_MOVE_BACKWARD_EVENT] = false;
     if (pressed[WORLD_MOVE_LEFT_EVENT] and pressed[WORLD_MOVE_RIGHT_EVENT])
         pressed[WORLD_MOVE_LEFT_EVENT] = pressed[WORLD_MOVE_RIGHT_EVENT] = false;
-    if (0 == pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT])
-    {
-        persons[man_idx]->set_speed(vec3<float>(0, 0, 0));
+    if (persons[man_idx]->touch_ground) {
+        if (0 == pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT])
+        {
+            persons[man_idx]->set_speed(vec3<float>(0, 0, 0));
+        }
+        else
+        {
+            float angle = (pressed[WORLD_MOVE_RIGHT_EVENT] + 2 * pressed[WORLD_MOVE_BACKWARD_EVENT] + 3 * pressed[WORLD_MOVE_LEFT_EVENT] + 4 * pressed[WORLD_MOVE_FORWARD_EVENT] * pressed[WORLD_MOVE_LEFT_EVENT]) * M_PI / 2;
+            angle /= pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT];
+            persons[man_idx]->set_speed((float)persons[man_idx]->abs_speed * move_orientation);
+            persons[man_idx]->speed.rotate(angle);
+        }
+            if (pressed[WORLD_ATTACK_EVENT])
+                persons[man_idx]->speed.y += persons[man_idx]->jump_high;
+                //attack(man_idx, 0);
     }
-    else
-    {
-        float angle = (pressed[WORLD_MOVE_RIGHT_EVENT] + 2 * pressed[WORLD_MOVE_BACKWARD_EVENT] + 3 * pressed[WORLD_MOVE_LEFT_EVENT] + 4 * pressed[WORLD_MOVE_FORWARD_EVENT] * pressed[WORLD_MOVE_LEFT_EVENT]) * M_PI / 2;
-        angle /= pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT];
-        persons[man_idx]->set_speed((float)persons[man_idx]->abs_speed * move_orientation);
-        persons[man_idx]->speed.rotate(angle);
-    }
-        if (pressed[WORLD_ATTACK_EVENT])
-            attack(man_idx, 0);
 }

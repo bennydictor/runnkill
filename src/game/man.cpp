@@ -8,11 +8,12 @@ man::man() {
     def_mod = atk_mod = 1; 
     can_die = true;
     have_shield = false;
+    touch_ground = false;
     orientation = vec3<float>(1, 0, 0);
     for (size_t i = 0; i < BP_AMOUNT; i++) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
-    init_values(hp, mp, agility, strength, intellect, abs_speed, cls);
+    init_values(hp, mp, agility, strength, intellect, abs_speed, jump_high, cls);
     exp = level = 0;
     number = rand();
 }
@@ -22,11 +23,12 @@ man::man(string _name, int cl) {
     def_mod = atk_mod = 1; 
     can_die = true;
     have_shield = false;
+    touch_ground = false;
     orientation = vec3<float>(1, 0, 0);
     for (size_t i = 0; i < BP_AMOUNT; i++) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
-    init_values(hp, mp, agility, strength, intellect, abs_speed, cl);
+    init_values(hp, mp, agility, strength, intellect, abs_speed, jump_high, cl);
     busy = exp = level = 0;
     speed = vec3<float>(abs_speed, 0, 0);
     number = rand();
