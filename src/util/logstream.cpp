@@ -27,10 +27,6 @@ logstream &logstream::operator<<(ostream &(*f)(ostream &)) {
     return *this;
 }
 
-inline _set_log_level_func setloglevel(unsigned int ll) {
-    return _set_log_level_func(ll);
-}
-
 logstream &logstream::operator<<(const _set_log_level_func &f) {
     set_log_level(f.ll);
     return *this;

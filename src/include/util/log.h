@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <time.h>
 
-#define LOG_D 0
-#define LOG_I 1
-#define LOG_W 2
-#define LOG_E 3
+#define LOG_D 0U
+#define LOG_I 1U
+#define LOG_W 2U
+#define LOG_E 3U
 
 #ifdef __cplusplus
 extern "C" {

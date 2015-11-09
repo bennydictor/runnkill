@@ -41,7 +41,9 @@ public:
     friend logstream &logstream::operator<<(const _set_log_level_func &f);
 };
 
-inline _set_log_level_func setloglevel(unsigned int ll);
+inline _set_log_level_func loglevel(unsigned int ll) {
+    return _set_log_level_func(ll);
+}
 
 extern logstream lout;
 

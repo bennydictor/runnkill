@@ -1,5 +1,6 @@
 #include <game/field.h>
 #include <cmath>
+#include <util/logstream.h>
 
 using namespace std;
 

@@ -409,7 +409,7 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
 }
 
 
-void world_update(float dt, char *evs, vec3f rot) {
+void world_update(float dt) {
     for (int i = 0; i < (int)bullets.size(); i++) {
         if (alive_bullets[i])
             move_bullet(i, dt);

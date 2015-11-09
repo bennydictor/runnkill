@@ -58,6 +58,7 @@ void in_items() {
 int init_world(void) {
     w = h = 100;
     chunk = 10;
+    cout << loglevel(LOG_I) << "world height: " << h << endl << "world width: " << w << endl << "chunk size: " << chunk << endl << loglevel(LOG_D);
     world_map = new draw_obj*[w / chunk];
     for (int i = 0; i < w / chunk; ++i) {
         world_map[i] = new draw_obj[h / chunk];
@@ -74,7 +75,6 @@ int init_world(void) {
     for (int i = 0; i < w; i += chunk) {
         for (int j = 0; j < h; j += chunk) {
             world_map[i / chunk][j / chunk] = make_draw_subfield(i, j, i + chunk, j + chunk, default_material);
-            cout << "chunk: [" << i << "-" << i + chunk << ")["<< j << "-" << j + chunk << ")" << endl;
         }
     }
     in_skills();

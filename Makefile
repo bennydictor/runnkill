@@ -47,7 +47,7 @@ CFLAGS=-std=c11 -march=native -pipe $(OPTS) -Wall -Wextra -Wshadow $(foreach inc
 CXX=g++
 CXXFLAGS=-std=c++11 -march=native -pipe $(OPTS) -Wall -Wextra -Wshadow $(foreach inc,$(INCLUDEDIRS), -I$(inc)) -I/usr/include/freetype2
 LD=g++
-LDFLAGS=$(OPTS) $(addprefix -l,$(LIBS))
+LDFLAGS=-pthread $(OPTS) $(addprefix -l,$(LIBS))
 
 SRCS=$(foreach subd,$(SUBDIRS),$(foreach suf,$(SUFFIXES),$(wildcard $(subd)/*$(suf))))
 HEADERS=$(foreach subd,$(INCLUDEDIRS),$(shell find $(subd) -regex '.*\.h'))
