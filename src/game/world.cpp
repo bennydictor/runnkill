@@ -290,6 +290,8 @@ bool move_bullet(int b_idx, float time) {
 }
 
 bool move_man(int idx, float time) {
+    if (time < 0)
+        return true;
     //cout << persons[idx]->speed << endl;
     vec3<float> finish = persons[idx]->in_time(time);
     float beg_dist = dist(persons[idx]->coords, finish);
@@ -299,7 +301,7 @@ bool move_man(int idx, float time) {
         return true;
     }
     persons[idx]->touch_ground = false;
-    vec3<float> touch_point;
+    vec3<float> touch_point(0, 0, 0);
     bool res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, false, touch_point);
     if (res)
     {
@@ -313,11 +315,11 @@ bool move_man(int idx, float time) {
         float _res = dist_to_plain(our_plain, d, tmp_point) * dist_to_plain(our_plain, d, tmp_point + normal); 
         if (_res > EPS)
             normal = -1.0f * normal;
-        /*
+         
         else if (abs(_res) < EPS)
-            persons[idx]->coords = persons[idx]->coords + (float)0.01 * persons[idx]->speed;
-        */
-        persons[idx]->speed = vec3<float>(persons[idx]->coords, tmp_point + normal) / 2.0f;
+            persons[idx]->coords = persons[idx]->coords -(float)EPS * persons[idx]->speed;
+        
+        persons[idx]->speed = vec3<float>(persons[idx]->coords, tmp_point + normal) / 1.0f;
         float time_2 =  time * (1 - (dist(persons[idx]->coords, finish) / beg_dist) - 0.1);
         persons[idx]->move(time - time_2);
         vec3<float> rvector(persons[idx]->coords, touch_point);

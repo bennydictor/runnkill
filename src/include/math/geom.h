@@ -125,10 +125,10 @@ bool intersect_segment_sphere(vec3<T> p1, vec3<T> p2, vec3<T> centre, T rad, vec
         return true;
     }
         
-    T our_h = sqrt(bc.crs(ac).sqlen()) / (2 * dist(p1, p2));
+    T our_h = (bc.crs(ac).sqlen()) / (2 * dist(p1, p2));
     vec3<T> our_plain = plain(p1, p2, centre), normal;
     normal = plain(p1, p2, p1 + our_plain);
-    if (our_h > rad) {
+    if (our_h > rad * rad + EPS) {
         return false;
     }
     normal.resize(our_h);
