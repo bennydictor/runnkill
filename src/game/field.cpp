@@ -1,6 +1,6 @@
 #include <game/field.h>
 #include <cmath>
-
+#include <iostream>
 using namespace std;
 
 template <class T>
@@ -29,6 +29,17 @@ void render_line(vec2<int> p1, vec2<int> p2, T**buf, T val) {
     }
 }
 
+void render_line_breight(vec2<int> p1, vec2<int> p2, int** buff, int val) {
+    render_line(p1, p2, buff, val);
+    p1.x++;
+    render_line(p1, p2, buff, val);
+    p2.x++;
+    render_line(p1, p2, buff, val);
+    p1.x -= 2;
+    render_line(p1, p2, buff, val);
+    p2.x -= 2;
+    render_line(p1, p2, buff, val);
+}
 void render_line_add(vec2<int> p1, vec2<int> p2, int**buf, int val) {
     bool steep = abs(p2.y - p1.y) > abs(p2.x - p1.x);
     if (steep) {
@@ -216,4 +227,32 @@ int** gen_field_empty(int w, int h) {
         }
     }
     return field; 
+}
+
+int** gen_field_suns(int w, int h) {
+    int** result = new int*[w];
+    for (int i = 0; i < w; i++) {
+        result[i] = new int[h];
+        for (int j = 0; j < h; j++)
+            result[i][j] = -SMALL_INF;
+    }
+    int sw = 4 * (int)sqrt(w), sh = (int)sqrt(h) * 4;
+    vector<vec2<int> > points;
+    for (int i = 0; i < w - sw; i += sw) {
+        for (int j = 0; j < h - sh; j += sh) {
+            int x = get_rand(i, i + sw / 2 - 1), y = get_rand(j, j + sh / 2 - 1);
+            int **curr_f = gen_field_sun(sw / 2, sh / 2);
+            for (int dx = 0; dx < sw / 2; dx++) {
+                for (int dy = 0; dy < sh / 2; dy++) {
+                    result[dx + x][dy + y] = curr_f[dx][dy];
+                }
+            }
+            cout << x << ' ' << y << sh << endl;
+            points.push_back(vec2<int>(x + sw / 4, y + sh / 4));
+        }
+    }
+    for (int i = 0; i < points.size() - 2; i++) {
+        render_line_breight(points[i], points[i + 2], result, 0);
+    }
+    return result;
 }

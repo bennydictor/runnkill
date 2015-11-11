@@ -153,10 +153,10 @@ bool intersect_plain_sphere(vec3<T> p1, vec3<T> p2, vec3<T> p3, vec3<T> centre, 
         return intersect_segment_sphere(p2, p3, centre, rad, res);
     vec3<T> cur_plain = plain(p1, p2, p3);
     T d = -cur_plain.dot(p1);
-    if (fabs(dist_to_plain(cur_plain, d, centre)) > rad)
+    if (fabs(dist_to_plain(cur_plain, d, centre)) > rad + EPS)
         return false;
     vec3<T> normal = cur_plain;
-    normal.resize(rad);
+    normal.resize(dist_to_plain(cur_plain, d, centre));
     if (dist_to_plain(cur_plain, d, centre + normal) * dist_to_plain(cur_plain, d, centre) <= 0) {
         res = centre + normal;
     } else {
@@ -257,7 +257,7 @@ bool intersect_segment_sphere_ortohedron(ortohedron& a, vec3<T> start, vec3<T> &
 {
     vec3<T> mid, low = start, hig = finish;
     if (!intersect_ortohedron_sphere(a, hig, rad, res)) {
-        if (dist(start, finish) < 0.5)
+        if (dist(start, finish) < SMALL_CONSTANT_1)
             return false;
         mid = (start + finish) / 2.0f;
         if (!intersect_segment_sphere_ortohedron(a, start, mid, rad, res))
@@ -277,7 +277,6 @@ bool intersect_segment_sphere_ortohedron(ortohedron& a, vec3<T> start, vec3<T> &
         }
     }
     finish = low;
-    //std::cout << 'o' << finish << res << std::endl;
     return true;
 }
 #endif // MATH_GEOM_H

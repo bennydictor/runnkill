@@ -3,7 +3,8 @@
 
 
 #define M_PI 3.14159265358979323846
-#define EPS 10e-5
-
+#define EPS 10e-3
+#define SMALL_CONSTANT_1 0.2
+#define SMALL_INF 179  
 
 #endif // MATH_CONSTANTS_H

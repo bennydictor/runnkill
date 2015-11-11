@@ -25,7 +25,6 @@ using namespace std;
 const int len = 1;
 int world_max_height;
 draw_obj **world_map;
-
 vector<bullet> bullets;
 vector<man*> persons;
 vector<bool> is_alive, alive_bullets;
@@ -240,14 +239,14 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag, ve
     for (int k = 0; k < 1; k++) {
         for (int i = -(int)rad - 1; i <= (int)rad + 1; i++) {
             for (int j = -(int)rad - 1; j <= (int)rad + 1; j++) {
-                point1 = vec3<float>((int)finish.x + i, EPS, (int)finish.z + EPS + j);
-                point2 = vec3<float>((int)finish.x + 1 + EPS + i, EPS, (int)finish.z + EPS + j);
-                point3 = vec3<float>((int)finish.x + EPS + i, get_element(F, (int)finish.x + i, (int)finish.z + j) + EPS, 
-                                                                    (int)finish.z + EPS + j);
-                point4 = vec3<float>((int)finish.x + EPS + i, + EPS, (int)finish.z + 1 + EPS + j);
+                point1 = vec3<float>((int)finish.x + i - EPS, -SMALL_INF, (int)finish.z - EPS + j);
+                point2 = vec3<float>((int)finish.x + 1 + EPS + i, -SMALL_INF, (int)finish.z - EPS + j);
+                point3 = vec3<float>((int)finish.x - EPS + i, get_element(F, (int)finish.x + i, (int)finish.z + j) + EPS, 
+                                                                    (int)finish.z - EPS + j);
+                point4 = vec3<float>((int)finish.x - EPS + i, -SMALL_INF, (int)finish.z + 1 + EPS + j);
                 ortohedron curr(point1, point2, point3, point4);
                 bool res1 = intersect_segment_sphere_ortohedron(
-                                curr, start, curr_finish, rad, curr_intersection);
+                                curr, start, curr_finish, rad + (float)EPS, curr_intersection);
                 (intersection = curr_intersection);
                 res |= res1;
                 /*
@@ -267,7 +266,7 @@ bool move_bullet(int b_idx, float time) {
     if (!alive_bullets[b_idx]) {
         return false;
     }
-    if (bullets[b_idx].coords.y > 100) {
+    if (abs(bullets[b_idx].coords.y) > 100) {
         explosions.push_back(make_pair(bullets[b_idx].coords, bullets[b_idx].exp_rad));
         damage_last_explosion(b_idx);
         alive_bullets[b_idx] = 0;
@@ -292,6 +291,10 @@ bool move_bullet(int b_idx, float time) {
 bool move_man(int idx, float time) {
     if (time < 0)
         return true;
+    if (abs(persons[idx]->coords.y) > 20) {
+        is_alive[idx] = 0;
+        return false;
+    }
     //cout << persons[idx]->speed << endl;
     vec3<float> finish = persons[idx]->in_time(time);
     float beg_dist = dist(persons[idx]->coords, finish);
@@ -451,6 +454,7 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
 
 
 void world_update(float dt, char *evs, vec3f rot) {
+    //cout << persons[0]->coords << endl;
     vector<bullet> new_bullets;
     vector<bool> new_alive_bullets;
     for (int i = 0; i < (int)bullets.size(); i++) {
@@ -460,7 +464,7 @@ void world_update(float dt, char *evs, vec3f rot) {
             new_alive_bullets.push_back(alive_bullets[i]);
         }
     }
-    cout << bullets.size() << endl;
+    //cout << bullets.size() << endl;
     bullets = new_bullets; 
     alive_bullets = new_alive_bullets;
     for (int i = 0; i < (int)persons.size(); i++) {
@@ -484,6 +488,7 @@ void world_update(float dt, char *evs, vec3f rot) {
 void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     persons[man_idx]->set_orientation(curr_orientation);
     vec3<float> move_orientation = curr_orientation;
+    move_orientation.y /= persons[man_idx]->abs_speed / 2;
     if (!is_alive[man_idx])
         return;
     if (pressed[WORLD_MOVE_FORWARD_EVENT] and pressed[WORLD_MOVE_BACKWARD_EVENT])
@@ -502,8 +507,9 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
             persons[man_idx]->set_speed((float)persons[man_idx]->abs_speed * move_orientation);
             persons[man_idx]->speed.rotate(angle);
         }
-            if (pressed[WORLD_ATTACK_EVENT])
-                persons[man_idx]->speed.y += persons[man_idx]->jump_high;
-                //attack(man_idx, 0);
+        if (pressed[WORLD_ATTACK_EVENT]) {
+            persons[man_idx]->speed.y += persons[man_idx]->jump_high;
+            attack(man_idx, 0);
+        }
     }
 }
