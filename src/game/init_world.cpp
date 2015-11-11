@@ -56,7 +56,7 @@ void in_items() {
 }
 
 int init_world(void) {
-    w = h = 504;
+    w = h = 204;
     chunk = 12;
     world_map = new draw_obj*[w / chunk];
     for (int i = 0; i < w / chunk; ++i) {

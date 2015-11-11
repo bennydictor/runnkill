@@ -6,12 +6,12 @@ using namespace std;
 
 void skill_t::in_damage(istream& stream) {
     stream >> cost.hp >> cost.mp >> busy_time;
+    stream >> dmg;
     if (is_range) {
-        stream >> dmg;
         sample.in(stream);
         sample.damage = dmg;
     } else {
-        stream >> u_l >> u_r >> d_l >> d_r;
+        stream >> left_angle >> right_angle >> height >> dir;
     }
     int amount_of_effects;
     stream >> amount_of_effects;

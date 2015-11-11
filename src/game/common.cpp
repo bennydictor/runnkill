@@ -24,6 +24,7 @@ int init_strength[] = {15, 9, 6};
 int init_int[] = {3, 6, 15};
 int init_speed[] = {4, 7, 5};
 int init_jump_high[] = {2, 4, 3};
+float init_attack_rad[] = {0.5, 0.3, 0.4};
 int atk_strength_mods[] = {4, 2, 1};
 int atk_agi_mods[] = {2, 3, 1};
 int atk_int_mods[] = {0, 1, 5};
@@ -40,7 +41,7 @@ void init_maps() {
     }
 }
 
-void init_values(int &hp, int &mp, int &agi, int &strength, int &intellect, int &speed, int& jump_high, int cl) {
+void init_values(int &hp, int &mp, int &agi, int &strength, int &intellect, int &speed, int& jump_high, float& attack_rad, int cl) {
     hp = cl_init_hp[cl];
     mp = init_mp[cl];
     agi = init_agi[cl];
@@ -48,6 +49,7 @@ void init_values(int &hp, int &mp, int &agi, int &strength, int &intellect, int 
     intellect = init_int[cl];
     speed = init_speed[cl];
     jump_high = init_jump_high[cl];
+    attack_rad = init_attack_rad[cl];
 }
 
 

@@ -13,7 +13,7 @@ man::man() {
     for (size_t i = 0; i < BP_AMOUNT; i++) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
-    init_values(hp, mp, agility, strength, intellect, abs_speed, jump_high, cls);
+    init_values(hp, mp, agility, strength, intellect, abs_speed, jump_high, attack_rad, cls);
     exp = level = 0;
     number = rand();
 }
@@ -28,7 +28,7 @@ man::man(string _name, int cl) {
     for (size_t i = 0; i < BP_AMOUNT; i++) {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
-    init_values(hp, mp, agility, strength, intellect, abs_speed, jump_high, cl);
+    init_values(hp, mp, agility, strength, intellect, abs_speed, jump_high, attack_rad, cl);
     busy = exp = level = 0;
     speed = vec3<float>(abs_speed, 0, 0);
     number = rand();

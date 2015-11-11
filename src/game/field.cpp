@@ -46,7 +46,7 @@ int get_rand(int l, int r) {
 }
 
 void render_line_ugly(vec2<int> p1, vec2<int> p2, int**buf, int val) {
-    if (dist(p1, p2) < 20)
+    if (dist(p1, p2) < UGLY_C)
         render_line_breight(p1, p2, buf, val);
     else {
         vec2<int> mid = (p1 + p2) / 2;    

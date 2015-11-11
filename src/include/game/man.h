@@ -19,7 +19,7 @@ struct man {
     std::string name;
     int cls;
     int level, exp, number;
-    float def_mod, atk_mod, busy;
+    float def_mod, atk_mod, busy, attack_rad;
     bool can_die, have_shield, is_running, touch_ground;
     vec3<float> coords, speed, orientation;
     std::vector<item_t*> bag;

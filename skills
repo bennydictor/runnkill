@@ -2,7 +2,7 @@ class_0
 1
     M
     0 -10 0.9
-    0.8 0.8 0.8 0.5
+    1.5 0.8 0.8 0.1 1
     0
     
 class_1
@@ -23,7 +23,7 @@ class X
 <amount of skills>
     <type M or R>
     <hp cost> <mp cost> <busy_time>
-    <u_l u_r d_l d_r if M, else dmg spd size if R>
+    <dmg left_angle right_angle height direction if M, else dmg spd size if R>
     <amount of effects>
         <time>
         <hp mp>

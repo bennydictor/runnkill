@@ -106,14 +106,14 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
     res.resize(rad);
     return true;
 }
-
+/*
 int all_dmg(body_part u_l_bp, body_part u_r_bp, body_part d_l_bp, body_part d_r_bp, skill_t skill, int attack) {
     cerr << "We want to count damage!" << endl;
     return count_dmg(u_l_bp, skill.u_l * attack) + count_dmg(u_r_bp, skill.u_r * attack) 
          + count_dmg(d_l_bp, skill.d_l * attack) + count_dmg(d_r_bp, skill.d_r * attack);
 
 }
-
+*/
 bool _in_sector(vec3<float> centre, vec3<float> a, vec3<float> b, vec3<float> c, vec3<float> p)
 {
     vec3<float> pl_ab, pl_bc, pl_ac;
@@ -367,45 +367,23 @@ void attack(int man_idx, int idx) {
         z->busy += curr.busy_time;
         cerr << "you try to beat" << endl;
         for (size_t i = 0; i < persons.size(); i++) {
-            if ((int)i != man_idx and dist(persons[i]->coords, z->coords) < len and 
-                                    z->speed.dot(vec3<float>(z->coords, persons[i]->coords))) {
-                cerr << "You want to attack man #" << i << endl;
-                vec3<float> I, He;
-                He.x = persons[i]->coords.x;
-                He.y = persons[i]->coords.z;
-                I.x = z->coords.x - He.x;
-                I.y = z->coords.z - He.z;
-                I = get_turned(I, M_PI / 4 + atan2(persons[i]->orientation.z, persons[i]->orientation.x));
-                cerr << "Yeah, we can detected an attack direction!" << endl;
-                int damage;
-                int attack = count_attack(*z);
-                if (He.x > I.x) {
-                    if (He.z > I.z) {
-                        cerr << "It`s 0" << endl;
-                        damage = all_dmg(persons[i]->body_parts[LEFT_FRONT_UP], persons[i]->body_parts[RIGHT_FRONT_UP],
-                                        persons[i]->body_parts[LEFT_FRONT_DOWN], persons[i]->body_parts[RIGHT_FRONT_DOWN],
-                                        z->skills[idx], attack);
-                    } else {
-                        cerr << "It`s 1" << endl;
-                        damage = all_dmg(persons[i]->body_parts[RIGHT_BACK_UP], persons[i]->body_parts[LEFT_BACK_UP],
-                                        persons[i]->body_parts[RIGHT_BACK_DOWN], persons[i]->body_parts[LEFT_BACK_DOWN],
-                                            z->skills[idx], attack);
-                    }
-                } else {
-                    if (He.z > I.z) {
-                        cerr << "It`s 2" << endl;
-                        damage = all_dmg(persons[i]->body_parts[RIGHT_FRONT_UP], persons[i]->body_parts[RIGHT_BACK_UP],
-                                        persons[i]->body_parts[RIGHT_FRONT_DOWN], persons[i]->body_parts[RIGHT_BACK_DOWN],
-                                        z->skills[idx], attack);
-                    } else {
-                        cerr << "It`s 3" << endl;
-                        damage = all_dmg(persons[i]->body_parts[LEFT_BACK_UP], persons[i]->body_parts[LEFT_FRONT_UP],
-                                            persons[i]->body_parts[LEFT_BACK_DOWN], persons[i]->body_parts[LEFT_FRONT_DOWN],
-                                            z->skills[idx], attack);
-                    }
+            if (i != idx) {
+                vec3<float> to_him(z->coords, persons[i]->coords);
+                if (to_him.sqlen() > z->attack_rad * z->attack_rad)
+                    return;
+                to_him.resize(1);
+                float angle = atan2(to_him.x, to_him.z) - atan2(z->orientation.x, z->orientation.z);
+                if (angle < curr.left_angle or angle > curr.right_angle) {
+                    return;
                 }
-                is_alive[i] = !persons[i]->take_damage(damage);
-                //Here will be effects adding
+                vec3<float> point, to_me(persons[i]->coords, z->coords);
+                int sector;
+                to_me.resize(1);
+                to_me.y += curr.height;
+                sector = detect_sector(persons[i]->coords, persons[i]->coords + to_me, persons[i]->orientation);
+                is_alive[i] = !persons[i]->take_damage(
+                        count_dmg(persons[i]->body_parts[sector], curr.dmg));
+                    
             }
         }
     }
