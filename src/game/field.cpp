@@ -35,10 +35,33 @@ void render_line_breight(vec2<int> p1, vec2<int> p2, int** buff, int val) {
     render_line(p1, p2, buff, val);
     p2.x++;
     render_line(p1, p2, buff, val);
-    p1.x -= 2;
+    p1.y++;
     render_line(p1, p2, buff, val);
-    p2.x -= 2;
+    p2.y++;
     render_line(p1, p2, buff, val);
+}
+int get_rand(int l, int r) {
+//    cout << l << ' ' << r <<  endl;
+    return rand() % (r - l + 1) + l; 
+}
+
+void render_line_ugly(vec2<int> p1, vec2<int> p2, int**buf, int val) {
+    if (dist(p1, p2) < 20)
+        render_line_breight(p1, p2, buf, val);
+    else {
+        vec2<int> mid = (p1 + p2) / 2;    
+        int min_y = min(p1.y, p2.y);
+        int max_y = max(p1.y, p2.y);
+        int min_x = min(p1.x, p2.x);
+        int max_x = max(p1.x, p2.x);
+
+        cout << mid << endl;
+        mid.x += get_rand(max(-UGLY_C, min_x - mid.x), (min(UGLY_C, max_x - mid.x)));
+        mid.y += get_rand(max(-UGLY_C, min_y - mid.y), (min(UGLY_C, max_y - mid.y)));
+        render_line_ugly(p1, mid, buf, val);
+        render_line_ugly(mid, p2, buf, val);
+    }
+
 }
 void render_line_add(vec2<int> p1, vec2<int> p2, int**buf, int val) {
     bool steep = abs(p2.y - p1.y) > abs(p2.x - p1.x);
@@ -63,10 +86,6 @@ void render_line_add(vec2<int> p1, vec2<int> p2, int**buf, int val) {
             error += dx;
         }
     }
-}
-int get_rand(int l, int r) {
-//    cout << l << ' ' << r <<  endl;
-    return rand() % (r - l + 1) + l; 
 }
 
 bool** gen_field(int w, int h) {
@@ -238,21 +257,26 @@ int** gen_field_suns(int w, int h) {
     }
     int sw = 4 * (int)sqrt(w), sh = (int)sqrt(h) * 4;
     vector<vec2<int> > points;
-    for (int i = 0; i < w - sw; i += sw) {
-        for (int j = 0; j < h - sh; j += sh) {
+    for (int i = 0; i < w - 2 * sw; i += sw) {
+        for (int j = 0; j < h - 2 * sh; j += sh) {
             int x = get_rand(i, i + sw / 2 - 1), y = get_rand(j, j + sh / 2 - 1);
-            int **curr_f = gen_field_sun(sw / 2, sh / 2);
-            for (int dx = 0; dx < sw / 2; dx++) {
-                for (int dy = 0; dy < sh / 2; dy++) {
+            int curr_w, curr_h;
+            curr_w = sw - get_rand(sw / 10, sw / 5);
+            curr_h = sh - get_rand(sw / 10, sw / 5);
+            curr_w -= curr_w % 4;
+            curr_h -= curr_h % 4;
+            int **curr_f = gen_field_sun(curr_w, curr_h);
+            for (int dx = 0; dx < curr_w; dx++) {
+                for (int dy = 0; dy < curr_h; dy++) {
                     result[dx + x][dy + y] = curr_f[dx][dy];
                 }
             }
-            cout << x << ' ' << y << sh << endl;
+            cout << points.size() << " : " << curr_w << ' ' << curr_h<< endl;
             points.push_back(vec2<int>(x + sw / 4, y + sh / 4));
         }
     }
-    for (int i = 0; i < points.size() - 2; i++) {
-        render_line_breight(points[i], points[i + 2], result, 0);
+    for (int i = 0; i < (int)points.size() - 2; i++) {
+        render_line_ugly(points[i], points[i + 2], result, 0);
     }
     return result;
 }

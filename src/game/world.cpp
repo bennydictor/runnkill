@@ -322,7 +322,7 @@ bool move_man(int idx, float time) {
         else if (abs(_res) < EPS)
             persons[idx]->coords = persons[idx]->coords -(float)EPS * persons[idx]->speed;
         
-        persons[idx]->speed = vec3<float>(persons[idx]->coords, tmp_point + normal) / 1.0f;
+        persons[idx]->speed = vec3<float>(persons[idx]->coords, tmp_point + normal) / 2.0f;
         float time_2 =  time * (1 - (dist(persons[idx]->coords, finish) / beg_dist) - 0.1);
         persons[idx]->move(time - time_2);
         vec3<float> rvector(persons[idx]->coords, touch_point);

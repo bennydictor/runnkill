@@ -1,8 +1,8 @@
 #ifndef GAME_FIELD_H
 #define GAME_FIELD_H
-#define S_WIGHT 6
-#define BIG_WIGHT 14
-
+#define S_WIGHT 5
+#define BIG_WIGHT 10
+#define UGLY_C 8
 #include <math/vec2.h>
 #include <math/constants.h>
 #include <cstdlib>

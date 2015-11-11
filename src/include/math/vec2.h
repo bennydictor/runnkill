@@ -5,13 +5,15 @@
 #include <vector>
 #include <iostream>
 #include <math/sgn.h>
+#include <cmath>
+
 template <typename T>
 struct vec2 {
     T x, y;
 
     vec2() : x(0), y(0) {}
     vec2(T _x, T _y) : x(_x), y(_y) {}
-
+    vec2(vec2<T> _x, vec2<T> _y) : x(_y.x - _x.x), y(_y.y - _x.y) {}
     T dot(const vec2<T> &v) const;
     T crs(const vec2<T> &v) const;
     T sdot(const vec2<T> &v) const;
@@ -26,7 +28,7 @@ typedef std::vector<vec2<double>> polygond;
 
 template <class T>
 vec2<T> operator+(const vec2<T> &a, const vec2<T> &b) {
-    return vec2<T>(a.x + b.x, a.y - b.y);
+    return vec2<T>(a.x + b.x, a.y + b.y);
 }
 
 template <class T>
@@ -37,6 +39,10 @@ vec2<T> operator-(const vec2<T> &a, const vec2<T> &b) {
 template <class T>
 vec2<T> operator*(T x, const vec2<T> &v) {
     return vec2<T>(x * v.x, x * v.y);
+}
+template <class T>
+vec2<T> operator/(const vec2<T> &v, const T a) {
+    return vec2<T>(v.x / a, v.y / a);
 }
 
 template <class T>
@@ -75,4 +81,8 @@ std::ostream &operator<<(std::ostream &out, const vec2<T> &v) {
 }
 
 
+template <class T>
+double dist(vec2<T> a, vec2<T> b) {
+    return sqrt(vec2<T>(a, b).sqlen());
+}
 #endif // MATH_VEC2_H
