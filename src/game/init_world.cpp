@@ -56,7 +56,7 @@ void in_items() {
 }
 
 int init_world(void) {
-    w = h = 204;
+    w = h = 504;
     chunk = 12;
     world_map = new draw_obj*[w / chunk];
     for (int i = 0; i < w / chunk; ++i) {
@@ -81,9 +81,9 @@ int init_world(void) {
     in_skills();
     in_items();
 
-    int i = 1;
-    int j = 1;
-    while (F[i][j] <= 0)
+    int i = 2;
+    int j = 2;
+    while (F[i][j] != 0)
     {
         j++;
         if (j == h)
@@ -95,7 +95,7 @@ int init_world(void) {
     cout << "i j: " << i << " " << j << endl;
     persons.push_back(new man("Derrior", 1));
     is_alive.push_back(1);
-    persons[0]->coords = vec3<float>((float)i - 0.5, MAN_RAD, (float)j - 0.5);
+    persons[0]->coords = vec3<float>((float)i + 0.5, MAN_RAD, (float)j + 0.5);
     persons[0]->set_speed(vec3<float>(0, 0, 0));
 
     persons[0]->skills.push_back(default_skills[1][0]);
@@ -103,6 +103,18 @@ int init_world(void) {
 
     persons.push_back(new man("Benny", 1));
     is_alive.push_back(1);
+    i = rand() % w;
+    while (i < w and F[i][j] != 0)
+    {
+        j++;
+        if (j == h)
+        {
+            j = 0;
+            i++;
+        }
+    }
+    i -= i / w;
+
     persons[1]->coords = vec3<float>((float)i + 0.5, MAN_RAD,(float)j + 0.5);
     persons[1]->set_speed(vec3<float>(0, 0, 0));
     persons[1]->skills.push_back(default_skills[1][0]);

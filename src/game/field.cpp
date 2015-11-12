@@ -60,6 +60,8 @@ void render_line_ugly(vec2<int> p1, vec2<int> p2, int**buf, int val) {
         mid.y += get_rand(max(-UGLY_C, min_y - mid.y), (min(UGLY_C, max_y - mid.y)));
         render_line_ugly(p1, mid, buf, val);
         render_line_ugly(mid, p2, buf, val);
+        if (mid.x > 0 and mid.y > 0 and get_rand(1, 5) == 1)
+        buf[mid.x + get_rand(-1, 1)][mid.y + get_rand(-1, 1)] = 1;
     }
 
 }
@@ -185,7 +187,7 @@ int** gen_field_sun(int w, int h) {
             */
         }
     }
-   
+    render_line(centres[0][0], vec2<int>(0, 0), arr, 0); 
     for (int i = 0; i < w / (BIG_WIGHT); i++) {
         for (int j = 0; j < h / (BIG_WIGHT); j++) {
            arr[centres[i][j].x][centres[i][j].y] = 1; 
@@ -255,14 +257,14 @@ int** gen_field_suns(int w, int h) {
         for (int j = 0; j < h; j++)
             result[i][j] = -SMALL_INF;
     }
-    int sw = 4 * (int)sqrt(w), sh = (int)sqrt(h) * 4;
+    int sw = 2 * (int)sqrt(w), sh = (int)sqrt(h) * 2;
     vector<vec2<int> > points;
     for (int i = 0; i < w - 2 * sw; i += sw) {
         for (int j = 0; j < h - 2 * sh; j += sh) {
             int x = get_rand(i, i + sw / 2 - 1), y = get_rand(j, j + sh / 2 - 1);
             int curr_w, curr_h;
-            curr_w = sw - get_rand(sw / 10, sw / 5);
-            curr_h = sh - get_rand(sw / 10, sw / 5);
+            curr_w = sw - get_rand(sw / 5, sw / 4);
+            curr_h = sh - get_rand(sw / 5, sw / 4);
             curr_w -= curr_w % 4;
             curr_h -= curr_h % 4;
             int **curr_f = gen_field_sun(curr_w, curr_h);
@@ -272,7 +274,7 @@ int** gen_field_suns(int w, int h) {
                 }
             }
             cout << points.size() << " : " << curr_w << ' ' << curr_h<< endl;
-            points.push_back(vec2<int>(x + sw / 4, y + sh / 4));
+            points.push_back(vec2<int>(x, y));
         }
     }
     for (int i = 0; i < (int)points.size() - 2; i++) {
