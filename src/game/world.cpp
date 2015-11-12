@@ -487,7 +487,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         }
         if (pressed[WORLD_ATTACK_EVENT]) {
             persons[man_idx]->speed.y += persons[man_idx]->jump_high;
-            attack(man_idx, 0);
         }
+            attack(man_idx, 0);
     }
 }

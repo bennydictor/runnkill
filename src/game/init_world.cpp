@@ -56,15 +56,15 @@ void in_items() {
 }
 
 int init_world(void) {
-    w = h = 504;
-    chunk = 12;
+    w = h = 100;
+    chunk = 10;
     world_map = new draw_obj*[w / chunk];
     for (int i = 0; i < w / chunk; ++i) {
         world_map[i] = new draw_obj[h / chunk];
     }
     assert(w % chunk == 0);
     assert(h % chunk == 0);
-    F = gen_field_suns(w, h);
+    F = gen_field_empty(w, h);
     world_max_height = 0;
     for (int i = 0; i < w; ++i) {
         for (int j = 0; j < h; ++j) {
@@ -92,7 +92,6 @@ int init_world(void) {
             i++;
         }
     }
-    cout << "i j: " << i << " " << j << endl;
     persons.push_back(new man("Derrior", 1));
     is_alive.push_back(1);
     persons[0]->coords = vec3<float>((float)i + 0.5, MAN_RAD, (float)j + 0.5);
@@ -114,12 +113,16 @@ int init_world(void) {
         }
     }
     i -= i / w;
+    cout << "i j: " << i << " " << j << endl;
 
     persons[1]->coords = vec3<float>((float)i + 0.5, MAN_RAD,(float)j + 0.5);
     persons[1]->set_speed(vec3<float>(0, 0, 0));
     persons[1]->skills.push_back(default_skills[1][0]);
     persons[1]->body_parts[0].put_on(new item_t(default_items[0]));
-    persons[1]->fortify(LEFT_FRONT_UP);
+    for (int i = 0; i < 8; i++)
+    {
+        persons[1]->fortify(i);
+    }
     cout << persons[0]->skills.size() << endl;
     cout << persons[0]->skills[0].is_range << endl;
     cout << (default_skills[1][0].is_range) << endl;

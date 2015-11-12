@@ -63,7 +63,10 @@ vec3<float> man::in_time(float time) {
     if (have_shield) {
         amount_of_f--;
     }
-    vec3<float> ret = coords + (float)((time * (1 - (float)0.2 * amount_of_f)) * (is_running ? (have_shield ? 1.6 : 2) : 1)) * speed;
+    vec3<float> speed_tmp = speed;
+    speed_tmp.y = 0;
+    vec3<float> ret = coords + (float)((time * max(0.1f, (1 - (float)0.2 * amount_of_f))) * (is_running ? (have_shield ? 1.6 : 2) : 1)) * speed_tmp;
+    ret.y += time * speed.y;
     //cout << ret << ' ' << speed << endl;
     return ret;
 }
