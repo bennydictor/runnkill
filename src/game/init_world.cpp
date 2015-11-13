@@ -56,7 +56,7 @@ void in_items() {
 }
 
 int init_world(void) {
-    w = h = 100;
+    w = h = 300;
     chunk = 10;
     world_map = new draw_obj*[w / chunk];
     for (int i = 0; i < w / chunk; ++i) {
@@ -64,7 +64,8 @@ int init_world(void) {
     }
     assert(w % chunk == 0);
     assert(h % chunk == 0);
-    F = gen_field_empty(w, h);
+    F = gen_field_suns(w, h);
+
     world_max_height = 0;
     for (int i = 0; i < w; ++i) {
         for (int j = 0; j < h; ++j) {
@@ -92,7 +93,7 @@ int init_world(void) {
             i++;
         }
     }
-    persons.push_back(new man("Derrior", 1));
+    persons.push_back(new man("Derrior", 0));
     is_alive.push_back(1);
     persons[0]->coords = vec3<float>((float)i + 0.5, MAN_RAD, (float)j + 0.5);
     persons[0]->set_speed(vec3<float>(0, 0, 0));

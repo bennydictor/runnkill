@@ -301,6 +301,7 @@ bool move_man(int idx, float time) {
     if (finish == persons[idx]->coords)
     {
         persons[idx]->speed.y -= (time) * GRAVITATION;
+        persons[idx]->move(time);
         return true;
     }
     persons[idx]->touch_ground = false;
@@ -366,7 +367,7 @@ void attack(int man_idx, int idx) {
     } else {
         z->busy += curr.busy_time;
         cerr << "you try to beat" << endl;
-        for (size_t i = 0; i < persons.size(); i++) {
+        for (int i = 0; i < (int)persons.size(); i++) {
             if (i != idx) {
                 vec3<float> to_him(z->coords, persons[i]->coords);
                 if (to_him.sqlen() > z->attack_rad * z->attack_rad)
@@ -380,7 +381,7 @@ void attack(int man_idx, int idx) {
                 int sector;
                 to_me.resize(1);
                 to_me.y += curr.height;
-                sector = detect_sector(persons[i]->coords, persons[i]->coords + to_me, persons[i]->orientation);
+                sector = detect_sector(persons[i]->coords + to_me, persons[i]->coords, persons[i]->orientation);
                 is_alive[i] = !persons[i]->take_damage(
                         count_dmg(persons[i]->body_parts[sector], curr.dmg));
                     
