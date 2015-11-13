@@ -24,10 +24,13 @@ item_t* body_part::put_off() {
 }
 
 int count_dmg(body_part bp, int atk) {
+    float ret;
     if (bp.is_fortified)
-        return bp.mod * 0.1 * atk;
+        ret = bp.mod * 0.1 * atk;
     else if (bp.item)
-        return bp.mod * bp.item->defense_coeff * atk;
+        ret = bp.mod * bp.item->defense_coeff * atk;
     else
-        return bp.mod * atk;
+        ret = bp.mod * atk;
+    cout << bp.name << ' ' << ret << endl;
+    return (int)ret;
 }

@@ -61,7 +61,7 @@ int detect_sector(vec3<T> centre, vec3<T> point, vec3<T> orientation) {
     point.x -= centre.x;
     point.y -= centre.y;
     point.z -= centre.z;
-    point = get_turned(point, M_PI / 4 + atan2(orientation.z, orientation.x));
+    point = get_turned(point, atan2(orientation.x, orientation.z));
     float x = point.x, y = point.y, z = point.z;
     int ret[2][2][2] = {
         {{LEFT_BACK_DOWN, RIGHT_BACK_DOWN}, {LEFT_BACK_UP, RIGHT_BACK_UP}},
@@ -72,7 +72,7 @@ int detect_sector(vec3<T> centre, vec3<T> point, vec3<T> orientation) {
         {{"LEFT_FRONT_DOWN", "RIGHT_FRONT_DOWN"}, {"LEFT_FRONT_UP", "RIGHT_FRONT_UP"}},
     };
     //cout << "your number is " << names[x > 0][y > 0][z > 0] << endl;
-    return ret[x > 0][y > 0][z > 0];
+    return ret[x < 0][y > 0][z < 0];
 }
 
 bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin, vec3<float>& end, vec3<float>& res) {
@@ -295,7 +295,7 @@ bool move_man(int idx, float time) {
         is_alive[idx] = 0;
         return false;
     }
-    //cout << persons[idx]->speed << endl;
+    //cout << persons[idx]->hp << endl;
     vec3<float> finish = persons[idx]->in_time(time);
     float beg_dist = dist(persons[idx]->coords, finish);
     if (finish == persons[idx]->coords)
@@ -321,7 +321,7 @@ bool move_man(int idx, float time) {
             normal = -1.0f * normal;
          
         else if (abs(_res) < EPS)
-            persons[idx]->coords = persons[idx]->coords -(float)EPS * persons[idx]->speed;
+            persons[idx]->coords = persons[idx]->coords -(float)(10 * EPS) * persons[idx]->speed;
         
         persons[idx]->speed = vec3<float>(persons[idx]->coords, tmp_point + normal) / 2.0f;
         float time_2 =  time * (1 - (dist(persons[idx]->coords, finish) / beg_dist) - 0.1);
@@ -347,9 +347,10 @@ void attack(int man_idx, int idx) {
 
     man* z = persons[man_idx];
     if (z->busy > 0 or (int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp) {
-        cerr << "You missed!" << endl;
+//        cerr << "You missed!" << endl;
         return;
     }
+    z->mp -= z->skills[idx].cost.mp;
     cerr << "Well, " << endl;
     skill_t curr = z->skills[idx];
      if (curr.is_range) {

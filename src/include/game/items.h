@@ -10,7 +10,7 @@
 
 struct item_t {
     mod_t effects;
-    int strength, agi, intellect, speed;
+    int hp, mp, strength, agi, intellect, speed;
     material_t material;
     float defense_coeff;
     void set_material(vec3f ambient, vec3f diffuse, vec3f specular);

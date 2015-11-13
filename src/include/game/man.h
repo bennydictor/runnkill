@@ -21,12 +21,14 @@ struct man {
     int level, exp, number;
     float def_mod, atk_mod, busy, attack_rad;
     bool can_die, have_shield, is_running, touch_ground;
+    mod_t recovery;
     vec3<float> coords, speed, orientation;
     std::vector<item_t*> bag;
     std::vector<body_part> body_parts;
     std::vector<effect> effects;
     std::vector<skill_t> skills;
-    int hp, mp, agility, strength, intellect, abs_speed, jump_high;
+    float hp, mp;
+    int max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high;
     man();
     man(std::string _name, int cl);
     vec3<float> in_time(float time);

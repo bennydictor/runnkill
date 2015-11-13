@@ -14,8 +14,12 @@ man::man() {
         body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
     }
     init_values(hp, mp, agility, strength, intellect, abs_speed, jump_high, attack_rad, cls);
+    max_hp = hp;
+    max_mp = mp;
     exp = level = 0;
     number = rand();
+    recovery.hp = 0;
+    recovery.mp = 3;
 }
 man::man(string _name, int cl) {
     name = _name;
@@ -32,6 +36,10 @@ man::man(string _name, int cl) {
     busy = exp = level = 0;
     speed = vec3<float>(abs_speed, 0, 0);
     number = rand();
+    max_hp = hp;
+    max_mp = mp;
+    recovery.hp = 0;
+    recovery.mp = 3;
 }
 
 void man::set_speed(vec3<float> spd) {
@@ -82,15 +90,19 @@ void man::move(float time) {
         }
     }
     busy = max((float)0, busy - time);
+    hp += (recovery.hp * time);
+    hp = min(hp, (float)max_hp);
+    mp += (recovery.mp * time);
+    mp = min(mp, (float)max_mp);
 }
 
 bool man::take_damage(int dmg) {
     if (can_die) {
-        hp = max(hp - dmg, 0);
+        hp = max(hp - dmg, 0.0f);
     } else {
-        hp = max(hp - dmg, 1);
+        hp = max(hp - dmg, 1.0f);
     }
-    return (hp == 0);
+    return (hp < EPS);
     
 }
 int count_attack(man z) {
@@ -98,10 +110,7 @@ int count_attack(man z) {
 }
 
 void man::fortify(int idx) {
-    body_parts[idx].is_fortified = true;
-    if (idx == LEFT_FRONT_UP or body_parts[(idx - 2 + BP_AMOUNT) % BP_AMOUNT].is_fortified or 
-                           body_parts[(idx + 2 + BP_AMOUNT) % BP_AMOUNT].is_fortified) {
-    }
+    body_parts[idx].is_fortified ^= 1;
 }
 
 void man::out(ostream& stream) {
@@ -128,7 +137,12 @@ void man::put_on(item_t* item, int idx) {
     if (wore)
     {
         get_effect(wore->effects * -1);
+        max_hp -= wore->hp;
+        max_mp -= wore->mp;
+       
         bag.push_back(wore);
     }
     get_effect(item->effects);
+    max_hp += item->hp;
+    max_mp += item->mp;
 }

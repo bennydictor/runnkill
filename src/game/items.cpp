@@ -23,7 +23,7 @@ void item_t::set_material(vec3f ambient, vec3f diffuse, vec3f specular) {
 }
 
 void item_t::in(std::istream& stream) {
-    stream >> effects.hp >> effects.mp >> effects.strength >> effects.agility >> effects.intellect >> effects.speed;  
+    stream >> hp >> mp >> effects.strength >> effects.agility >> effects.intellect >> effects.speed;  
     stream >> defense_coeff;
     float r, g, b;
     vec3f ambient, diffuse, specular;
