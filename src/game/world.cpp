@@ -80,7 +80,7 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
     l = begin;
     
     r = end;
-    for (int i = 0; i < 40; i++) {
+    for (int i = 0; i < 10; i++) {
         m1 = ((float)2 * l + r) / (float)3;
         m2 = (l + (float)2 * r) / (float)3;
         if (dist(centre, m1) > dist(centre, m2)) {
@@ -89,11 +89,11 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
             r = m2;
         }
     }
-    if (dist(centre, l) >= rad + rad2 - EPS or dist(centre, l) < EPS) {
+    if (dist(centre, l) >= rad + rad2 + EPS or dist(centre, l) < EPS) {
         return false;
     }
     l = begin;
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 10; i++) {
         m = (l + r) / (float)2;
         if (dist(centre, m) < rad + rad2) {
             r = m;
@@ -103,7 +103,8 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
     }
     end = l;
     res = vec3<float>(end, centre);
-    res.resize(rad);
+    res.resize(rad2);
+    res = res + end;
     return true;
 }
 /*
@@ -246,8 +247,7 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag, ve
                 point4 = vec3<float>((int)finish.x - EPS + i, -SMALL_INF, (int)finish.z + 1 + EPS + j);
                 ortohedron curr(point1, point2, point3, point4);
                 bool res1 = intersect_segment_sphere_ortohedron(
-                                curr, start, curr_finish, rad + (float)EPS, curr_intersection);
-                (intersection = curr_intersection);
+                                curr, start, curr_finish, rad + (float)EPS, intersection);
                 res |= res1;
                 /*
                 if (res)
@@ -259,6 +259,7 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag, ve
     }
     finish = curr_finish;
     touch = intersection;
+    cout << touch << endl;
     return res;
 }
 

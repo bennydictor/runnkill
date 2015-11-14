@@ -56,7 +56,7 @@ void in_items() {
 }
 
 int init_world(void) {
-    w = h = 50;
+    w = h = 500;
     chunk = 10;
     world_map = new draw_obj*[w / chunk];
     for (int i = 0; i < w / chunk; ++i) {
@@ -64,7 +64,7 @@ int init_world(void) {
     }
     assert(w % chunk == 0);
     assert(h % chunk == 0);
-    F = gen_field_empty(w, h);
+    F = gen_field_suns(w, h);
 
     world_max_height = 0;
     for (int i = 0; i < w; ++i) {
