@@ -434,7 +434,7 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
 }
 
 
-void world_update(float dt, char *evs, vec3f rot) {
+void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp) {
     //cout << persons[0]->coords << endl;
     vector<bullet> new_bullets;
     vector<bool> new_alive_bullets;
@@ -463,6 +463,8 @@ void world_update(float dt, char *evs, vec3f rot) {
         explosions[i].second -= dt;
     }
     man_update(0, evs, vec3<float>(sinf(rot[1]), -rot[0] * 2 + 0.1, -cosf(rot[1])));
+    hp[0] = persons[0]->hp;
+    mp[0] = persons[0]->mp;
 }   
 
 

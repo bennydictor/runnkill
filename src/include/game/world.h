@@ -35,7 +35,7 @@ extern "C" {
 
 extern int world_max_height;
 extern draw_obj **world_map;
-void world_update(float dt, char *evs, vec3f rot);
+void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp);
 
 #ifdef __cplusplus
 }

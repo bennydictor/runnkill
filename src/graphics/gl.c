@@ -30,7 +30,6 @@ char gl_light_enable[LIGHT_COUNT];
 light_t gl_light[LIGHT_COUNT];
 vec3f gl_pos, gl_rot;
 float gl_fov, gl_z_near, gl_z_far;
-
 mat4f mat_p, mat_v;
 mat4f light_mat_p[LIGHT_COUNT], light_mat_v[LIGHT_COUNT];
 
@@ -128,14 +127,14 @@ void gl_reshape(void) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void gl_update(int n, draw_obj *objs) {
+void gl_update(int n, draw_obj *objs, float hp, float mp) {
     //render_depth(n, objs);
     render_light(n, objs);
     render_pp();
-    char fps_string[20];
-    sprintf(fps_string, "fps: %d", fps);
+    char fps_string[60];
+    sprintf(fps_string, "fps: %d; hp: %0.3f; mp: %0.3f", fps, hp, mp);
     render_text(10, window_height - ft_font_size - 10, fps_string);
-
+    
     glfwSwapBuffers(window);
     glfwPollEvents();
 }

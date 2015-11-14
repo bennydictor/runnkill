@@ -69,7 +69,7 @@ extern mat4f mat_p, mat_v;
 extern mat4f light_mat_p[LIGHT_COUNT], light_mat_v[LIGHT_COUNT];
 
 int init_gl(void);
-void gl_update(int n, draw_obj *count);
+void gl_update(int n, draw_obj *count, float hp, float mp);
 void gl_matrices(void);
 void gl_light_matrices(void);
 void gl_reshape(void);
