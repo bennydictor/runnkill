@@ -259,7 +259,7 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag, ve
     }
     finish = curr_finish;
     touch = intersection;
-    cout << touch << endl;
+    //cout << touch << endl;
     return res;
 }
 
@@ -294,6 +294,7 @@ bool move_man(int idx, float time) {
         return true;
     if (abs(persons[idx]->coords.y) > 20) {
         is_alive[idx] = 0;
+        persons[idx]->hp = 0;
         return false;
     }
     //cout << persons[idx]->hp << endl;
