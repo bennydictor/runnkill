@@ -1,17 +1,18 @@
-#include <game/world.h>
 #include <iostream>
-#include <game/man.h>
-#include <game/field.h>
 #include <cstdio>
 #include <fstream>
-#include <game/skill_type.h>
-#include <game/bullet.h>
-#include <game/init_world.h>
-#include <math/geom.h>
-#include <util/logstream.h>
 #include <vector>
 #include <cmath>
 #include <ctime>
+#include <game/world.h>
+#include <game/init_world.h>
+#include <game/man.h>
+#include <game/field.h>
+#include <game/skill_type.h>
+#include <game/bullet.h>
+#include <game/armour.h>
+#include <math/geom.h>
+#include <util/logstream.h>
 #include <graphics/objects/box.h>
 #include <graphics/objects/field.h>
 #include <graphics/objects/sphere.h>
@@ -31,6 +32,7 @@ vector<bool> is_alive, alive_bullets;
 vector<pair<vec3<float>, float> > explosions;
 vector<vector<skill_t > > default_skills;
 vector<item_t> default_items;
+vector<armour> default_armours;
 vec3<float> sector_points_a[8] = {
         vec3<float>(0, -1, 0), vec3<float>(0, -1, 0), vec3<float>(0, 1, 0), vec3<float>(0, 1, 0), 
         vec3<float>(0, -1, 0), vec3<float>(0, -1, 0), vec3<float>(0, 1, 0), vec3<float>(0, 1, 0), 
@@ -418,6 +420,12 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
                     result.push_back(make_draw_sphere_sector3fv2f(persons[i]->coords, alpha, 1.1 * MAN_RAD, j, persons[i]->body_parts[j].item->material));
                 }
             }
+            
+            if (persons[i]->weapon) {
+                result.push_back(persons[i]->weapon->give_me_points(persons[i]->coords, persons[i]->coords + persons[i]->orientation));
+//                result.push_back(persons[i]->weapon->give_me_points(vec3<float>(0, 0, 0), vec3<float>(1, 0, 0)));
+            }
+            
         }
     }
     for (int i = 0; i < (int) explosions.size(); ++i) {
@@ -430,7 +438,7 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
     }
 
     coord[0] = persons[0]->coords.x - 5 * (persons[0]->orientation.x);
-    coord[1] = persons[0]->coords.y + (1 - persons[0]->orientation.y);
+    coord[1] = persons[0]->coords.y + 1;
     coord[2] = persons[0]->coords.z - 5 * (persons[0]->orientation.z);
 }
 

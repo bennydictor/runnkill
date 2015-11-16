@@ -55,6 +55,17 @@ void in_items() {
     in.close();
 }
 
+void in_armours() {
+    fstream in;
+    in.open("armours");
+    int am;
+    in >> am;
+    default_armours.resize(am);
+    for (int j = 0; j < am; j++) {
+        default_armours[j].in(in);
+    }
+    in.close();
+}
 int init_world(void) {
     w = h = 500;
     chunk = 10;
@@ -64,7 +75,7 @@ int init_world(void) {
     }
     assert(w % chunk == 0);
     assert(h % chunk == 0);
-    F = gen_field_lsuns(w, h);
+    F = gen_field_empty(w, h);
 
     world_max_height = 0;
     for (int i = 0; i < w; ++i) {
@@ -81,9 +92,10 @@ int init_world(void) {
     }
     in_skills();
     in_items();
+    in_armours();
 
-    int i = 20;
-    int j = 20;
+    int i = 0;
+    int j = 0;
     while (F[i][j] != 0)
     {
         j++;
@@ -100,6 +112,7 @@ int init_world(void) {
     persons[0]->skills.push_back(default_skills[1][0]);
     persons[0]->put_on(new item_t(default_items[0]), LEFT_BACK_DOWN);
     persons[0]->put_on(new item_t(default_items[2]), LEFT_BACK_DOWN);
+    persons[0]->weapon = &default_armours[0];
     persons.push_back(new man("Benny", 1));
     is_alive.push_back(1);
     i = rand() % w;

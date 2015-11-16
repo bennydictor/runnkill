@@ -113,7 +113,7 @@ bool intersect_point_sphere(vec3<T> point, vec3<T> centre, T rad, vec3<T> &res) 
 
 template <class T>
 
-bool intersect_segment_sphere(vec3<T> p1, vec3<T> p2, vec3<T> centre, T rad, vec3<T> &res) {
+bool intersect_segment_sphere(vec3<T> p1, vec3<T> p2, vec3<T> centre, T rad, vec3<T> &res, bool f=false) {
     vec3<T> ab(p1, p2), bc(centre, p1), ac(centre, p2);
     if (ab.sqlen() < EPS)
         return intersect_point_sphere(p1, centre, rad, res);
@@ -135,7 +135,7 @@ bool intersect_segment_sphere(vec3<T> p1, vec3<T> p2, vec3<T> centre, T rad, vec
     vec3<T> projection = centre + normal;
     if ((ab.crs(vec3<T>(p1, projection)).sqlen()) > EPS)
         projection = centre - normal;
-    if (vec3<T>(p1, projection).dot(vec3<T>(p2, projection)) > EPS)
+    if (!f and vec3<T>(p1, projection).dot(vec3<T>(p2, projection)) > EPS)
         return false;
     res = projection;
     //std::cout << "seg" << std::endl;

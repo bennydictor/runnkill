@@ -2,18 +2,21 @@
 #define GAME_MAN_H
 #define MAN_RAD .4
 
-#include <game/common.h>
-#include <game/items.h>
-#include <vector>
+#include <cstdlib>
+#include <iostream>
 #include <string>
+#include <vector>
+
+#include <game/armour.h>
 #include <game/body_part.h>
+#include <game/common.h>
 #include <game/effect.h>
+#include <game/items.h>
 #include <game/mod_type.h>
 #include <game/skill_type.h>
+
 #include <math/vec2.h>
 #include <math/vec3.h>
-#include <iostream>
-#include <cstdlib>
 
 struct man {
     std::string name;
@@ -28,6 +31,7 @@ struct man {
     std::vector<effect> effects;
     std::vector<skill_t> skills;
     float hp, mp;
+    armour* weapon;
     int max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high;
     man();
     man(std::string _name, int cl);
