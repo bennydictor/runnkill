@@ -66,6 +66,17 @@ void in_armours() {
     }
     in.close();
 }
+void in_animations() {
+    fstream in;
+    in.open("animations");
+    int am;
+    in >> am;
+    animations.resize(am);
+    for (int j = 0; j < am; j++) {
+        animations[j].in(in);
+    }
+    in.close();
+}
 int init_world(void) {
     w = h = 500;
     chunk = 10;
@@ -93,7 +104,7 @@ int init_world(void) {
     in_skills();
     in_items();
     in_armours();
-
+    in_animations();
     int i = 0;
     int j = 0;
     while (F[i][j] != 0)

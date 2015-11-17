@@ -24,5 +24,6 @@ void skill_t::in_damage(istream& stream) {
     if (is_range) {
         sample.effects = effects;
     }
+    stream >> animation_idx >> activate_time;
 }
 

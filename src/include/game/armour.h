@@ -6,6 +6,9 @@
 
 #include <math/vec3.h>
 #include <math/geom.h>
+
+#include <game/util/event.h>
+
 #include <graphics/draw_obj.h>
 
 #include <graphics/material.h>
@@ -25,7 +28,7 @@ struct armour {
     armour();
     void get(vec3<float> p1, vec3<float> p2, float angle, std::vector<vec3<float> >& vbo);
     void in(std::istream& stream); 
-    draw_obj give_me_points(vec3<float> coords, vec3<float> p2); 
+    draw_obj give_me_points(event E);
 
 };
 

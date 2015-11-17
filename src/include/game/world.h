@@ -18,11 +18,13 @@
 #include <game/items.h>
 #include <game/armour.h>
 #include <game/man.h>
+#include <game/animation.h>
 
 extern int w, h, chunk;
 extern std::vector<std::vector<skill_t > > default_skills;
 extern std::vector<item_t> default_items;
 extern std::vector<armour> default_armours;
+extern std::vector<animation> animations;
 extern vec3<float> sector_points_a[8];
 extern vec3<float> sector_points_b[8];
 extern vec3<float> sector_points_c[8];

@@ -11,6 +11,9 @@
 #include <game/skill_type.h>
 #include <game/bullet.h>
 #include <game/armour.h>
+#include <game/animation.h>
+#include <game/util/event.h>
+
 #include <math/geom.h>
 #include <util/logstream.h>
 #include <graphics/objects/box.h>
@@ -33,6 +36,7 @@ vector<pair<vec3<float>, float> > explosions;
 vector<vector<skill_t > > default_skills;
 vector<item_t> default_items;
 vector<armour> default_armours;
+vector<animation> animations;
 vec3<float> sector_points_a[8] = {
         vec3<float>(0, -1, 0), vec3<float>(0, -1, 0), vec3<float>(0, 1, 0), vec3<float>(0, 1, 0), 
         vec3<float>(0, -1, 0), vec3<float>(0, -1, 0), vec3<float>(0, 1, 0), vec3<float>(0, 1, 0), 
@@ -357,8 +361,10 @@ void attack(int man_idx, int idx) {
     z->mp -= z->skills[idx].cost.mp;
     cerr << "Well, " << endl;
     skill_t curr = z->skills[idx];
+    z->busy += animations[curr.animation_idx].events[0].dt;
+    z->curr_skill = idx;
+    /*
      if (curr.is_range) {
-        z->busy += curr.busy_time;
         bullets.push_back(bullet(curr.sample));
         bullets.back().coords = z->coords + ((float)MAN_RAD + 2 * (float)curr.sample.rad) * z->orientation;
         bullets.back().speed = vec3<float>(z->orientation);
@@ -393,6 +399,7 @@ void attack(int man_idx, int idx) {
             }
         }
     }
+    */
 }
 
 void world_callback(vector<draw_obj> &result, vec3f coord) {
@@ -417,19 +424,28 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
                     result.push_back(make_draw_sphere_sector3fv2f(persons[i]->coords, alpha, 1.5 * MAN_RAD, j, shield_material));
                 else if (persons[i]->body_parts[j].item)
                 {
-                    result.push_back(make_draw_sphere_sector3fv2f(persons[i]->coords, alpha, 1.1 * MAN_RAD, j, persons[i]->body_parts[j].item->material));
+                    result.push_back(make_draw_sphere_sector3fv2f(persons[i]->coords, alpha, 1.1 * MAN_RAD, j,
+                                    persons[i]->body_parts[j].item->material));
                 }
             }
             
             if (persons[i]->weapon) {
-                result.push_back(persons[i]->weapon->give_me_points(persons[i]->coords, persons[i]->coords + persons[i]->orientation));
+                int one_idx = persons[i]->curr_skill;
+                if (one_idx != -1) {
+                    cout << "w" << endl;
+                    cout << persons[i]->skills[one_idx].animation_idx << animations.size() << endl;
+                result.push_back(persons[i]->weapon->give_me_points(
+                                   animations[persons[i]->skills[one_idx].animation_idx].get(persons[i]->busy)));
+                }
+                else result.push_back(persons[i]->weapon->give_me_points(event(persons[i]->coords, persons[i]->coords + persons[i]->orientation, 0)));
 //                result.push_back(persons[i]->weapon->give_me_points(vec3<float>(0, 0, 0), vec3<float>(1, 0, 0)));
             }
             
         }
     }
     for (int i = 0; i < (int) explosions.size(); ++i) {
-        result.push_back(make_draw_sphere3fv1f(explosions[i].first, EXPLOSION_RADIUS * powf(EXPLOSION_TIME - explosions[i].second, 1.0 / 3), explosion_material));
+        result.push_back(make_draw_sphere3fv1f(explosions[i].first, EXPLOSION_RADIUS * 
+                        powf(EXPLOSION_TIME - explosions[i].second, 1.0 / 3), explosion_material));
     }
     
     for (int i = 0; i < (int)bullets.size(); i++) {
@@ -478,30 +494,68 @@ void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp) {
 
 
 void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
-    persons[man_idx]->set_orientation(curr_orientation);
+    man* z = persons[man_idx];
+    z->set_orientation(curr_orientation);
     vec3<float> move_orientation = curr_orientation;
-    move_orientation.y /= persons[man_idx]->abs_speed / 2;
+    move_orientation.y /= z->abs_speed / 2;
     if (!is_alive[man_idx])
         return;
     if (pressed[WORLD_MOVE_FORWARD_EVENT] and pressed[WORLD_MOVE_BACKWARD_EVENT])
         pressed[WORLD_MOVE_FORWARD_EVENT] = pressed[WORLD_MOVE_BACKWARD_EVENT] = false;
     if (pressed[WORLD_MOVE_LEFT_EVENT] and pressed[WORLD_MOVE_RIGHT_EVENT])
         pressed[WORLD_MOVE_LEFT_EVENT] = pressed[WORLD_MOVE_RIGHT_EVENT] = false;
-    if (persons[man_idx]->touch_ground) {
+    if (z->touch_ground) {
         if (0 == pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT])
         {
-            persons[man_idx]->set_speed(vec3<float>(0, 0, 0));
+            z->set_speed(vec3<float>(0, 0, 0));
         }
         else
         {
             float angle = (pressed[WORLD_MOVE_RIGHT_EVENT] + 2 * pressed[WORLD_MOVE_BACKWARD_EVENT] + 3 * pressed[WORLD_MOVE_LEFT_EVENT] + 4 * pressed[WORLD_MOVE_FORWARD_EVENT] * pressed[WORLD_MOVE_LEFT_EVENT]) * M_PI / 2;
             angle /= pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT];
-            persons[man_idx]->set_speed((float)persons[man_idx]->abs_speed * move_orientation);
-            persons[man_idx]->speed.rotate(angle);
+            z->set_speed((float)z->abs_speed * move_orientation);
+            z->speed.rotate(angle);
         }
         if (pressed[WORLD_ATTACK_EVENT]) {
-            persons[man_idx]->speed.y += persons[man_idx]->jump_high;
+            z->speed.y += z->jump_high;
         }
             attack(man_idx, 0);
+    }
+    if (z->curr_skill != -1 and fabs(z->busy - z->skills[z->curr_skill].activate_time) < EPS) {
+        skill_t curr = z->skills[z->curr_skill];
+        if (curr.is_range) {
+            bullets.push_back(bullet(curr.sample));
+            bullets.back().coords = z->coords + ((float)MAN_RAD + 2 * (float)curr.sample.rad) * z->orientation;
+            bullets.back().speed = vec3<float>(z->orientation);
+            bullets.back().speed.resize(curr.sample.speed.x);
+            bullets.back().speed = bullets.back().speed + z->speed;
+            bullets.back().damage *= count_attack(*z);
+            bullets.back().owner = z->number;
+            bullets.back().exp_rad = 3;
+            alive_bullets.push_back(1);
+            cerr << "You shoot" << endl;
+        } else {
+            cerr << "you try to beat" << endl;
+            for (int i = 0; i < (int)persons.size(); i++) {
+                if (i != man_idx) {
+                    vec3<float> to_him(z->coords, persons[i]->coords);
+                    if (to_him.sqlen() > z->attack_rad * z->attack_rad)
+                        return;
+                    to_him.resize(1);
+                    float angle = atan2(to_him.x, to_him.z) - atan2(z->orientation.x, z->orientation.z);
+                    if (angle < curr.left_angle or angle > curr.right_angle) {
+                        return;
+                    }
+                    vec3<float> point, to_me(persons[i]->coords, z->coords);
+                    int sector;
+                    to_me.resize(1);
+                    to_me.y += curr.height;
+                    sector = detect_sector(persons[i]->coords + to_me, persons[i]->coords, persons[i]->orientation);
+                    is_alive[i] = !persons[i]->take_damage(
+                            count_dmg(persons[i]->body_parts[sector], curr.dmg));
+                        
+                }
+            }
+        }
     }
 }

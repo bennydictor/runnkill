@@ -14,7 +14,8 @@ struct skill_t {
     mod_t cost;
     bullet sample;
     bool is_range;
-    float busy_time, dmg, left_angle, right_angle, height, dir;
+    int animation_idx;
+    float busy_time, activate_time, dmg, left_angle, right_angle, height, dir;
     void in_damage(std::istream& stream);
 };
 

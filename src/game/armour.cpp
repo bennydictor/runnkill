@@ -44,7 +44,7 @@ void armour::get(vec3<float> p1, vec3<float> p2, float angle, vector<vec3<float>
     }
     vec2<float> xy(p1p2.x, p1p2.y), xy_was(v_to_points[p2_idx].x, v_to_points[p2_idx].y);
     float angle_xy = atan2(xy_was.crs(xy), xy_was.dot(xy));
-//    cout << p1 << p2 << endl;
+    cout << p1 << p2 << endl;
     for (int i = 0; i < (int)v_to_points.size(); i++) {
         if (i != p1_idx) {
             v_to_points[i].rotate(0, angle_xy);
@@ -66,7 +66,7 @@ void armour::get(vec3<float> p1, vec3<float> p2, float angle, vector<vec3<float>
             vbo.push_back(p1);
         }
     }
-//    cout << v_to_points[p2_idx] << p1p2 << endl;
+    cout << v_to_points[p2_idx] << p1p2 << endl;
 }
 
 
@@ -107,16 +107,13 @@ void armour::in(istream& stream) {
 }
 
 
-draw_obj armour::give_me_points(vec3<float> coords, vec3<float> p2) {
-    coords = coords + vec3<float>(0, 1, 0);
-    p2 = p2 + vec3<float>(0, 1, 0);
+draw_obj armour::give_me_points(event E) {
     vector<vec3<float> > vbo_to_get;
-    unsigned int* _ibo_data;
-    get(coords, p2, 0, vbo_to_get); 
+    get(E.point1, E.point2, E.angle, vbo_to_get); 
     vertex3d *vbo_data = new vertex3d[vbo_to_get.size()];
     for (int i = 0; i < (int)vbo_to_get.size(); i++) {
         vbo_data[i].coord[0] = vbo_to_get[i].x;// + coords.x;
-        vbo_data[i].coord[1] = vbo_to_get[i].y;// + coords.y;
+        vbo_data[i].coord[1] = vbo_to_get[i].y + 2;// + coords.y;
         vbo_data[i].coord[2] = vbo_to_get[i].z;// + coords.z;
         vbo_data[i].normal[0] = normal[i].x;
         vbo_data[i].normal[1] = normal[i].y;

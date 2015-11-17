@@ -1,5 +1,6 @@
 #include <game/man.h>
 #include <game/common.h>
+#include <game/animation.h>
 #include <cstdlib>
 
 using namespace std;
@@ -17,6 +18,8 @@ man::man() {
     init_values(hp, mp, agility, strength, intellect, abs_speed, jump_high, attack_rad, cls);
     max_hp = hp;
     max_mp = mp;
+    curr_skill = -1;
+
     exp = level = 0;
     number = rand();
     recovery.hp = 0;
@@ -40,6 +43,7 @@ man::man(string _name, int cl) {
     number = rand();
     max_hp = hp;
     max_mp = mp;
+    curr_skill = -1;
     recovery.hp = 0;
     recovery.mp = 3;
 }
@@ -91,7 +95,11 @@ void man::move(float time) {
             this->get_effect(effects[i].mods_two_side * -1);
         }
     }
+    cout << busy << endl;
     busy = max((float)0, busy - time);
+    if (busy < EPS) {
+        curr_skill = -1;
+    }
     hp += (recovery.hp * time);
     hp = min(hp, (float)max_hp);
     mp += (recovery.mp * time);

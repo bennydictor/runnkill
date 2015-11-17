@@ -20,7 +20,7 @@
 
 struct man {
     std::string name;
-    int cls;
+    int cls, curr_skill;
     int level, exp, number;
     float def_mod, atk_mod, busy, attack_rad;
     bool can_die, have_shield, is_running, touch_ground;
