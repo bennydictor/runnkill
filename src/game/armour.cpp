@@ -30,16 +30,14 @@ void armour::get(vec3<float> p1, vec3<float> p2, float angle, vector<vec3<float>
     for (int i = 0; i < (int)v_to_points.size(); i++) {
         if (i != p1_idx) {
             v_to_points[i].rotate(angle_xz, 0);
-            /*
-            cout << v_to_points[i] << endl;
-            vec3<float> curr_point = v_to_points[i] + p1;
-            cout << v_to_points[i] << endl;
-            vec3<float> curr_normal = plain(p1, p2, curr_point);
-            curr_normal.resize(tan(angle) * sqrt(v_to_points[i].sqlen()));
-            vec3<float> curr_vec = v_to_points[i] + curr_normal;
-            curr_vec.resize(sqrt(v_to_points[i].sqlen()));
-            cout << v_to_points[i] << endl;
-            */
+        } 
+    }
+    vec2<float> yz(p1p2.y, p1p2.z), yz_was(v_to_points[p2_idx].y, v_to_points[p2_idx].z);
+    float angle_yz = atan2(yz_was.crs(yz), yz_was.dot(yz));
+//    cout << yz << ' ' << yz_was << ' ' << angle_yz << endl;
+    for (int i = 0; i < (int)v_to_points.size(); i++) {
+        if (i != p1_idx) {
+            v_to_points[i].rotate(0, 0, angle_yz);
         } 
     }
     vec2<float> xy(p1p2.x, p1p2.y), xy_was(v_to_points[p2_idx].x, v_to_points[p2_idx].y);

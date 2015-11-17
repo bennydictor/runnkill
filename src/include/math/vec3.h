@@ -19,7 +19,7 @@ struct vec3 {
     T sdot(const vec3<T> &v) const;
     T sqlen() const;
     void resize(const float s);
-    void rotate(const float s, const float t=0);
+    void rotate(const float s, const float t=0, const float a=0);
     void floor(const float s);
     operator vec3f();
 };
@@ -91,10 +91,11 @@ void vec3<T>::resize(const float s) {
     (*this) = s * (*this);
 }
 template <class T>
-void vec3<T>::rotate(const float s, const float t) {
-    T new_x, new_z;
-    float cosf = cos(std::min((float)(2 * M_PI - s), s));
-    float sinf;
+void vec3<T>::rotate(const float s, const float t, const float a) { // xz xy yz
+    T new_x, new_y, new_z;
+    float cosf, sinf;
+    if (s != 0) {
+    cosf = cos(std::min((float)(2 * M_PI - s), s));
     if (-M_PI < 2 * s and 2 * s <= M_PI)
         sinf = sin(s);
     else if (2 * s > 3 * M_PI)
@@ -105,8 +106,7 @@ void vec3<T>::rotate(const float s, const float t) {
     new_z = sinf * x + cosf * z;
     x = new_x;
     z = new_z;
-    if (t != 0) {
-        T new_y;
+    } if (t != 0) {
         cosf = cos(std::min((2 * M_PI - fabs(t)), fabs(t)));
         if (-M_PI < 2 * t and 2 * t <= M_PI)
             sinf = sin(t);
@@ -118,6 +118,19 @@ void vec3<T>::rotate(const float s, const float t) {
         new_y = sinf * x + cosf * y;
         x = new_x;
         y = new_y;
+    } if (a != 0) {
+        cosf = cos(std::min((2 * M_PI - fabs(a)), fabs(a)));
+        if (-M_PI < 2 * a and 2 * a <= M_PI)
+            sinf = sin(a);
+        else if (2 * a > 3 * M_PI)
+            sinf = -sin(2 * M_PI - a);
+        else
+            sinf = -sin(a - M_PI);
+        new_y = cosf * y - sinf * z;
+        new_z = sinf * y + cosf * z;
+        y = new_y;
+        z = new_z;
+
     }
 }
 
