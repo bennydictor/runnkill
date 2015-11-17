@@ -95,7 +95,7 @@ void man::move(float time) {
             this->get_effect(effects[i].mods_two_side * -1);
         }
     }
-    cout << busy << endl;
+    //cout << busy << endl;
     busy = max((float)0, busy - time);
     if (busy < EPS) {
         curr_skill = -1;

@@ -432,10 +432,10 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
             if (persons[i]->weapon) {
                 int one_idx = persons[i]->curr_skill;
                 if (one_idx != -1) {
-                    cout << "w" << endl;
-                    cout << persons[i]->skills[one_idx].animation_idx << animations.size() << endl;
                 result.push_back(persons[i]->weapon->give_me_points(
-                                   animations[persons[i]->skills[one_idx].animation_idx].get(persons[i]->busy)));
+                                   animations[persons[i]->skills[one_idx].animation_idx].get(persons[i]->busy),
+                                   event(persons[i]->coords, vec3<float>(), 
+                                         -atan2(persons[i]->orientation.x, persons[i]->orientation.z))));
                 }
                 else result.push_back(persons[i]->weapon->give_me_points(event(persons[i]->coords, persons[i]->coords + persons[i]->orientation, 0)));
 //                result.push_back(persons[i]->weapon->give_me_points(vec3<float>(0, 0, 0), vec3<float>(1, 0, 0)));

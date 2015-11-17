@@ -28,7 +28,7 @@ struct armour {
     armour();
     void get(vec3<float> p1, vec3<float> p2, float angle, std::vector<vec3<float> >& vbo);
     void in(std::istream& stream); 
-    draw_obj give_me_points(event E);
+    draw_obj give_me_points(event E, event other=event());
 
 };
 

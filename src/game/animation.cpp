@@ -34,7 +34,6 @@ event animation::get(float time) {
     vec3<float> vec_to_p2 = vec3<float>(p1, get_mid(events[l].point2, events[r].point2, proportion));
     float fdist = events[l].get_dist();
     vec_to_p2.resize(get_mid(fdist, events[r].get_dist(), proportion));
-    cout << p1 << vec_to_p2 << endl;
     event ret;
     ret.point1 = p1;
     ret.point2 = p1 + vec_to_p2;
