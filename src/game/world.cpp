@@ -403,10 +403,10 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
                 vec3<float> point1, p1p2 = persons[i]->orientation,
                             normal = plain(vec3<float>(0, 0, 0), 
                                            persons[i]->orientation, vec3<float>(0, 1, 0));
-                normal.resize(1.5);
-                point1 = persons[i]->coords + normal;
+                normal.resize(0.5);
                 p1p2.y = 0;
-                p1p2.resize(persons[i]->weapon->length());
+                p1p2.resize(2 * persons[i]->weapon->length());
+                point1 = persons[i]->coords + normal + p1p2;
                
                 if (one_idx != -1) {
 
