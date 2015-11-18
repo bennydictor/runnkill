@@ -5,7 +5,7 @@
 using namespace std;
 
 void skill_t::in_damage(istream& stream) {
-    stream >> cost.hp >> cost.mp >> busy_time;
+    stream >> cost.hp >> cost.mp;
     stream >> dmg;
     if (is_range) {
         sample.in(stream);

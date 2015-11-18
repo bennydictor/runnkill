@@ -53,7 +53,7 @@ void armour::get(vec3<float> p1, vec3<float> p2, float angle, vector<vec3<float>
             vec3<float> curr_vec(proj, curr_point);
             if (curr_normal.sqlen() > EPS) { 
                 curr_normal.resize(tan(angle) * sqrt(curr_vec.sqlen()));
-                vec3<float> res = curr_vec + curr_normal;
+                vec3<float> res = curr_vec - curr_normal;
                 res.resize(sqrt(curr_vec.sqlen()));
                 vbo.push_back(p1 + vec3<float>(p1, res + proj) / scale);
             } else {
@@ -100,7 +100,7 @@ void armour::in(istream& stream) {
         stream >> ibo_data[i];
     stream >> scale;
     count = 4 * ibo_size;
-    
+    l = dist(points[p1_idx], points[p2_idx]); 
     glGenBuffers(1, &vbo_buffer);
 }
 
@@ -113,7 +113,7 @@ draw_obj armour::give_me_points(event E, event other) {
     vertex3d *vbo_data = new vertex3d[vbo_to_get.size()];
     for (int i = 0; i < (int)vbo_to_get.size(); i++) {
         vbo_data[i].coord[0] = vbo_to_get[i].x + other.point1.x;// + coords.x;
-        vbo_data[i].coord[1] = vbo_to_get[i].y + other.point1.y + 1;// + coords.y;
+        vbo_data[i].coord[1] = vbo_to_get[i].y + other.point1.y;// + coords.y;
         vbo_data[i].coord[2] = vbo_to_get[i].z + other.point1.z;// + coords.z;
         vbo_data[i].normal[0] = normal[i].x;
         vbo_data[i].normal[1] = normal[i].y;
@@ -137,4 +137,8 @@ draw_obj armour::give_me_points(event E, event other) {
     ret.free_mat_m = 0;
     ret.free_ibo = 0;
     return ret;
+}
+
+float armour::length() {
+    return l;
 }

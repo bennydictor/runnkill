@@ -107,6 +107,7 @@ void man::move(float time) {
 }
 
 bool man::take_damage(int dmg) {
+    cout << dmg << endl;
     if (can_die) {
         hp = max(hp - dmg, 0.0f);
     } else {

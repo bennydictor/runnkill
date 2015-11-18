@@ -1,15 +1,15 @@
 class_0
 1
     M
-    0 10 0.9
-    1.5 0.8 0.8 0.1 1
+    0 10
+    1.5 -0.6 0.6 0.1 1
     0
-    0 0.2
+    0 0.7
     
 class_1
 1
     R
-    0 20 4
+    0 20
     1 20 0.1
     0
     0 0.3
@@ -24,10 +24,12 @@ class_2
 class X
 <amount of skills>
     <type M or R>
-    <hp cost> <mp cost> <busy_time>
+    <hp cost> <mp cost>
     <dmg left_angle right_angle height direction if M, else dmg spd size if R>
     <amount of effects>
         <time>
         <hp mp>
         <strength build agility intellect speed>
     <animation number> <when activate>
+
+busy = animation busy

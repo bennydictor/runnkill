@@ -4,7 +4,8 @@
 using namespace std;
 
 event::event() {
-
+    angle = 0;
+    point2 = point1 = vec3<float>(0, 0, 0);
 };
 
 event::event(vec3<float> p1, vec3<float> p2, float a) {
