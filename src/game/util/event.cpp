@@ -12,6 +12,7 @@ event::event(vec3<float> p1, vec3<float> p2, float a) {
     angle = a;
     point1 = p1;
     point2 = p2;
+    dt = 0;
 }
 
 void event::in(istream& stream) {

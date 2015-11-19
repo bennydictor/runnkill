@@ -25,6 +25,7 @@
 #define EXPLOSION_RADIUS .2
 #define EXPLOSION_TIME .3
 #define INF 10000000
+#define VEC3F vec3<float>()
 using namespace std;
 
 const int len = 1;
@@ -406,16 +407,21 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
                 normal.resize(0.5);
                 p1p2.y = 0;
                 p1p2.resize(2 * persons[i]->weapon->length());
-                point1 = persons[i]->coords + normal + p1p2;
-               
+                point1 = persons[i]->coords;
+                int an_idx = persons[i]->skills[one_idx].animation_idx; 
                 if (one_idx != -1) {
-
+                   animations[an_idx].events.push_back(event(vec3<float>(0, 1, 0), 
+                                                        VEC3F - persons[i]->orientation,
+                                                        -2 * atan2(persons[i]->orientation.x, persons[i]->orientation.z)));
                     result.push_back(persons[i]->weapon->give_me_points(
-                                   animations[persons[i]->skills[one_idx].animation_idx].get(persons[i]->busy),
+                                   animations[an_idx].get(persons[i]->busy),
                                    event(point1, vec3<float>(), 
                                          -atan2(persons[i]->orientation.x, persons[i]->orientation.z))));
+                    animations[an_idx].events.pop_back();
                 }
-                else result.push_back(persons[i]->weapon->give_me_points(event(point1, point1 + p1p2, 0)));
+                else result.push_back(persons[i]->weapon->give_me_points(event(persons[i]->coords + vec3<float>(0, 1, 0), 
+                                                                         persons[i]->coords - persons[i]->orientation,
+                                                          -atan2(persons[i]->orientation.x, persons[i]->orientation.z))));
 //                result.push_back(persons[i]->weapon->give_me_points(vec3<float>(0, 0, 0), vec3<float>(1, 0, 0)));
             }
             
