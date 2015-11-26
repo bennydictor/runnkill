@@ -18,7 +18,7 @@ string bp_names[] = {"right down front", "left down front",
 
 map<string, string> item_bp;
 float bp_init_mods[] = {
-    0.7, 0.8, 1.5, 1.2, 
+    0.7, 0.8, 1.3, 1.2, 
     0.8, 1,   1.8, 1.4, 
 };
 int cl_init_hp[] = {1500, 1100, 700};
@@ -27,7 +27,7 @@ int init_agi[] = {9, 15, 6};
 int init_strength[] = {15, 9, 6};
 int init_int[] = {3, 6, 15};
 int init_speed[] = {4, 7, 5};
-int init_jump_high[] = {3, 5, 4};
+int init_jump_high[] = {4, 5, 4};
 float init_attack_rad[] = {1.8, 1.5, 1.7};
 int atk_strength_mods[] = {4, 2, 1};
 int atk_agi_mods[] = {2, 3, 1};

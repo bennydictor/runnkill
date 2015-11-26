@@ -10,10 +10,10 @@
 #include <game/armour.h>
 #include <game/body_part.h>
 #include <game/common.h>
-#include <game/effect.h>
+#include <game/skills/effect.h>
 #include <game/items.h>
 #include <game/mod_type.h>
-#include <game/skill_type.h>
+#include <game/skills/skill_type.h>
 
 #include <math/vec2.h>
 #include <math/vec3.h>

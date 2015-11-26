@@ -1,4 +1,4 @@
-#include <game/effect.h>
+#include <game/skills/effect.h>
 #include <game/mod_type.h>
 using namespace std;
 

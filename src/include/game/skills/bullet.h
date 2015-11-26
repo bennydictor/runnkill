@@ -2,7 +2,7 @@
 #define GAME_BULLET_H
 
 #include <iostream>
-#include <game/effect.h>
+#include <game/skills/effect.h>
 #include <vector>
 #include <string>
 #include <math/vec3.h>

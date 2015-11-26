@@ -1,4 +1,4 @@
-#include <game/bullet.h>
+#include <game/skills/bullet.h>
 #include <iostream>
 using namespace std;
 

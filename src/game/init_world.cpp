@@ -5,8 +5,8 @@
 #include <game/field.h>
 #include <cstdio>
 #include <fstream>
-#include <game/skill_type.h>
-#include <game/bullet.h>
+#include <game/skills/skill_type.h>
+#include <game/skills/bullet.h>
 #include <game/init_world.h>
 #include <math/geom.h>
 #include <util/logstream.h>
@@ -36,7 +36,7 @@ void in_skills() {
         for (int j = 0; j < amount; j++) {
             in >> type;
             cout << '!' << type << endl;
-            default_skills[i][j].is_range = (type == 'R');
+            default_skills[i][j].type = type;
             default_skills[i][j].in_damage(in);
         }
     }
@@ -78,7 +78,7 @@ void in_animations() {
     in.close();
 }
 int init_world(void) {
-    w = h = 50;
+    w = h = 500;
     chunk = 10;
     world_map = new draw_obj*[w / chunk];
     for (int i = 0; i < w / chunk; ++i) {
@@ -86,7 +86,7 @@ int init_world(void) {
     }
     assert(w % chunk == 0);
     assert(h % chunk == 0);
-    F = gen_field_empty(w, h);
+    F = gen_field_lsuns(w, h);
 
     world_max_height = 0;
     for (int i = 0; i < w; ++i) {
@@ -116,17 +116,19 @@ int init_world(void) {
             i++;
         }
     }
-    persons.push_back(new man("Derrior", 0));
+    persons.push_back(new man("Derrior", 1));
     is_alive.push_back(1);
     persons[0]->coords = vec3<float>((float)i + 0.5, MAN_RAD, (float)j + 0.5);
     persons[0]->set_speed(vec3<float>(0, 0, 0));
-    persons[0]->skills.push_back(default_skills[0][0]);
+    persons[0]->skills.push_back(default_skills[1][1]);
+    cout << persons[0]->skills[0].type << endl;
     persons[0]->put_on(new item_t(default_items[0]), LEFT_BACK_DOWN);
     persons[0]->put_on(new item_t(default_items[2]), LEFT_BACK_DOWN);
     persons[0]->weapon = &default_armours[0];
     persons.push_back(new man("Benny", 1));
     is_alive.push_back(1);
     i = rand() % w;
+    j = rand() % h;
     while (i < w and F[i][j] != 0)
     {
         j++;
@@ -147,8 +149,6 @@ int init_world(void) {
     persons[1]->fortify(LEFT_FRONT_DOWN);
     persons[1]->fortify(RIGHT_FRONT_DOWN);
     cout << persons[0]->skills.size() << endl;
-    cout << persons[0]->skills[0].is_range << endl;
-    cout << (default_skills[1][0].is_range) << endl;
     return 0;
 }
 

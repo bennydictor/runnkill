@@ -1,6 +1,6 @@
 #include <graphics/material.h>
 
-material_t man_material, default_material, bullet_material, shield_material, explosion_material;
+material_t man_material, default_material, bullet_material, shield_material, explosion_material, trap_material;
 
 int init_material(void) {
     default_material.diffuse = default_material.ambient = make_vec3(1, 1, 1);
@@ -10,6 +10,10 @@ int init_material(void) {
     bullet_material.ambient = make_vec3(0, 1, 0);
     bullet_material.specular = make_vec3(1, 0.5, 0);
     bullet_material.shininess = 32;
+    trap_material.diffuse = make_vec3(1, 1, 0);
+    trap_material.ambient = make_vec3(0, 1, 0);
+    trap_material.specular = make_vec3(1, 0.5, 0);
+    trap_material.shininess = 32;
     shield_material.diffuse = shield_material.ambient = make_vec3(0, 0.1, 0.5);
     shield_material.specular = make_vec3(0, 0.9, 0.5);
     shield_material.shininess = 32;

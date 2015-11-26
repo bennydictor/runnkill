@@ -2,18 +2,22 @@ class_0
 1
     M
     0 12
-    1.5 -0.6 0.6 0.1 1
+    1.5 -0.4 0.4 0.1 2
     0
     0 0.7
     
 class_1
-1
+2
     R
     0 15
     1 20 0.1
     0
     0 0.3
-
+    T
+    0 20
+    1 0.5 1
+    0
+    1 0
 class_2
 0
     0 -10
@@ -25,7 +29,7 @@ class X
 <amount of skills>
     <type M or R>
     <hp cost> <mp cost>
-    <dmg left_angle right_angle height direction if M, else dmg spd size if R>
+    <dmg left_angle right_angle height distance if M, else dmg spd size if R>
     <amount of effects>
         <time>
         <hp mp>

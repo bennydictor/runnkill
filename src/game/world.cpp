@@ -8,8 +8,9 @@
 #include <game/init_world.h>
 #include <game/man.h>
 #include <game/field.h>
-#include <game/skill_type.h>
-#include <game/bullet.h>
+#include <game/skills/skill_type.h>
+#include <game/skills/bullet.h>
+#include <game/skills/trap.h>
 #include <game/armour.h>
 #include <game/animation.h>
 #include <game/util/event.h>
@@ -32,6 +33,7 @@ const int len = 1;
 int world_max_height;
 draw_obj **world_map;
 vector<bullet> bullets;
+vector<trap> traps;
 vector<man*> persons;
 vector<bool> is_alive, alive_bullets;
 vector<pair<vec3<float>, float> > explosions;
@@ -210,6 +212,10 @@ void damage_last_explosion(int b_idx) {
             //Here will be effects adding
         }
     }
+    for (int j = 0; j < (int)traps.size(); j++) {
+        if (traps[j].is_intersect(bullets[b_idx].coords, bullets[b_idx].rad))
+            traps[j].is_alive = 0;
+    }
 
 }
 int get_element(int** __F, int i, int j) {
@@ -372,6 +378,23 @@ void attack(int man_idx, int idx) {
     z->curr_skill = idx;
 }
 
+bool move_trap(int idx, float time) {
+//    cout << traps[idx].time << ' ' << traps[idx].activate_time << endl;
+    traps[idx].time += time;
+    if (traps[idx].time < traps[idx].activate_time or !traps[idx].is_alive) {
+        return true;
+    }
+    for (int i = 0; i < (int)persons.size(); i++) {
+        if (traps[idx].is_intersect(persons[i]->coords, MAN_RAD)) {
+            vec3<float> to(persons[i]->coords, traps[idx].centre);
+            to.resize(MAN_RAD);
+            explosions.push_back(make_pair(persons[i]->coords + to, EXPLOSION_TIME));
+            traps[idx].is_alive = false;
+        }
+    }
+    return traps[idx].is_alive;
+}
+
 void world_callback(vector<draw_obj> &result, vec3f coord) {
     result.clear();
     /*for (int i = 0; i < w; i++) {
@@ -406,13 +429,15 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
                                            persons[i]->orientation, vec3<float>(0, 1, 0));
                 normal.resize(0.5);
                 p1p2.y = 0;
-                p1p2.resize(2 * persons[i]->weapon->length());
-                point1 = persons[i]->coords;
+                p1p2.resize(persons[i]->weapon->length());
+                point1 = persons[i]->coords + p1p2;
                 int an_idx = persons[i]->skills[one_idx].animation_idx; 
                 if (one_idx != -1) {
+                
                    animations[an_idx].events.push_back(event(vec3<float>(0, 1, 0), 
                                                         VEC3F - persons[i]->orientation,
-                                                        -2 * atan2(persons[i]->orientation.x, persons[i]->orientation.z)));
+                                                        atan2(persons[i]->orientation.x, persons[i]->orientation.z)));
+                                                        //-2 * atan2(persons[i]->orientation.x, persons[i]->orientation.z)));
                     result.push_back(persons[i]->weapon->give_me_points(
                                    animations[an_idx].get(persons[i]->busy),
                                    event(point1, vec3<float>(), 
@@ -434,9 +459,13 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
     
     for (int i = 0; i < (int)bullets.size(); i++) {
         if (alive_bullets[i])
-        result.push_back(make_draw_sphere3fv1f(bullets[i].coords, bullets[i].rad, bullet_material));
+            result.push_back(make_draw_sphere3fv1f(bullets[i].coords, bullets[i].rad, bullet_material));
     }
-
+    
+    for (int i = 0; i < (int)traps.size(); i++) {
+        if (traps[i].is_alive)
+            result.push_back(make_draw_sphere3fv1f(traps[i].centre, traps[i].rad, trap_material));
+    }
     coord[0] = persons[0]->coords.x - 5 * (persons[0]->orientation.x);
     coord[1] = persons[0]->coords.y + 1;
     coord[2] = persons[0]->coords.z - 5 * (persons[0]->orientation.z);
@@ -445,6 +474,7 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
 
 void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp) {
     //cout << persons[0]->coords << endl;
+    //cout << traps.size() << endl;
     vector<bullet> new_bullets;
     vector<bool> new_alive_bullets;
     for (int i = 0; i < (int)bullets.size(); i++) {
@@ -466,6 +496,11 @@ void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp) {
     for (int i = 0; i < (int)nexp.size(); ++i) {
         if (nexp[i].second > 0) {
             explosions.push_back(nexp[i]);
+        }
+    }
+    for (int i = 0; i < (int)traps.size(); i++) {
+        if (traps[i].is_alive) {
+            move_trap(i, dt);
         }
     }
     for (int i = 0; i < (int)explosions.size(); i++) {
@@ -507,7 +542,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     }
     if (z->curr_skill != -1 and fabs(z->busy - z->skills[z->curr_skill].activate_time) < EPS) {
         skill_t curr = z->skills[z->curr_skill];
-        if (curr.is_range) {
+        if (curr.type == 'R') {
             bullets.push_back(bullet(curr.sample));
             bullets.back().coords = z->coords + ((float)MAN_RAD + 2 * (float)curr.sample.rad) * z->orientation;
             bullets.back().speed = vec3<float>(z->orientation);
@@ -518,12 +553,12 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
             bullets.back().exp_rad = 3;
             alive_bullets.push_back(1);
             cerr << "You shoot" << endl;
-        } else {
+        } else if (curr.type == 'M') {
             cerr << "you try to beat" << endl;
             for (int i = 0; i < (int)persons.size(); i++) {
                 if (i != man_idx) {
                     vec3<float> to_him(z->coords, persons[i]->coords);
-                    if (sqrt(to_him.sqlen()) > (2 * MAN_RAD + z->attack_rad)) {
+                    if (sqrt(to_him.sqlen()) > (2 * MAN_RAD + curr.distance)) {
                         cout << "too far" << endl;
                     } else {
                         to_him.resize(1);
@@ -543,6 +578,13 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
                         }
                     }
                 }
+            }
+        } else if (curr.type == 'T') {
+            if (z->touch_ground) {
+                vec3<float> centre = z->coords;
+                centre.y -= MAN_RAD;
+                traps.push_back(trap(centre, curr.distance, curr.dmg * count_attack(*z), curr.busy_time));
+                cout << "Охота началась!" << endl;
             }
         }
     }

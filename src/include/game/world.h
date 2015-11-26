@@ -14,7 +14,7 @@
 
 #include <vector>
 #include <math/vec3.h>
-#include <game/skill_type.h>
+#include <game/skills/skill_type.h>
 #include <game/items.h>
 #include <game/armour.h>
 #include <game/man.h>

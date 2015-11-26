@@ -2,9 +2,9 @@
 #define GAME_SKILL_TYPE_H
 
 #include <vector>
-#include <game/effect.h>
+#include <game/skills/effect.h>
 #include <game/mod_type.h>
-#include <game/bullet.h>
+#include <game/skills/bullet.h>
 #include <iostream>
 
 
@@ -13,9 +13,9 @@ struct skill_t {
     std::vector<effect> effects;
     mod_t cost;
     bullet sample;
-    bool is_range;
+    char type;
     int animation_idx;
-    float busy_time, activate_time, dmg, left_angle, right_angle, height, dir;
+    float busy_time, activate_time, dmg, left_angle, right_angle, height, distance;
     void in_damage(std::istream& stream);
 };
 
