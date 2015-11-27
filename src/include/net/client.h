@@ -17,8 +17,7 @@ typedef struct {
 } client_t;
 
 
-extern int control_socket;
-extern int data_socket;
+extern int local_socket;
 
 int init_net(void);
 void free_net(void);
