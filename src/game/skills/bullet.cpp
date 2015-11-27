@@ -9,5 +9,5 @@ vec3<float> bullet::in_time(float time) {
     return coords + time * speed;
 }
 void bullet::in(istream& stream) {
-    stream >> speed.x >> rad;
+    stream >> speed.x >> rad >> exp_rad;
 }

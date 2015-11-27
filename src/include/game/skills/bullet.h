@@ -17,7 +17,7 @@ struct bullet {
     float damage;
     float rad, exp_rad;
     bullet();
-    void in (std::istream& stream);
+    void in(std::istream& stream);
     vec3<float> in_time(float time);
     int owner;
 };

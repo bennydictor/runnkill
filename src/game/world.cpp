@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstdio>
-#include <fstream>
+//#include <fstream>
 #include <vector>
 #include <cmath>
 #include <ctime>
@@ -11,6 +11,7 @@
 #include <game/skills/skill_type.h>
 #include <game/skills/bullet.h>
 #include <game/skills/trap.h>
+#include <game/skills/explosion.h>
 #include <game/armour.h>
 #include <game/animation.h>
 #include <game/util/event.h>
@@ -23,8 +24,6 @@
 #include <graphics/objects/sphere.h>
 #include <graphics/objects/sphere_sector.h>
 #include <cassert>
-#define EXPLOSION_RADIUS .2
-#define EXPLOSION_TIME .3
 #define INF 10000000
 #define VEC3F vec3<float>()
 using namespace std;
@@ -36,7 +35,7 @@ vector<bullet> bullets;
 vector<trap> traps;
 vector<man*> persons;
 vector<bool> is_alive, alive_bullets;
-vector<pair<vec3<float>, float> > explosions;
+vector<explosion> explosions;
 vector<vector<skill_t > > default_skills;
 vector<item_t> default_items;
 vector<armour> default_armours;
@@ -202,18 +201,18 @@ bool intersect_sector_ball(vec3<float> centre, float rad1, float rad2, int i, ve
     return false;
 }
 
-void damage_last_explosion(int b_idx) {
+void damage_last_explosion() {
     //cout << explosions.back().first << endl;
     for (int j = 0; j < (int)persons.size(); j++) {
-        if (dist(explosions.back().first, persons[j]->coords) < MAN_RAD + explosions.back().second) {
-            int sector = detect_sector(persons[j]->coords, explosions.back().first, persons[j]->orientation);
+        if (dist(explosions.back().coords, persons[j]->coords) < MAN_RAD + explosions.back().rad) {
+            int sector = detect_sector(persons[j]->coords, explosions.back().coords, persons[j]->orientation);
             is_alive[j] = !persons[j]->take_damage(
-                        count_dmg(persons[j]->body_parts[sector], bullets[b_idx].damage));
+                        count_dmg(persons[j]->body_parts[sector], explosions.back().damage));
             //Here will be effects adding
         }
     }
     for (int j = 0; j < (int)traps.size(); j++) {
-        if (traps[j].is_intersect(bullets[b_idx].coords, bullets[b_idx].rad))
+        if (traps[j].is_intersect(explosions.back().coords, explosions.back().rad))
             traps[j].is_alive = 0;
     }
 
@@ -285,8 +284,8 @@ bool move_bullet(int b_idx, float time) {
         return false;
     }
     if (abs(bullets[b_idx].coords.y) > 100) {
-        explosions.push_back(make_pair(bullets[b_idx].coords, bullets[b_idx].exp_rad));
-        damage_last_explosion(b_idx);
+        explosions.push_back(explosion(bullets[b_idx].coords, EXPLOSION_TIME, bullets[b_idx].exp_rad, bullets[b_idx].damage));
+        damage_last_explosion();
         alive_bullets[b_idx] = 0;
         return false;
     }
@@ -296,8 +295,8 @@ bool move_bullet(int b_idx, float time) {
     bool res = move_sphere(bullets[b_idx].coords, our_point, (float)bullets[b_idx].rad, bullets[b_idx].owner, true, touch_point);
     if (res) {
 //        cerr << "Strike #" << 179 << endl;
-        explosions.push_back(make_pair(our_point, EXPLOSION_TIME));
-        damage_last_explosion(b_idx);
+        explosions.push_back(explosion(bullets[b_idx].coords, EXPLOSION_TIME, bullets[b_idx].exp_rad, bullets[b_idx].damage));
+        damage_last_explosion();
         alive_bullets[b_idx] = 0;
         return false;
     }
@@ -329,8 +328,8 @@ bool move_man(int idx, float time) {
     if (res)
     {
         if (persons[idx]->coords == finish) {
-            cout << persons[idx]->coords << finish << persons[idx]->in_time(time) << endl;   
-            cout << persons[idx]->speed << endl;
+            //cout << persons[idx]->coords << finish << persons[idx]->in_time(time) << endl;   
+            //cout << persons[idx]->speed << endl;
         }
         persons[idx]->coords = finish;
         vec3<float> our_plain = vec3<float>(persons[idx]->coords, touch_point);
@@ -388,10 +387,12 @@ bool move_trap(int idx, float time) {
         if (traps[idx].is_intersect(persons[i]->coords, MAN_RAD)) {
             vec3<float> to(persons[i]->coords, traps[idx].centre);
             to.resize(MAN_RAD);
-            explosions.push_back(make_pair(persons[i]->coords + to, EXPLOSION_TIME));
+            explosions.push_back(explosion(persons[i]->coords + to, EXPLOSION_TIME, EXPLOSION_RADIUS, traps[idx].dmg));
+            damage_last_explosion();
             traps[idx].is_alive = false;
         }
     }
+    
     return traps[idx].is_alive;
 }
 
@@ -453,8 +454,8 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
         }
     }
     for (int i = 0; i < (int) explosions.size(); ++i) {
-        result.push_back(make_draw_sphere3fv1f(explosions[i].first, EXPLOSION_RADIUS * 
-                        powf(EXPLOSION_TIME - explosions[i].second, 1.0 / 3), explosion_material));
+        result.push_back(make_draw_sphere3fv1f(explosions[i].coords, explosions[i].rad * 
+                        powf(explosions[i].time_c(), 1.0 / 3), explosion_material));
     }
     
     for (int i = 0; i < (int)bullets.size(); i++) {
@@ -491,10 +492,10 @@ void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp) {
         if (is_alive[i])
             move_man(i, dt);
     }
-    vector<pair<vec3<float>, float>> nexp = explosions;
+    vector<explosion> nexp = explosions;
     explosions.clear();
     for (int i = 0; i < (int)nexp.size(); ++i) {
-        if (nexp[i].second > 0) {
+        if (nexp[i].time - nexp[i].end_time < 0) {
             explosions.push_back(nexp[i]);
         }
     }
@@ -504,7 +505,7 @@ void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp) {
         }
     }
     for (int i = 0; i < (int)explosions.size(); i++) {
-        explosions[i].second -= dt;
+        explosions[i].time += dt;
     }
     man_update(0, evs, vec3<float>(sinf(rot[1]), -rot[0] * 2 + 0.1, -cosf(rot[1])));
     hp[0] = persons[0]->hp;

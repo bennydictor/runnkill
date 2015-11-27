@@ -12,9 +12,8 @@ trap::trap(vec3<float> _centre, float _rad, float _dmg, float t) {
 }
 
 bool trap::is_intersect(vec3<float> c, float r) {
-    cout << time << ' ' << activate_time << endl;
+//    cout << time << ' ' << activate_time << endl;
     if (vec3<float>(c, centre).sqlen() > (r + rad) * (r + rad)) {
-        cout << "1" << endl;
         return false;
     }
     cout << "Капкан!" << endl;
