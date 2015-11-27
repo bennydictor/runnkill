@@ -16,12 +16,22 @@
 #include <graphics/objects/pp.h>
 #include <controller.h>
 
-#include <game/init_world.h>
+#include <net.h>
 
 
-int main() {
+int main(int argc, char **argv) {
     lopen("/dev/stderr");
     min_log_level = LOG_D;
+    if (argc < 2) {
+        printl(LOG_I, "Usage: %s hostname [port]", argv[0]);
+        return EXIT_FAILURE;
+    } else {
+        if (init_net(argv[1], argc >= 3 ? atoi(argv[2]) : 0)) {
+            printl(LOG_E, "Fatal error while initializing network.");
+            return EXIT_FAILURE;
+        }
+    }
+
     ft_font_size = 24;
 
     gl_pos = make_vec3(-5, 3, 5);
@@ -51,10 +61,6 @@ int main() {
         free_glfw();
         return EXIT_FAILURE;
     }
-    if (init_world()) {
-        printl(LOG_E, "Fatal error while initializing world.");
-        return EXIT_FAILURE;
-    }
     while (!glfwWindowShouldClose(window)) {
         controller();
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -62,9 +68,9 @@ int main() {
         }
     }
 
-    free_world();
     free_gl();
     free_glfw();
+    free_net();
     lclose();
     return EXIT_SUCCESS;
 }
