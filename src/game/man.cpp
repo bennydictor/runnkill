@@ -89,11 +89,14 @@ void man::move(float time) {
     for (size_t i = 0; i < effects.size(); i++)
     {
         mod_t res = effects[i].tic(time);
-        this->get_effect(res);
+        get_effect(res);
         if (effects[i].time <= 0)
         {
-            this->get_effect(effects[i].mods_two_side * -1);
+            get_effect(effects[i].mods_two_side * -1);
         }
+    }
+    for (int i = 0; i < (int)skills.size(); i++) {
+        skills[i].to_activate -= time; 
     }
     //cout << busy << endl;
     busy = max((float)0, busy - time);

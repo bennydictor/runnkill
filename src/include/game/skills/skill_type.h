@@ -15,6 +15,7 @@ struct skill_t {
     bullet sample;
     char type;
     int animation_idx;
+    float to_activate, between_activate;
     float busy_time, activate_time, dmg, left_angle, right_angle, height, distance;
     void in_damage(std::istream& stream);
 };

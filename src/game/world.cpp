@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cstdio>
-//#include <fstream>
 #include <vector>
 #include <cmath>
 #include <ctime>
@@ -364,17 +363,18 @@ bool move_man(int idx, float time) {
 }
 
 void attack(int man_idx, int idx) {
-
     man* z = persons[man_idx];
-    if (z->busy > 0 or (int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp) {
+    if (z->busy > 0 or (int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp or z->skills[idx].to_activate > EPS) {
 //        cerr << "You missed!" << endl;
         return;
     }
+    cout << z->skills[idx].to_activate << ' ' << z->skills[idx].between_activate << endl;
     z->mp -= z->skills[idx].cost.mp;
     cerr << "Well, " << endl;
     skill_t curr = z->skills[idx];
     z->busy += animations[curr.animation_idx].events[0].dt;
     z->curr_skill = idx;
+    z->skills[idx].to_activate = z->skills[idx].between_activate;
 }
 
 bool move_trap(int idx, float time) {

@@ -5,7 +5,7 @@
 using namespace std;
 
 void skill_t::in_damage(istream& stream) {
-    stream >> cost.hp >> cost.mp;
+    stream >> cost.hp >> cost.mp >> between_activate;
     stream >> dmg;
     if (type == 'R') {
         sample.in(stream);
@@ -27,5 +27,6 @@ void skill_t::in_damage(istream& stream) {
         sample.effects = effects;
     }
     stream >> animation_idx >> activate_time;
+    to_activate = 0;
 }
 
