@@ -44,8 +44,8 @@ vec3<float> sector_points_c[8] = {
         vec3<float>(0, 0, 1), vec3<float>(0, 0, -1), vec3<float>(0, 0, 1), vec3<float>(0, 0, -1),
         vec3<float>(0, 0, 1), vec3<float>(0, 0, -1), vec3<float>(0, 0, 1), vec3<float>(0, 0, -1)
 };
-int** F;
-int w, h, chunk;
+int** world_field;
+int world_w, world_h, chunk;
 
 template <class T>
 
@@ -199,10 +199,10 @@ void damage_last_explosion(int b_idx) {
 
 }
 int get_element(int** __F, int i, int j) {
-    if (i < 0 or i > w - 1 or j < 0 or j > h - 1)
+    if (i < 0 or i > world_w - 1 or j < 0 or j > world_h - 1)
         return -INF;
-    i = min(w - 1, max(i, 0));
-    j = min(h - 1, max(j, 0));
+    i = min(world_w - 1, max(i, 0));
+    j = min(world_h - 1, max(j, 0));
     return __F[i][j];
 }
 template <class T>
@@ -240,7 +240,7 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag) {
         for (int j = -(int)rad - 1; j <= (int)rad + 1; j++) {
             point1 = vec3<float>((int)finish.x - rad + EPS + i, -rad + EPS, (int)finish.z - rad + EPS + j);
             point2 = vec3<float>((int)finish.x + 1 + rad - EPS + i, -rad + EPS, (int)finish.z - rad + EPS + j);
-            point3 = vec3<float>((int)finish.x - rad + EPS + i, get_element(F, (int)finish.x + i, (int)finish.z + j) + rad - EPS, 
+            point3 = vec3<float>((int)finish.x - rad + EPS + i, get_element(world_field, (int)finish.x + i, (int)finish.z + j) + rad - EPS, 
                                                                 (int)finish.z - rad + EPS + j);
             point4 = vec3<float>((int)finish.x - rad + EPS + i, -rad + EPS, (int)finish.z + 1 + rad - EPS + j);
             bool res1 = intersect_seg_ortohedron(
@@ -375,8 +375,8 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
             result.push_back(make_draw_box(bounds, default_material));
         }
     }*/
-    for (int i = max(0, (int) (persons[0]->coords.x / chunk + .5) - 2); i < min(w / chunk, (int) (persons[0]->coords.x / chunk + .5) + 2); ++i) {
-        for (int j = max(0, (int) (persons[0]->coords.z / chunk + .5) - 2); j < min(h / chunk, (int) (persons[0]->coords.z / chunk + .5) + 2); ++j) {
+    for (int i = max(0, (int) (persons[0]->coords.x / chunk + .5) - 2); i < min(world_w / chunk, (int) (persons[0]->coords.x / chunk + .5) + 2); ++i) {
+        for (int j = max(0, (int) (persons[0]->coords.z / chunk + .5) - 2); j < min(world_h / chunk, (int) (persons[0]->coords.z / chunk + .5) + 2); ++j) {
             result.push_back(world_map[i][j]);
         }
     }

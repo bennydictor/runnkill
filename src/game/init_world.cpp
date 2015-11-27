@@ -56,24 +56,24 @@ void in_items() {
 }
 
 int init_world(void) {
-    w = h = 100;
+    world_w = world_h = 100;
     chunk = 10;
-    cout << loglevel(LOG_I) << "world height: " << h << endl << "world width: " << w << endl << "chunk size: " << chunk << endl << loglevel(LOG_D);
-    world_map = new draw_obj*[w / chunk];
-    for (int i = 0; i < w / chunk; ++i) {
-        world_map[i] = new draw_obj[h / chunk];
+    cout << loglevel(LOG_I) << "world height: " << world_h << endl << "world width: " << world_w << endl << "chunk size: " << chunk << endl << loglevel(LOG_D);
+    assert(world_w % chunk == 0);
+    assert(world_h % chunk == 0);
+    world_map = new draw_obj*[world_w / chunk];
+    for (int i = 0; i < world_w / chunk; ++i) {
+        world_map[i] = new draw_obj[world_h / chunk];
     }
-    assert(w % chunk == 0);
-    assert(h % chunk == 0);
-    F = gen_field_sun(w, h);
+    world_field = gen_field_sun(world_w, world_h);
     world_max_height = 0;
-    for (int i = 0; i < w; ++i) {
-        for (int j = 0; j < h; ++j) {
-            world_max_height = max(world_max_height, F[i][j]);
+    for (int i = 0; i < world_w; ++i) {
+        for (int j = 0; j < world_h; ++j) {
+            world_max_height = max(world_max_height, world_field[i][j]);
         }
     }
-    for (int i = 0; i < w; i += chunk) {
-        for (int j = 0; j < h; j += chunk) {
+    for (int i = 0; i < world_w; i += chunk) {
+        for (int j = 0; j < world_h; j += chunk) {
             world_map[i / chunk][j / chunk] = make_draw_subfield(i, j, i + chunk, j + chunk, default_material);
         }
     }
@@ -84,7 +84,7 @@ int init_world(void) {
 }
 
 void free_world(void) {
-    for (int i = 0; i < w / chunk; ++i) {
+    for (int i = 0; i < world_w / chunk; ++i) {
         delete[] world_map[i];
     }
     delete[] world_map;
