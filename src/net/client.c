@@ -23,7 +23,8 @@ client_t clients[MAX_CLIENTS];
 void net_update(void) {
     char msg[MSG_BUF_LEN];
     struct sockaddr_in src_addr;
-    socklen_t addrlen;
+    socklen_t addrlen = sizeof(struct sockaddr_in);
+    memset(&src_addr, 0, sizeof(struct sockaddr_in));
     int msg_len;
     while ((msg_len = recvfrom(local_socket, msg, MSG_BUF_LEN, MSG_DONTWAIT, (struct sockaddr *) &src_addr, &addrlen)) > 0) {
         printl(LOG_D, "Datagramm from %s:%d", inet_ntoa(src_addr.sin_addr), ntohs(src_addr.sin_port));
