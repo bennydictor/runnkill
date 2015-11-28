@@ -77,6 +77,27 @@ void in_animations() {
     }
     in.close();
 }
+
+void in_materials() {
+    fstream in;
+    in.open("materials");
+    int am;
+    in >> am;
+    float r, g, b;
+    materials.resize(am);
+    for (int j = 0; j < am; j++) {
+        in >> r >> g >> b;
+        cout << r << ' '<< g<< ' ' << b << ' ' << endl;
+        materials[j].ambient = cpp_make_vec3(r, g, b);
+        in >> r >> g >> b;
+        materials[j].diffuse = cpp_make_vec3(r, g, b);
+        in >> r >> g >> b;
+        materials[j].specular = cpp_make_vec3(r, g, b);
+        in >> materials[j].shininess;
+    }
+    in.close();
+}
+
 int init_world(void) {
     w = h = 500;
     chunk = 10;
@@ -105,6 +126,7 @@ int init_world(void) {
     in_items();
     in_armours();
     in_animations();
+    in_materials();
     int i = 0;
     int j = 0;
     while (F[i][j] != 0)

@@ -4,10 +4,11 @@
 
 struct trap {
     float rad, dmg, time, activate_time;
+    int material_idx;
     bool is_alive;
     vec3<float> centre;
     trap() { };
-    trap(vec3<float> _centre, float _rad, float _dmg, float t);
+    trap(vec3<float> _centre, float _rad, float _dmg, float t, int i);
     bool is_intersect(vec3<float> c, float r);
 };
 

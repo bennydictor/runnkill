@@ -2,13 +2,14 @@
 
 using namespace std;
 
-trap::trap(vec3<float> _centre, float _rad, float _dmg, float t) {
+trap::trap(vec3<float> _centre, float _rad, float _dmg, float t, int i) {
     centre = _centre;
     rad = _rad;
     dmg = _dmg;
     activate_time = t;
     time = 0;
     is_alive = true;
+    material_idx = i;
 }
 
 bool trap::is_intersect(vec3<float> c, float r) {

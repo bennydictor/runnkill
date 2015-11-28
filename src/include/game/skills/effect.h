@@ -12,6 +12,7 @@ public:
     mod_t mods_one_side;
     mod_t mods_two_side;
     float time;
+    int material_idx;
     effect(std::string _name) : name(_name) {}
     mod_t tic(float t);
     void in(std::istream& stream);

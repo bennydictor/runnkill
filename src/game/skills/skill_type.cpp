@@ -13,7 +13,7 @@ void skill_t::in_damage(istream& stream) {
     } else if (type == 'M') {
         stream >> left_angle >> right_angle >> height >> distance;
     } else if (type == 'T') {
-        stream >> distance >> busy_time; 
+        stream >> distance >> busy_time >> material_idx; 
     }
     int amount_of_effects;
     stream >> amount_of_effects;

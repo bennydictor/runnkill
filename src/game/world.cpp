@@ -39,6 +39,7 @@ vector<vector<skill_t > > default_skills;
 vector<item_t> default_items;
 vector<armour> default_armours;
 vector<animation> animations;
+vector<material_t> materials;
 vec3<float> sector_points_a[8] = {
         vec3<float>(0, -1, 0), vec3<float>(0, -1, 0), vec3<float>(0, 1, 0), vec3<float>(0, 1, 0), 
         vec3<float>(0, -1, 0), vec3<float>(0, -1, 0), vec3<float>(0, 1, 0), vec3<float>(0, 1, 0), 
@@ -267,6 +268,7 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag, ve
                 /*
                 if (res)
                     cout << point1 << point2 << point3 << point4 << finish << endl;
+
                 cout << res << endl;
                 */
             }
@@ -419,7 +421,7 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
                 else if (persons[i]->body_parts[j].item)
                 {
                     result.push_back(make_draw_sphere_sector3fv2f(persons[i]->coords, alpha, 1.1 * MAN_RAD, j,
-                                    persons[i]->body_parts[j].item->material));
+                       materials[persons[i]->body_parts[j].item->material_idx]));
                 }
             }
             
@@ -465,7 +467,7 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
     
     for (int i = 0; i < (int)traps.size(); i++) {
         if (traps[i].is_alive)
-            result.push_back(make_draw_sphere3fv1f(traps[i].centre, traps[i].rad, trap_material));
+            result.push_back(make_draw_sphere3fv1f(traps[i].centre, traps[i].rad, materials[traps[i].material_idx]));
     }
     coord[0] = persons[0]->coords.x - 5 * (persons[0]->orientation.x);
     coord[1] = persons[0]->coords.y + 1;
@@ -584,7 +586,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
             if (z->touch_ground) {
                 vec3<float> centre = z->coords;
                 centre.y -= MAN_RAD;
-                traps.push_back(trap(centre, curr.distance, curr.dmg * count_attack(*z), curr.busy_time));
+                traps.push_back(trap(centre, curr.distance, curr.dmg * count_attack(*z), curr.busy_time, curr.material_idx));
                 cout << "Охота началась!" << endl;
             }
         }
