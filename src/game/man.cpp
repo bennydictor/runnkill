@@ -2,7 +2,6 @@
 #include <game/common.h>
 #include <game/animation.h>
 #include <cstdlib>
-
 using namespace std;
 man::man() {
     cls = 0;
@@ -56,20 +55,28 @@ void man::set_orientation(vec3<float> orient) {
     orientation = orient;
     orientation.resize(1);
 }
-void man::get_effect(mod_t res) {
+void man::get_effect_1(mod_t res) {
     hp += res.hp;
     mp += res.mp;
+}
+
+void man::get_effect_2(mod_t res) {
+     
     agility *= res.agility;
     strength *= res.strength;
     intellect *= res.intellect;
-    speed = res.speed * speed;
+    abs_speed *= res.speed;
     def_mod *= res.def_mod;
     atk_mod *= res.atk_mod;
+    cout << '!' << abs_speed << endl; 
 }
-
+void man::add_effect(effect a) {
+    effects.push_back(a);
+    get_effect_2(a.mods_two_side);
+}
 vec3<float> man::in_time(float time) {
     int amount_of_f = 0;
-    for (int j = 0; j < BP_AMOUNT; j++) {
+    for (int j = 1; j < BP_AMOUNT; j++) {
         if (body_parts[j].is_fortified) {
             amount_of_f++;
         }
@@ -81,6 +88,9 @@ vec3<float> man::in_time(float time) {
     speed_tmp.y = 0;
     vec3<float> ret = coords + (float)((time * max(0.1f, (1 - (float)0.2 * amount_of_f))) * (is_running ? (have_shield ? 1.6 : 2) : 1)) * speed_tmp;
     ret.y += time * speed.y;
+    char a;
+    if (!(abs(speed.x) >= 0))
+        cin >> a;
     //cout << ret << ' ' << speed << endl;
     return ret;
 }
@@ -89,11 +99,12 @@ void man::move(float time) {
     for (size_t i = 0; i < effects.size(); i++)
     {
         mod_t res = effects[i].tic(time);
-        get_effect(res);
-        if (effects[i].time <= 0)
+        get_effect_1(res);
+        if (effects[i].time >= 0 and effects[i].time - time <= 0)
         {
-            get_effect(effects[i].mods_two_side * -1);
+            get_effect_2(effects[i].mods_two_side * -1);
         }
+        effects[i].time -= time;
     }
     for (int i = 0; i < (int)skills.size(); i++) {
         skills[i].to_activate -= time; 
@@ -150,13 +161,13 @@ void man::put_on(item_t* item, int idx) {
     item_t* wore = body_parts[idx].put_on(item);
     if (wore)
     {
-        get_effect(wore->effects * -1);
+        get_effect_2(wore->effects * -1);
         max_hp -= wore->hp;
         max_mp -= wore->mp;
        
         bag.push_back(wore);
     }
-    get_effect(item->effects);
+    get_effect_2(item->effects);
     max_hp += item->hp;
     max_mp += item->mp;
 }

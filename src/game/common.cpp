@@ -45,7 +45,7 @@ void init_maps() {
     }
 }
 
-void init_values(float &hp, float &mp, int &agi, int &strength, int &intellect, int &speed, int& jump_high, float& attack_rad, int cl) {
+void init_values(float &hp, float &mp, float &agi, float &strength, float &intellect, float &speed, float& jump_high, float& attack_rad, int cl) {
     hp = cl_init_hp[cl];
     mp = init_mp[cl];
     agi = init_agi[cl];

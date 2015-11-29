@@ -32,14 +32,16 @@ struct man {
     std::vector<skill_t> skills;
     float hp, mp;
     armour* weapon;
-    int max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high;
+    float max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high;
     man();
     man(std::string _name, int cl);
     vec3<float> in_time(float time);
     void move(float time);
+    void add_effect(effect a);
     void set_speed(vec3<float> spd);
     void set_orientation(vec3<float> orient);
-    void get_effect(mod_t res);
+    void get_effect_1(mod_t res);
+    void get_effect_2(mod_t res);
     void fortify(int idx);
     void out(std::ostream& stream);
     void run();

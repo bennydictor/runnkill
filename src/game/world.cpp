@@ -208,7 +208,11 @@ void damage_last_explosion() {
             int sector = detect_sector(persons[j]->coords, explosions.back().coords, persons[j]->orientation);
             is_alive[j] = !persons[j]->take_damage(
                         count_dmg(persons[j]->body_parts[sector], explosions.back().damage));
-            //Here will be effects adding
+            if (is_alive[j]) {
+                for (int i = 0; i < (int)explosions.back().effects.size(); i++) {
+                    persons[j]->add_effect((explosions.back().effects[i]));
+                }
+            }
         }
     }
     for (int j = 0; j < (int)traps.size(); j++) {
@@ -286,6 +290,9 @@ bool move_bullet(int b_idx, float time) {
     }
     if (abs(bullets[b_idx].coords.y) > 100) {
         explosions.push_back(explosion(bullets[b_idx].coords, EXPLOSION_TIME, bullets[b_idx].exp_rad, bullets[b_idx].damage));
+        for (int j = 0; j < (int)bullets[b_idx].effects.size(); j++) {
+            explosions.back().effects.push_back(bullets[b_idx].effects[j]);
+        }
         damage_last_explosion();
         alive_bullets[b_idx] = 0;
         return false;
@@ -297,6 +304,9 @@ bool move_bullet(int b_idx, float time) {
     if (res) {
 //        cerr << "Strike #" << 179 << endl;
         explosions.push_back(explosion(bullets[b_idx].coords, EXPLOSION_TIME, bullets[b_idx].exp_rad, bullets[b_idx].damage));
+        for (int j = 0; j < (int)bullets[b_idx].effects.size(); j++) {
+            explosions.back().effects.push_back(bullets[b_idx].effects[j]);
+        }
         damage_last_explosion();
         alive_bullets[b_idx] = 0;
         return false;
@@ -325,13 +335,15 @@ bool move_man(int idx, float time) {
     }
     persons[idx]->touch_ground = false;
     vec3<float> touch_point(0, 0, 0);
+    //cout << "b" << endl;
     bool res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, false, touch_point);
     if (res)
     {
         if (persons[idx]->coords == finish) {
+        }
             //cout << persons[idx]->coords << finish << persons[idx]->in_time(time) << endl;   
             //cout << persons[idx]->speed << endl;
-        }
+        
         persons[idx]->coords = finish;
         vec3<float> our_plain = vec3<float>(persons[idx]->coords, touch_point);
         float d = -our_plain.dot(persons[idx]->coords);
@@ -390,6 +402,10 @@ bool move_trap(int idx, float time) {
             vec3<float> to(persons[i]->coords, traps[idx].centre);
             to.resize(MAN_RAD);
             explosions.push_back(explosion(persons[i]->coords + to, EXPLOSION_TIME, EXPLOSION_RADIUS, traps[idx].dmg));
+            
+            for (int j = 0; j < (int)traps[idx].effects.size(); j++) {
+                explosions.back().effects.push_back(traps[idx].effects[j]);
+            }
             damage_last_explosion();
             traps[idx].is_alive = false;
         }
@@ -413,7 +429,15 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
     }
     for (int i = 0; i < (int)persons.size(); i++) {
         if (is_alive[i]) {
+            
             result.push_back(make_draw_sphere3fv1f(persons[i]->coords, MAN_RAD, man_material));
+            for (int j = 0; j < (int)persons[i]->effects.size(); j++) {
+                if (persons[i]->effects[j].time > 0) {
+                    vec3<float> centre = persons[i]->coords;
+                    centre.y += 0.5;
+                    result.push_back(make_draw_sphere3fv1f(centre, 0.1, materials[persons[i]->effects[i].material_idx]));
+                }
+            }
             float alpha = atan2(persons[i]->orientation.x, persons[i]->orientation.z);
             for (int j = 0; j < BP_AMOUNT; j++) {
                 if (persons[i]->body_parts[j].is_fortified)
@@ -491,8 +515,9 @@ void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp) {
     bullets = new_bullets; 
     alive_bullets = new_alive_bullets;
     for (int i = 0; i < (int)persons.size(); i++) {
-        if (is_alive[i])
+        if (is_alive[i]) {
             move_man(i, dt);
+        }
     }
     vector<explosion> nexp = explosions;
     explosions.clear();
@@ -587,6 +612,9 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
                 vec3<float> centre = z->coords;
                 centre.y -= MAN_RAD;
                 traps.push_back(trap(centre, curr.distance, curr.dmg * count_attack(*z), curr.busy_time, curr.material_idx));
+                for (int i = 0; i < (int)curr.effects.size(); i++) {
+                    traps.back().effects.push_back(curr.effects[i]);
+                }
                 cout << "Охота началась!" << endl;
             }
         }
