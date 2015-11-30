@@ -96,6 +96,7 @@ vec3<float> man::in_time(float time) {
 }
 
 void man::move(float time) {
+    vector<effect> new_effects;
     for (size_t i = 0; i < effects.size(); i++)
     {
         mod_t res = effects[i].tic(time);
@@ -105,7 +106,11 @@ void man::move(float time) {
             get_effect_2(effects[i].mods_two_side * -1);
         }
         effects[i].time -= time;
+        if (effects[i].time > -EPS) {
+            new_effects.push_back(effects[i]);
+        }
     }
+    effects = new_effects;
     for (int i = 0; i < (int)skills.size(); i++) {
         skills[i].to_activate -= time; 
     }

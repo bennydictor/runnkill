@@ -165,7 +165,7 @@ int init_world(void) {
 
     persons[1]->coords = vec3<float>((float)i + 0.5, MAN_RAD,(float)j + 0.5);
     persons[1]->set_speed(vec3<float>(0, 0, 0));
-    persons[1]->skills.push_back(default_skills[1][0]);
+    persons[1]->skills.push_back(default_skills[1][1]);
     persons[1]->fortify(LEFT_FRONT_UP);
     persons[1]->fortify(RIGHT_FRONT_UP);
     persons[1]->fortify(LEFT_FRONT_DOWN);

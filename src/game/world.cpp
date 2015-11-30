@@ -434,8 +434,8 @@ void world_callback(vector<draw_obj> &result, vec3f coord) {
             for (int j = 0; j < (int)persons[i]->effects.size(); j++) {
                 if (persons[i]->effects[j].time > 0) {
                     vec3<float> centre = persons[i]->coords;
-                    centre.y += 0.5;
-                    result.push_back(make_draw_sphere3fv1f(centre, 0.1, materials[persons[i]->effects[i].material_idx]));
+                    centre.y += 0.6 + j * 0.3;
+                    result.push_back(make_draw_sphere3fv1f(centre, 0.1, materials[persons[i]->effects[j].material_idx]));
                 }
             }
             float alpha = atan2(persons[i]->orientation.x, persons[i]->orientation.z);
