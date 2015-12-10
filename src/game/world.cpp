@@ -518,6 +518,10 @@ void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp) {
         if (is_alive[i]) {
             move_man(i, dt);
         }
+        if (persons[i]->hp < 0) {
+            is_alive[i] = false;
+            persons[i]->hp = 0;
+        }
     }
     vector<explosion> nexp = explosions;
     explosions.clear();

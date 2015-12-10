@@ -107,7 +107,7 @@ int init_world(void) {
     }
     assert(w % chunk == 0);
     assert(h % chunk == 0);
-    F = gen_field_lsuns(w, h);
+    F = gen_field_suns(w, h);
 
     world_max_height = 0;
     for (int i = 0; i < w; ++i) {
