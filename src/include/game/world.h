@@ -23,12 +23,17 @@ typedef struct {
 
 #include <vector>
 #include <math/vec3.h>
-#include <game/skill_type.h>
+#include <game/skills/skill_type.h>
 #include <game/items.h>
+//#include <game/armour.h>
+#include <game/animation.h>
 #include <game/man.h>
 
 extern std::vector<std::vector<skill_t>> default_skills;
 extern std::vector<item_t> default_items;
+//extern std::vector<armour> default_armours;
+extern std::vector<animation> animations;
+extern std::vector<int> fake_materials_idx;
 extern vec3<float> sector_points_a[8];
 extern vec3<float> sector_points_b[8];
 extern vec3<float> sector_points_c[8];
@@ -69,6 +74,8 @@ void world_update(float dt);
 void kill_person(int idx);
 float *get_person_coords(int idx);
 float *get_person_orientation(int idx);
+//extern draw_obj **world_map;
+//void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp);
 
 #ifdef __cplusplus
 }

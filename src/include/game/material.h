@@ -22,6 +22,7 @@ extern material_t materials[MAX_MATERIAL];
 extern int material_count;
 extern material_t default_material;
 extern material_t bullet_material;
+extern material_t trap_material;
 extern material_t shield_material;
 extern material_t man_material;
 extern material_t explosion_material;

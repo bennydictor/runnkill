@@ -9,13 +9,17 @@ sring bp_names[] = {"head", "face", "body", "right_leg", "left_leg", "right_foot
             "left_finger_1",  "left_finger_2",  "left_finger_3",  "left_finger_4",               // 4
             "right_big_finger", "left_big_finger"};                                              // 2
 */
-string bp_names[] = {"left up front", "left up back", "left down front", "left down back",
-                     "right up front", "right up back", "right down front", "right down back"};
+string bp_names[] = {"right down front", "left down front",
+                     "right up front", "left up front",
+
+                     "left down back", "right down back",
+                     "left up back", "right back up"
+};
 
 map<string, string> item_bp;
 float bp_init_mods[] = {
-    1.2, 1.5, 0.8, 1,
-    1.2, 1.5, 0.8, 1,
+    0.7, 0.8, 1.3, 1.2, 
+    0.8, 1,   1.8, 1.4, 
 };
 int cl_init_hp[] = {1500, 1100, 700};
 int init_mp[] = {10, 20, 70};
@@ -23,7 +27,8 @@ int init_agi[] = {9, 15, 6};
 int init_strength[] = {15, 9, 6};
 int init_int[] = {3, 6, 15};
 int init_speed[] = {4, 7, 5};
-
+int init_jump_high[] = {4, 5, 4};
+float init_attack_rad[] = {1.8, 1.5, 1.7};
 int atk_strength_mods[] = {4, 2, 1};
 int atk_agi_mods[] = {2, 3, 1};
 int atk_int_mods[] = {0, 1, 5};
@@ -40,13 +45,15 @@ void init_maps() {
     }
 }
 
-void init_values(int &hp, int &mp, int &agi, int &strength, int &intellect, int &speed, int cl) {
+void init_values(float &hp, float &mp, float &agi, float &strength, float &intellect, float &speed, float& jump_high, float& attack_rad, int cl) {
     hp = cl_init_hp[cl];
     mp = init_mp[cl];
     agi = init_agi[cl];
     strength = init_strength[cl];
     intellect = init_int[cl];
     speed = init_speed[cl];
+    jump_high = init_jump_high[cl];
+    attack_rad = init_attack_rad[cl];
 }
 
 
