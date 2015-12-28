@@ -16,7 +16,7 @@
 #include <graphics/objects/pp.h>
 #include <controller.h>
 
-#include <net.h>
+#include <net/net.h>
 
 
 int main(int argc, char **argv) {
@@ -39,18 +39,6 @@ int main(int argc, char **argv) {
     gl_fov = 1;
     gl_z_near = .1;
     gl_z_far = 1000;
-
-    float ones[] = {1, 1, 1};
-
-    gl_light_enable[0] = 1;
-    gl_light[0].pos = make_vec3(100, 100, 100);
-    gl_light[0].rot = make_vec3(3 * M_PI / 2, 0, 0);
-    gl_light[0].fov = 1;
-    gl_light[0].z_near = .1;
-    gl_light[0].z_far = 1000;
-    gl_light[0].ambient = make_vec3(.3, .3, .3);
-    gl_light[0].diffuse = make_vec3(.4, .4, .4);
-    gl_light[0].specular = ones;
 
     if (init_glfw()) {
         printl(LOG_E, "Fatal error while initializing glfw.");

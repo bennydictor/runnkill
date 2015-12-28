@@ -1,0 +1,1 @@
+g++ -O0 -ggdb -DDEBUG -lm -lGL -lglfw -lGLEW -lfreetype
