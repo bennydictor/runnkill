@@ -13,7 +13,6 @@ void controller(void) {
     net_update();
     for (int i = 0; i < client_count; ++i) {
         if (clients[i].alive && clients[i].upd) {
-            clients[i].upd = 0;
             man_update(i, clients[i].evs, clients[i].orientation);
         }
     }
