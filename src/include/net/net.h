@@ -1,9 +1,10 @@
 #ifndef NET_CLIENT_H
 #define NET_CLIENT_H
 
-#include <game/world.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+
+#include <graphics/draw_obj.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,8 +13,8 @@ extern "C" {
 extern int local_socket;
 
 int init_net(const char *hostname, uint16_t port);
+void net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs);
 void free_net(void);
-void net_update(void);
 
 #ifdef __cplusplus
 }

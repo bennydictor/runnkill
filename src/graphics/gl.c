@@ -13,6 +13,7 @@
 
 #include <graphics/vertex3d.h>
 #include <graphics/ft.h>
+#include <graphics/objects/field.h>
 #include <graphics/objects/sphere.h>
 #include <graphics/objects/sphere_sector.h>
 #include <graphics/objects/box.h>
@@ -22,7 +23,7 @@
 #include <graphics/gl/light.h>
 #include <graphics/gl/pp.h>
 
-#include <game/world.h>
+#include <world.h>
 
 #define unused(X) ((void) (X))
 
@@ -73,6 +74,7 @@ int init_gl(void) {
         return 1;
     }
 
+    init_field_object(world_w, world_h, world_field);
     init_sphere_object();
     init_sphere_sector_object();
     init_box_object();
