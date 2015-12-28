@@ -35,7 +35,7 @@ void net_update(void) {
                 clients[client_count].addr = src_addr;
                 clients[client_count].addrlen = addrlen;
                 clients[client_count].alive = 1;
-                add_player("Derrior", 0);
+                add_player("Derrior", 1);
                 printl(LOG_I, "Client %d is online", client_count + 1);
                 msg[0] = MSG_OK;
                 msg[1] = client_count;
