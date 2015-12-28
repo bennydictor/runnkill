@@ -364,7 +364,7 @@ bool move_man(int idx, float time) {
     }
     persons[idx]->touch_ground = false;
     vec3<float> touch_point(0, 0, 0);
-    //cout << "b" << endl;
+    cout << "b" << endl;
     bool res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, false, touch_point);
     if (res)
     {
@@ -394,12 +394,15 @@ bool move_man(int idx, float time) {
         rvector.resize(1);
         if (rvector.y - EPS <= -1)
             persons[idx]->touch_ground = true;
+    cout << (rvector.y - EPS <= -1) << endl;
     }
     else
     {
         persons[idx]->coords = (finish);
         persons[idx]->move(time);
         persons[idx]->speed.y -= (time) * GRAVITATION;
+        if (persons[idx]->coords.y - get_element(world_field, persons[idx]->coords.x, persons[idx]->coords.z) - MAN_RAD < EPS)
+            persons[idx]->touch_ground = true;
     }
 
     return !res;
@@ -562,6 +565,7 @@ void world_update(float dt) {
 
 
 void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
+    cout << "in Update" << endl;
     man* z = persons[man_idx];
     z->set_orientation(curr_orientation);
     vec3<float> move_orientation = curr_orientation;
