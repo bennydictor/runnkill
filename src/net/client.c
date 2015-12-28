@@ -147,6 +147,9 @@ void net_update(void) {
                 memcpy(clients[(int) msg[1]].orientation, msg + 2 + WORLD_EVENT_COUNT, 3 * sizeof(float));
                 msg[0] = MSG_OK;
                 sendto(local_socket, msg, 1, 0, (struct sockaddr *) &src_addr, addrlen);
+            } else {
+                msg[0] = MSG_NOPE;
+                sendto(local_socket, msg, 1, 0, (struct sockaddr *) &src_addr, addrlen);
             }
             break;
         default:
