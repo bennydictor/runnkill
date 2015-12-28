@@ -1,8 +1,6 @@
-scripts/__pycache__
-__pycache__
-field
-app
+server
 obj
 gmon.out
 analysis
-.opts
+.make/
+.make/depends/*.d

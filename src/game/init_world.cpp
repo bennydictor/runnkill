@@ -13,10 +13,6 @@
 #include <vector>
 #include <cmath>
 #include <ctime>
-#include <graphics/objects/box.h>
-#include <graphics/objects/field.h>
-#include <graphics/objects/sphere.h>
-#include <graphics/objects/sphere_sector.h>
 #include <cassert>
 
 
@@ -57,35 +53,29 @@ void in_items() {
 
 int init_world(void) {
     world_w = world_h = 100;
-    chunk = 10;
-    cout << loglevel(LOG_I) << "world height: " << world_h << endl << "world width: " << world_w << endl << "chunk size: " << chunk << endl << loglevel(LOG_D);
-    assert(world_w % chunk == 0);
-    assert(world_h % chunk == 0);
-    world_map = new draw_obj*[world_w / chunk];
-    for (int i = 0; i < world_w / chunk; ++i) {
-        world_map[i] = new draw_obj[world_h / chunk];
-    }
+    cout << loglevel(LOG_I) << "world height: " << world_h << endl << "world width: " << world_w << endl << loglevel(LOG_D);
     world_field = gen_field_sun(world_w, world_h);
-    world_max_height = 0;
-    for (int i = 0; i < world_w; ++i) {
-        for (int j = 0; j < world_h; ++j) {
-            world_max_height = max(world_max_height, world_field[i][j]);
-        }
-    }
-    for (int i = 0; i < world_w; i += chunk) {
-        for (int j = 0; j < world_h; j += chunk) {
-            world_map[i / chunk][j / chunk] = make_draw_subfield(i, j, i + chunk, j + chunk, default_material);
-        }
-    }
+    gl_light_enable[0] = 1;
+    gl_light[0].pos = make_vec3(100, 100, 100);
+    gl_light[0].rot = make_vec3(3 * M_PI / 2, 0, 0);
+    gl_light[0].fov = 1;
+    gl_light[0].z_near = .1;
+    gl_light[0].z_far = 1000;
+    gl_light[0].ambient = make_vec3(.3, .3, .3);
+    gl_light[0].diffuse = make_vec3(.4, .4, .4);
+    gl_light[0].specular = make_vec3(1, 1, 1);
     in_skills();
     in_items();
+    init_material();
 
     return 0;
 }
 
+void add_player(char *name, int clazz) {
+    persons.push_back(new man(string(name), clazz));
+    is_alive.push_back(true);
+    persons.back()->coords = vec3<float>(0, 2, 0);
+}
+
 void free_world(void) {
-    for (int i = 0; i < world_w / chunk; ++i) {
-        delete[] world_map[i];
-    }
-    delete[] world_map;
 }

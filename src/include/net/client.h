@@ -13,11 +13,17 @@ extern "C" {
 typedef struct {
     struct sockaddr_in addr;
     socklen_t addrlen;
+    char evs[WORLD_EVENT_COUNT];
+    float orientation[3];
+    char upd;
     char alive;
 } client_t;
 
+#define MAX_CLIENTS 256
 
 extern int local_socket;
+extern int client_count;
+extern client_t clients[MAX_CLIENTS];
 
 int init_net(void);
 void free_net(void);

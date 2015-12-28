@@ -4,6 +4,7 @@
 #include <game/field.h>
 #include <cstdio>
 #include <fstream>
+#include <cstring>
 #include <game/skill_type.h>
 #include <game/bullet.h>
 #include <game/init_world.h>
@@ -12,10 +13,6 @@
 #include <vector>
 #include <cmath>
 #include <ctime>
-#include <graphics/objects/box.h>
-#include <graphics/objects/field.h>
-#include <graphics/objects/sphere.h>
-#include <graphics/objects/sphere_sector.h>
 #include <cassert>
 #define EXPLOSION_RADIUS .2
 #define EXPLOSION_TIME .3
@@ -25,6 +22,10 @@ using namespace std;
 const int len = 1;
 int world_max_height;
 draw_obj **world_map;
+light_t gl_light[LIGHT_COUNT];
+char gl_light_enable[LIGHT_COUNT];
+draw_obj draw_objs[MAX_DRAW_OBJ];
+int draw_obj_count;
 
 vector<bullet> bullets;
 vector<man*> persons;
@@ -45,7 +46,27 @@ vec3<float> sector_points_c[8] = {
         vec3<float>(0, 0, 1), vec3<float>(0, 0, -1), vec3<float>(0, 0, 1), vec3<float>(0, 0, -1)
 };
 int** world_field;
-int world_w, world_h, chunk;
+int world_w, world_h;
+
+draw_obj make_draw_sphere(vec3f pos, float rad, short int material) {
+    draw_obj ret;
+    ret.type = DRAW_SPHERE;
+    memcpy(ret.pos, pos, 3 * sizeof(float));
+    ret.rad = rad;
+    ret.material = material;
+    return ret;
+}
+
+draw_obj make_draw_sphere_sector(vec3f pos, float rad, float rot, int s, short int material) {
+    draw_obj ret;
+    ret.type = DRAW_SPHERE_SECTOR;
+    memcpy(ret.pos, pos, 3 * sizeof(float));
+    ret.rad = rad;
+    ret.rot = rot;
+    ret.s = s;
+    ret.material = material;
+    return ret;
+}
 
 template <class T>
 
@@ -367,45 +388,42 @@ void attack(int man_idx, int idx) {
     }
 }
 
-void world_callback(vector<draw_obj> &result, vec3f coord) {
-    result.clear();
-    /*for (int i = 0; i < w; i++) {
-        for (int j = 0; j < h; j++) {
-            ortohedron bounds(vec3<float>(i, 0, j), vec3<float>(i + 1, 0, j), vec3<float>(i, F[i][j] + 1, j), vec3<float>(i, 0, j + 1));
-            result.push_back(make_draw_box(bounds, default_material));
-        }
-    }*/
-    for (int i = max(0, (int) (persons[0]->coords.x / chunk + .5) - 2); i < min(world_w / chunk, (int) (persons[0]->coords.x / chunk + .5) + 2); ++i) {
-        for (int j = max(0, (int) (persons[0]->coords.z / chunk + .5) - 2); j < min(world_h / chunk, (int) (persons[0]->coords.z / chunk + .5) + 2); ++j) {
-            result.push_back(world_map[i][j]);
-        }
-    }
+void kill_person(int idx) {
+    is_alive[idx] = false;
+}
+
+float *get_person_coords(int idx) {
+    return (float *) (persons[idx]->coords);
+}
+
+float *get_person_orientation(int idx) {
+    return (float *) (persons[idx]->orientation);
+}
+
+void world_callback(void) {
+    draw_obj_count = 0;
     for (int i = 0; i < (int)persons.size(); i++) {
         if (is_alive[i]) {
-            result.push_back(make_draw_sphere3fv1f(persons[i]->coords, MAN_RAD, man_material));
+            draw_objs[draw_obj_count++] = make_draw_sphere(persons[i]->coords, MAN_RAD, man_material.id);
             float alpha = atan2(persons[i]->orientation.x, persons[i]->orientation.z);
             for (int j = 0; j < BP_AMOUNT; j++) {
                 if (persons[i]->body_parts[j].is_fortified)
-                    result.push_back(make_draw_sphere_sector3fv2f(persons[i]->coords, alpha, 1.5 * MAN_RAD, j, shield_material));
+                    draw_objs[draw_obj_count++] = make_draw_sphere_sector(persons[i]->coords, alpha, 1.5 * MAN_RAD, j, shield_material.id);
                 else if (persons[i]->body_parts[j].item)
                 {
-                    result.push_back(make_draw_sphere_sector3fv2f(persons[i]->coords, alpha, 1.1 * MAN_RAD, j, persons[i]->body_parts[j].item->material));
+                    draw_objs[draw_obj_count++] = make_draw_sphere_sector(persons[i]->coords, alpha, 1.1 * MAN_RAD, j, persons[i]->body_parts[j].item->material.id);
                 }
             }
         }
     }
     for (int i = 0; i < (int) explosions.size(); ++i) {
-        result.push_back(make_draw_sphere3fv1f(explosions[i].first, EXPLOSION_RADIUS * powf(EXPLOSION_TIME - explosions[i].second, 1.0 / 3), explosion_material));
+        draw_objs[draw_obj_count++] = make_draw_sphere(explosions[i].first, EXPLOSION_RADIUS * powf(EXPLOSION_TIME - explosions[i].second, 1.0 / 3), explosion_material.id);
     }
     
     for (int i = 0; i < (int)bullets.size(); i++) {
         if (alive_bullets[i])
-        result.push_back(make_draw_sphere3fv1f(bullets[i].coords, bullets[i].rad, bullet_material));
+        draw_objs[draw_obj_count++] = make_draw_sphere(bullets[i].coords, bullets[i].rad, bullet_material.id);
     }
-
-    coord[0] = persons[0]->coords.x - 5 * (persons[0]->orientation.x);
-    coord[1] = persons[0]->coords.y + (1 - persons[0]->orientation.y);
-    coord[2] = persons[0]->coords.z - 5 * (persons[0]->orientation.z);
 }
 
 

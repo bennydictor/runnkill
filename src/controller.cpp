@@ -1,5 +1,4 @@
 #include <controller.h>
-#include <graphics/gl.h>
 #include <game/world.h>
 #include <util/timing.h>
 #include <net/client.h>
@@ -9,6 +8,13 @@ using namespace std;
 
 void controller(void) {
     float dt = delta();
-    net_update();
     world_update(dt);
+    world_callback();
+    net_update();
+    for (int i = 0; i < client_count; ++i) {
+        if (clients[i].alive && clients[i].upd) {
+            clients[i].upd = 0;
+            man_update(i, clients[i].evs, clients[i].orientation);
+        }
+    }
 }

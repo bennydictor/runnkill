@@ -1,14 +1,23 @@
 #ifndef GAME_WORLD_H
 #define GAME_WORLD_H
 
-#include <graphics/draw_obj.h>
-
 #define WORLD_EVENT_COUNT 5
 #define WORLD_MOVE_FORWARD_EVENT 0
 #define WORLD_MOVE_RIGHT_EVENT 1
 #define WORLD_MOVE_BACKWARD_EVENT 2
 #define WORLD_MOVE_LEFT_EVENT 3
 #define WORLD_ATTACK_EVENT 4
+
+#define LIGHT_COUNT 8
+
+typedef struct {
+    char type;
+    float pos[3];
+    float rad;
+    float rot;
+    int s;
+    short int material;
+} draw_obj;
 
 #ifdef __cplusplus
 
@@ -18,24 +27,48 @@
 #include <game/items.h>
 #include <game/man.h>
 
-extern std::vector<std::vector<skill_t > > default_skills;
+extern std::vector<std::vector<skill_t>> default_skills;
 extern std::vector<item_t> default_items;
 extern vec3<float> sector_points_a[8];
 extern vec3<float> sector_points_b[8];
 extern vec3<float> sector_points_c[8];
 extern std::vector<man*> persons;
 extern std::vector<bool> is_alive;
-void world_callback(std::vector<draw_obj> &res, vec3f coord);
 void man_update(int man_idx, char* pressed, vec3<float> curr_orientation);
 
 extern "C" {
 #endif
 
-extern int world_w, world_h, chunk;
+#include <math/vecmath.h>
+
+#define DRAW_SPHERE 0
+#define DRAW_SPHERE_SECTOR 1
+#define MAX_DRAW_OBJ 256
+
+typedef struct {
+    vec3f pos;
+    vec3f rot;
+    vec3f ambient;
+    vec3f diffuse;
+    vec3f specular;
+    float fov;
+    float z_near;
+    float z_far;
+} light_t;
+
+extern light_t gl_light[LIGHT_COUNT];
+extern char gl_light_enable[LIGHT_COUNT];
+extern draw_obj draw_objs[MAX_DRAW_OBJ];
+extern int draw_obj_count;
+
+extern int world_w, world_h;
 extern int **world_field;
 extern int world_max_height;
-extern draw_obj **world_map;
+void world_callback(void);
 void world_update(float dt);
+void kill_person(int idx);
+float *get_person_coords(int idx);
+float *get_person_orientation(int idx);
 
 #ifdef __cplusplus
 }

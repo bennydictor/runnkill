@@ -3,7 +3,7 @@
 
 #include <game/mod_type.h>
 #include <game/common.h>
-#include <graphics/material.h>
+#include <game/material.h>
 #include <math/vecmath.h>
 #include <string>
 #include <iostream>
