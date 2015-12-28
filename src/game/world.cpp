@@ -364,7 +364,6 @@ bool move_man(int idx, float time) {
     }
     persons[idx]->touch_ground = false;
     vec3<float> touch_point(0, 0, 0);
-    cout << "b" << endl;
     bool res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, false, touch_point);
     if (res)
     {
@@ -410,8 +409,9 @@ bool move_man(int idx, float time) {
 
 void attack(int man_idx, int idx) {
     man* z = persons[man_idx];
+    cout << z->mp << ' ' << z->skills[idx].cost.mp << endl;
     if (z->busy > 0 or (int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp or z->skills[idx].to_activate > EPS) {
-//        cerr << "You missed!" << endl;
+        cerr << "You missed!" << endl;
         return;
     }
     cout << z->skills[idx].to_activate << ' ' << z->skills[idx].between_activate << endl;
@@ -520,6 +520,11 @@ void world_callback(void) {
         if (is_bullet_alive[i])
         draw_objs[draw_obj_count++] = make_draw_sphere(bullets[i].coords, bullets[i].rad, bullet_material.id);
     }
+
+    for (int i = 0; i < (int)traps.size(); i++) {
+        if (traps[i].is_alive) 
+            draw_objs[draw_obj_count++] = make_draw_sphere(traps[i].centre, traps[i].rad, fake_materials_idx[traps[i].material_idx]);
+    }
 }
 
 
@@ -540,6 +545,10 @@ void world_update(float dt) {
     for (int i = 0; i < (int)persons.size(); i++) {
         if (is_alive[i]) {
             move_man(i, dt);
+            if (persons[i]->skills.size() < 1) {
+                for (skill_t k : default_skills[persons[i]->cls])
+                persons[i]->skills.push_back(k);
+            }
         }
         if (persons[i]->hp < 0) {
             is_alive[i] = false;
@@ -565,7 +574,6 @@ void world_update(float dt) {
 
 
 void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
-    cout << "in Update" << endl;
     man* z = persons[man_idx];
     z->set_orientation(curr_orientation);
     vec3<float> move_orientation = curr_orientation;
@@ -591,7 +599,16 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         if (pressed[WORLD_ATTACK_EVENT]) {
             z->speed.y += z->jump_high;
         }
+        if (pressed[WORLD_SYM_1]) {
             attack(man_idx, 0);
+            printl(LOG_D, "SYM_1");
+        }
+        if (pressed[WORLD_SYM_2]) {
+            attack(man_idx, 1);
+        }
+        if (pressed[WORLD_SYM_3]) {
+            attack(man_idx, 2);
+        }
     }
     if (z->curr_skill != -1 and fabs(z->busy - z->skills[z->curr_skill].activate_time) < EPS) {
         skill_t curr = z->skills[z->curr_skill];
