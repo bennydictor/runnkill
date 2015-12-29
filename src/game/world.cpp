@@ -240,6 +240,7 @@ void damage_last_explosion() {
             if (is_alive[j]) {
                 for (int i = 0; i < (int)explosions.back().effects.size(); i++) {
                     persons[j]->add_effect((explosions.back().effects[i]));
+                    cout << "bagkalkf" << endl;
                 }
             }
         }
@@ -321,7 +322,9 @@ bool move_bullet(int b_idx, float time) {
         explosions.push_back(explosion(bullets[b_idx].coords, EXPLOSION_TIME, bullets[b_idx].exp_rad, bullets[b_idx].damage));
         for (int j = 0; j < (int)bullets[b_idx].effects.size(); j++) {
             explosions.back().effects.push_back(bullets[b_idx].effects[j]);
+            cout << 1 << ' ';
         }
+        cout << endl;
         damage_last_explosion();
         is_bullet_alive[b_idx] = 0;
         return false;
@@ -393,7 +396,7 @@ bool move_man(int idx, float time) {
         rvector.resize(1);
         if (rvector.y - EPS <= -1)
             persons[idx]->touch_ground = true;
-    cout << (rvector.y - EPS <= -1) << endl;
+    //cout << (rvector.y - EPS <= -1) << endl;
     }
     else
     {
@@ -410,6 +413,7 @@ bool move_man(int idx, float time) {
 void attack(int man_idx, int idx) {
     man* z = persons[man_idx];
     cout << z->mp << ' ' << z->skills[idx].cost.mp << endl;
+    cout << z->busy << ' ' << z->skills.size() << ' ' << z->skills[idx].to_activate << ' ' << z->skills[idx].between_activate << endl;
     if (z->busy > 0 or (int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp or z->skills[idx].to_activate > EPS) {
         cerr << "You missed!" << endl;
         return;
@@ -421,6 +425,7 @@ void attack(int man_idx, int idx) {
     z->busy += animations[curr.animation_idx].events[0].dt;
     z->curr_skill = idx;
     z->skills[idx].to_activate = z->skills[idx].between_activate;
+    z->need_to_cast = true;
 }
 
 bool move_trap(int idx, float time) {
@@ -610,8 +615,9 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
             attack(man_idx, 2);
         }
     }
-    if (z->curr_skill != -1 and fabs(z->busy - z->skills[z->curr_skill].activate_time) < EPS) {
+    if (z->need_to_cast and z->curr_skill != -1 and fabs(z->busy - z->skills[z->curr_skill].activate_time) < EPS) {
         skill_t curr = z->skills[z->curr_skill];
+        z->need_to_cast = false;
         if (curr.type == 'R') {
             bullets.push_back(bullet(curr.sample));
             bullets.back().coords = z->coords + ((float)MAN_RAD + 2 * (float)curr.sample.rad) * z->orientation;

@@ -17,6 +17,7 @@ void skill_t::in_damage(istream& stream) {
     }
     int amount_of_effects;
     stream >> amount_of_effects;
+    cout << "1111" << type << amount_of_effects << endl;
     string eff_name;
     for (int i = 0; i < amount_of_effects; i++) {
         stream >> eff_name;
