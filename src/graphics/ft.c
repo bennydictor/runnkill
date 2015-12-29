@@ -101,8 +101,13 @@ void render_text(int x, int y, const char *str) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
+    int orig_x = x;
     for (const char *c = str; *c; ++c) {
         int i = *c;
+        if (i == '\n') {
+            x = orig_x;
+            y -= ft_font_size;
+        }
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

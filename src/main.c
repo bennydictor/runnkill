@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    ft_font_size = 24;
+    ft_font_size = 16;
 
     gl_pos = make_vec3(-5, 3, 5);
     gl_rot = make_vec3(M_PI / 9, M_PI / 4, 0);
