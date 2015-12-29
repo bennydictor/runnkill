@@ -12,6 +12,10 @@ double delta(void) {
     struct timeval ct;
     gettimeofday(&ct, NULL);
     double cur_time = 1.0 * ct.tv_sec + 1.0e-6 * ct.tv_usec;
+    while (cur_time - prev_time < 1.0 / 1024) {
+        gettimeofday(&ct, NULL);
+        cur_time = 1.0 * ct.tv_sec + 1.0e-6 * ct.tv_usec;
+    }
     if (cur_time - last_point >= 1) {
         fps = cur_fps;
         cur_fps = 0;

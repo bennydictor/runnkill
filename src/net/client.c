@@ -117,9 +117,8 @@ void net_update(void) {
                 } else if (msg[2] == RES_DRAW) {
                     PUT(char, MSG_OK);
                     int client = msg[1];
-                    PUT(float, get_person_coords(client)[0] - 5 * get_person_orientation(client)[0]);
-                    PUT(float, get_person_coords(client)[1] + 1);
-                    PUT(float, get_person_coords(client)[2] - 5 * get_person_orientation(client)[2]);
+                    memcpy(ptr, get_person_data_begin(client), get_person_data_end(client) - get_person_data_begin(client));
+                    ptr += get_person_data_end(client) - get_person_data_begin(client);
                     PUT(int, draw_obj_count);
                     for (int i = 0; i < draw_obj_count; ++i) {
                         PUT(char, draw_objs[i].type);

@@ -75,8 +75,8 @@ extern int world_max_height;
 void world_callback(void);
 void world_update(float dt);
 void kill_person(int idx);
-float *get_person_coords(int idx);
-float *get_person_orientation(int idx);
+void *get_person_data_begin(int idx);
+void *get_person_data_end(int idx);
 //extern draw_obj **world_map;
 //void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp);
 

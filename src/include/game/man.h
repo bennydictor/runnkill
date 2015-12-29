@@ -25,13 +25,13 @@ struct man {
     float def_mod, atk_mod, busy, attack_rad;
     bool can_die, have_shield, is_running, touch_ground;
     mod_t recovery;
-    vec3<float> coords, speed, orientation;
     std::vector<item_t*> bag;
     std::vector<body_part> body_parts;
     std::vector<effect> effects;
     std::vector<skill_t> skills;
-    float hp, mp;
     //armour* weapon;
+    vec3<float> coords, speed, orientation;
+    float hp, mp;
     float max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high;
     man();
     man(std::string _name, int cl);

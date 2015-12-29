@@ -450,12 +450,12 @@ void kill_person(int idx) {
     is_alive[idx] = false;
 }
 
-float *get_person_coords(int idx) {
-    return (float *) (persons[idx]->coords);
+void *get_person_data_begin(int idx) {
+    return (void *) (persons[idx]->coords);
 }
 
-float *get_person_orientation(int idx) {
-    return (float *) (persons[idx]->orientation);
+void *get_person_data_end(int idx) {
+    return ((char *)&persons[idx]->jump_high) + sizeof(persons[idx]->jump_high);
 }
 
 void world_callback(void) {
