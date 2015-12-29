@@ -10,6 +10,7 @@ void controller(void) {
     float dt = delta();
     world_update(dt);
     world_callback();
+
     net_update();
     for (int i = 0; i < client_count; ++i) {
         if (clients[i].alive && clients[i].upd) {

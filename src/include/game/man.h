@@ -23,7 +23,7 @@ struct man {
     int cls, curr_skill;
     int level, exp, number;
     float def_mod, atk_mod, busy, attack_rad;
-    bool can_die, have_shield, is_running, touch_ground;
+    bool can_die, have_shield, is_running, touch_ground, need_to_cast;
     mod_t recovery;
     std::vector<item_t*> bag;
     std::vector<body_part> body_parts;

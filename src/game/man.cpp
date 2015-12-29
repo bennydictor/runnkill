@@ -1,6 +1,7 @@
 #include <game/man.h>
 #include <game/common.h>
-//#include <game/animation.h>
+#include <game/animation.h>
+#include <cassert>
 #include <cstdlib>
 using namespace std;
 man::man() {
@@ -61,13 +62,18 @@ void man::get_effect_1(mod_t res) {
 }
 
 void man::get_effect_2(mod_t res) {
-     
-    agility *= res.agility;
-    strength *= res.strength;
-    intellect *= res.intellect;
-    abs_speed *= res.speed;
-    def_mod *= res.def_mod;
-    atk_mod *= res.atk_mod;
+    if (res.agility > EPS) 
+        agility *= res.agility;
+    if (res.strength >  EPS) 
+        strength *= res.strength;
+    if (res.intellect > EPS) 
+        intellect *= res.intellect;
+    if (res.speed > EPS) 
+        abs_speed *= res.speed;
+    if (res.def_mod > EPS) 
+        def_mod *= res.def_mod;
+    if (res.atk_mod > EPS) 
+        atk_mod *= res.atk_mod;
     cout << '!' << abs_speed << endl; 
 }
 void man::add_effect(effect a) {
@@ -96,6 +102,9 @@ vec3<float> man::in_time(float time) {
 }
 
 void man::move(float time) {
+    if (time <= 0)
+        return;
+    assert(time > 0);
     vector<effect> new_effects;
     for (size_t i = 0; i < effects.size(); i++)
     {
@@ -115,8 +124,8 @@ void man::move(float time) {
         skills[i].to_activate -= time; 
     }
     //cout << busy << endl;
-    busy = max((float)0, busy - time);
-    if (busy < EPS) {
+    busy = max((float)-EPS, busy - time);
+    if (busy < 0) {
         curr_skill = -1;
     }
     hp += (recovery.hp * time);
