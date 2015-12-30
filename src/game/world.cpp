@@ -5,6 +5,7 @@
 #include <cmath>
 #include <ctime>
 #include <cstring>
+#include <cassert>
 #include <game/world.h>
 #include <game/init_world.h>
 #include <game/man.h>
@@ -348,7 +349,10 @@ bool move_bullet(int b_idx, float time) {
     return true;
 }
 
-bool move_man(int idx, float time) {
+bool move_man(int idx, float time, int depth = 0) {
+    if (depth > 10) {
+        return true;
+    }
     if (time < 0)
         return true;
     if (abs(persons[idx]->coords.y) > 20) {
@@ -356,6 +360,7 @@ bool move_man(int idx, float time) {
         persons[idx]->hp = 0;
         return false;
     }
+    assert(time >= 0);
     //cout << persons[idx]->hp << endl;
     vec3<float> finish = persons[idx]->in_time(time);
     float beg_dist = dist(persons[idx]->coords, finish);
@@ -383,16 +388,12 @@ bool move_man(int idx, float time) {
         float _res = dist_to_plain(our_plain, d, tmp_point) * dist_to_plain(our_plain, d, tmp_point + normal); 
         if (_res > EPS)
             normal = -1.0f * normal;
-         
-        else if (abs(_res) < EPS)
-            persons[idx]->coords = persons[idx]->coords -(float)(10 * EPS) * persons[idx]->speed;
-        
         persons[idx]->speed = vec3<float>(persons[idx]->coords, tmp_point + normal) / 2.0f;
-        float time_2 =  time * (1 - (dist(persons[idx]->coords, finish) / beg_dist) - 0.1);
+        float time_2 =  time * (1 - (dist(persons[idx]->coords, finish) / beg_dist));
         persons[idx]->move(time - time_2);
         vec3<float> rvector(persons[idx]->coords, touch_point);
         persons[idx]->speed.y -= (time - time_2) * GRAVITATION;
-        move_man(idx, time_2);
+        move_man(idx, time_2, depth + 1);
         rvector.resize(1);
         if (rvector.y - EPS <= -1)
             persons[idx]->touch_ground = true;
@@ -412,15 +413,15 @@ bool move_man(int idx, float time) {
 
 void attack(int man_idx, int idx) {
     man* z = persons[man_idx];
-    cout << z->mp << ' ' << z->skills[idx].cost.mp << endl;
-    cout << z->busy << ' ' << z->skills.size() << ' ' << z->skills[idx].to_activate << ' ' << z->skills[idx].between_activate << endl;
+    //cout << z->mp << ' ' << z->skills[idx].cost.mp << endl;
+    //cout << z->busy << ' ' << z->skills.size() << ' ' << z->skills[idx].to_activate << ' ' << z->skills[idx].between_activate << endl;
     if (z->busy > 0 or (int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp or z->skills[idx].to_activate > EPS) {
-        cerr << "You missed!" << endl;
+    //    cerr << "You missed!" << endl;
         return;
     }
-    cout << z->skills[idx].to_activate << ' ' << z->skills[idx].between_activate << endl;
+    //cout << z->skills[idx].to_activate << ' ' << z->skills[idx].between_activate << endl;
     z->mp -= z->skills[idx].cost.mp;
-    cerr << "Well, " << endl;
+    //cerr << "Well, " << endl;
     skill_t curr = z->skills[idx];
     z->busy += animations[curr.animation_idx].events[0].dt;
     z->curr_skill = idx;
@@ -606,7 +607,6 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         }
         if (pressed[WORLD_SYM_1]) {
             attack(man_idx, 0);
-            printl(LOG_D, "SYM_1");
         }
         if (pressed[WORLD_SYM_2]) {
             attack(man_idx, 1);

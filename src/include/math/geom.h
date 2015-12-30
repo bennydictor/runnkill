@@ -253,15 +253,18 @@ bool intersect_ortohedron_sphere(ortohedron& d, vec3<T> centre, T rad, vec3<T>& 
 
 template <class T>
 
-bool intersect_segment_sphere_ortohedron(ortohedron& a, vec3<T> start, vec3<T> &finish, T rad, vec3<T> &res)
+bool intersect_segment_sphere_ortohedron(ortohedron& a, vec3<T> start, vec3<T> &finish, T rad, vec3<T> &res, int depth = 0)
 {
+    if (depth > 5) {
+        return true;
+    }
     vec3<T> mid, low = start, hig = finish;
     if (!intersect_ortohedron_sphere(a, hig, rad, res)) {
         if (dist(start, finish) < SMALL_CONSTANT_1)
             return false;
         mid = (start + finish) / 2.0f;
-        if (!intersect_segment_sphere_ortohedron(a, start, mid, rad, res))
-            return intersect_segment_sphere_ortohedron(a, mid, finish, rad, res);
+        if (!intersect_segment_sphere_ortohedron(a, start, mid, rad, res, depth + 1))
+            return intersect_segment_sphere_ortohedron(a, mid, finish, rad, res, depth + 1);
         finish = mid;
         return true;
 
