@@ -30,11 +30,16 @@ ssize_t recvfrom_timeout(int sockfd, void *buf, size_t len, int flags, struct so
     struct pollfd fd;
     fd.fd = sockfd;
     fd.events = POLLIN;
-    if (poll(&fd, 1, 1000) <= 0) {
-        printl(LOG_W, "Error while receiving datagram: Timed out");
-        return -1;
+    char recv_succ = 0;
+    for (int i = 0; i < 5; ++i) {
+        if (poll(&fd, 1, 500) <= 0) {
+            printl(LOG_W, "Error while receiving datagram: Timed out");
+        } else {
+            recv_succ = 1;
+            break;
+        }
     }
-    return recvfrom(sockfd, buf, len, flags, src_addr, addrlen);
+    return recv_succ ? recvfrom(sockfd, buf, len, flags, src_addr, addrlen) : -1;
 }
 
 int init_net(const char *hostname, uint16_t port) {
@@ -193,9 +198,9 @@ int net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs) {
     gl_pos[0] = coords[0] - 5 * orientation[0];
     gl_pos[1] = coords[1] + 1;
     gl_pos[2] = coords[2] - 5 * orientation[2];
-//    ++*draw_obj_count;
-//    draw_objs[0] = make_draw_field(materials[0]);
-    for (int i = 0; i < *draw_obj_count; ++i) {
+    ++*draw_obj_count;
+    draw_objs[0] = make_draw_field(materials[0]);
+    for (int i = 1; i < *draw_obj_count; ++i) {
         GET(char, type);
         GET(float, pos[0]);
         GET(float, pos[1]);
@@ -221,7 +226,7 @@ void free_net(void) {
     if (msg[0] == MSG_OK) {
         printl(LOG_I, "Logout sucessful");
     } else {
-        printl(LOG_I, "Logout failed");
+        printl(LOG_W, "Logout failed");
     }
     close(local_socket);
 }
