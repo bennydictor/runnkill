@@ -50,7 +50,9 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
     while (!glfwWindowShouldClose(window)) {
-        controller();
+        if (controller()) {
+            break;
+        }
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             break;
         }

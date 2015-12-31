@@ -1,6 +1,7 @@
 #include <net/net.h>
 #include <net/proto.h>
 #include <netdb.h>
+#include <poll.h>
 #include <util/log.h>
 #include <errno.h>
 #include <string.h>
@@ -22,8 +23,19 @@
 char msg[MSG_BUF_LEN];
 int local_socket;
 struct sockaddr_in server;
-socklen_t addrlen;
+socklen_t server_addlen;
 int client_num;
+
+ssize_t recvfrom_timeout(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen) {
+    struct pollfd fd;
+    fd.fd = sockfd;
+    fd.events = POLLIN;
+    if (poll(&fd, 1, 1000) <= 0) {
+        printl(LOG_W, "Error while receiving datagram: Timed out");
+        return -1;
+    }
+    return recvfrom(sockfd, buf, len, flags, src_addr, addrlen);
+}
 
 int init_net(const char *hostname, uint16_t port) {
     local_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -32,14 +44,13 @@ int init_net(const char *hostname, uint16_t port) {
         printl(LOG_W, "Error while initializing network: cannot get %s's ip address", hostname);
         return 1;
     }
-    addrlen = sizeof(struct sockaddr_in);
+    server_addlen = sizeof(struct sockaddr_in);
     server.sin_family = AF_INET;
     server.sin_port = htons(port == 0 ? PORT : port);
     server.sin_addr.s_addr = *(in_addr_t *) host->h_addr_list[0];
     msg[0] = MSG_HELLO;
-    sendto(local_socket, msg, 1, 0, (struct sockaddr *) &server, addrlen); 
-    recvfrom(local_socket, msg, MSG_BUF_LEN, 0, NULL, NULL);
-    if (msg[0] == MSG_NOPE) {
+    sendto(local_socket, msg, 1, 0, (struct sockaddr *) &server, server_addlen); 
+    if (recvfrom_timeout(local_socket, msg, MSG_BUF_LEN, 0, NULL, NULL) == -1 || msg[0] == MSG_NOPE) {
         printl(LOG_W, "Error while initializing network: cannot login to %s", host->h_name);
         return 1;
     }
@@ -49,9 +60,8 @@ int init_net(const char *hostname, uint16_t port) {
     msg[0] = MSG_RES;
     msg[1] = client_num;
     msg[2] = RES_MAP;
-    sendto(local_socket, msg, 3, 0, (struct sockaddr *) &server, addrlen); 
-    recvfrom(local_socket, msg, MSG_BUF_LEN, 0, NULL, NULL);
-    if (msg[0] == MSG_NOPE) {
+    sendto(local_socket, msg, 3, 0, (struct sockaddr *) &server, server_addlen); 
+    if (recvfrom_timeout(local_socket, msg, MSG_BUF_LEN, 0, NULL, NULL) == -1 || msg[0] == MSG_NOPE) {
         printl(LOG_W, "Error while initializing network: cannot get map");
         return 1;
     }
@@ -70,9 +80,8 @@ int init_net(const char *hostname, uint16_t port) {
     msg[0] = MSG_RES;
     msg[1] = client_num;
     msg[2] = RES_LIGHT;
-    sendto(local_socket, msg, 3, 0, (struct sockaddr *) &server, addrlen); 
-    recvfrom(local_socket, msg, MSG_BUF_LEN, 0, NULL, NULL);
-    if (msg[0] == MSG_NOPE) {
+    sendto(local_socket, msg, 3, 0, (struct sockaddr *) &server, server_addlen); 
+    if (recvfrom_timeout(local_socket, msg, MSG_BUF_LEN, 0, NULL, NULL) == -1 || msg[0] == MSG_NOPE) {
         printl(LOG_W, "Error while initializing network: cannot get lights");
         return 1;
     }
@@ -110,9 +119,8 @@ int init_net(const char *hostname, uint16_t port) {
     msg[0] = MSG_RES;
     msg[1] = client_num;
     msg[2] = RES_MATERIAL;
-    sendto(local_socket, msg, 3, 0, (struct sockaddr *) &server, addrlen); 
-    recvfrom(local_socket, msg, MSG_BUF_LEN, 0, NULL, NULL);
-    if (msg[0] == MSG_NOPE) {
+    sendto(local_socket, msg, 3, 0, (struct sockaddr *) &server, server_addlen); 
+    if (recvfrom_timeout(local_socket, msg, MSG_BUF_LEN, 0, NULL, NULL) == -1 || msg[0] == MSG_NOPE) {
         printl(LOG_W, "Error while initializing network: cannot get materials");
         return 1;
     }
@@ -138,24 +146,24 @@ int init_net(const char *hostname, uint16_t port) {
     return 0;
 }
 
-void net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs) {
+int net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs) {
     msg[0] = MSG_UPD;
     msg[1] = client_num;
     memcpy(msg + 2, evs, WORLD_EVENT_COUNT);
     float orient[3] = {sinf(gl_rot[1]), -gl_rot[0] * 2 + 0.1, -cosf(gl_rot[1])};
     memcpy(msg + 2 + WORLD_EVENT_COUNT, orient, 3 * sizeof(float));
-    sendto(local_socket, msg, 2 + WORLD_EVENT_COUNT + 3 * sizeof(float), 0, (struct sockaddr *) &server, addrlen); 
-    recvfrom(local_socket, msg, MSG_BUF_LEN, 0, NULL, NULL);
-    if (msg[0] == MSG_NOPE) {
+    sendto(local_socket, msg, 2 + WORLD_EVENT_COUNT + 3 * sizeof(float), 0, (struct sockaddr *) &server, server_addlen); 
+    if (recvfrom_timeout(local_socket, msg, MSG_BUF_LEN, 0, NULL, NULL) == -1 || msg[0] == MSG_NOPE) {
         printl(LOG_W, "Error while updating player: cannot send update data");
+        return 1;
     }
     msg[0] = MSG_RES;
     msg[1] = client_num;
     msg[2] = RES_DRAW;
-    sendto(local_socket, msg, 3, 0, (struct sockaddr *) &server, addrlen);
-    recvfrom(local_socket, msg, MSG_BUF_LEN, 0, NULL, NULL);
-    if (msg[0] == MSG_NOPE) {
+    sendto(local_socket, msg, 3, 0, (struct sockaddr *) &server, server_addlen);
+    if (recvfrom_timeout(local_socket, msg, MSG_BUF_LEN, 0, NULL, NULL) == -1 || msg[0] == MSG_NOPE) {
         printl(LOG_W, "Error while updating player: cannot get draw objects");
+        return 1;
     }
     void *ptr = msg + 1;
     char type;
@@ -202,13 +210,14 @@ void net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs) {
             draw_objs[i] = make_draw_sphere_sector3fv2f(pos, rot, rad, s, materials[mat_id]);
         }
     }
+    return 0;
 }
 
 void free_net(void) {
     msg[0] = MSG_EXIT;
     msg[1] = client_num;
-    sendto(local_socket, msg, 2, 0, (struct sockaddr *) &server, addrlen);
-    recvfrom(local_socket, msg, 1, 0, NULL, NULL);
+    sendto(local_socket, msg, 2, 0, (struct sockaddr *) &server, server_addlen);
+    recvfrom_timeout(local_socket, msg, 1, 0, NULL, NULL);
     if (msg[0] == MSG_OK) {
         printl(LOG_I, "Logout sucessful");
     } else {
