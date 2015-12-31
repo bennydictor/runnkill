@@ -20,6 +20,7 @@ struct vec3 {
     T sqlen() const;
     void resize(const float s);
     void rotate(const float s);
+    void floor(const float s);
     operator vec3f();
 };
 
@@ -58,6 +59,16 @@ T vec3<T>::dot(const vec3<T> &v) const {
 template <class T>
 vec3<T> vec3<T>::crs(const vec3<T> &v) const {
     return vec3<T>(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
+}
+
+template <class T>
+void vec3<T>::floor(const float s) {
+    x /= s;
+    y /= s;
+    z /= s;
+    x -= x / 1000;
+    y -= y / 1000;
+    z -= z / 1000;
 }
 /*
 template <class T>
