@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-void controller(void);
+int controller(void);
 
 #ifdef __cplusplus
 }

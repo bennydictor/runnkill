@@ -13,7 +13,7 @@ extern "C" {
 extern int local_socket;
 
 int init_net(const char *hostname, uint16_t port);
-void net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs);
+int net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs);
 void free_net(void);
 
 #ifdef __cplusplus
