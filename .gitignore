@@ -1,6 +1,3 @@
-server
 obj
 gmon.out
 analysis
-.make/
-.make/depends/*.d
