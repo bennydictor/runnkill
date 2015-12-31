@@ -1,5 +1,5 @@
-#ifndef GAME_BULLET_H
-#define GAME_BULLET_H
+#ifndef GAME_SKILLS_BULLET_H
+#define GAME_SKILLS_BULLET_H
 
 #include <iostream>
 #include <game/skills/effect.h>

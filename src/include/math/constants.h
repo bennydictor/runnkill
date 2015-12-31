@@ -3,7 +3,8 @@
 
 
 #define M_PI 3.14159265358979323846
-#define EPS 10e-4
+#define EPS_FOR_MOVE   10e-5
+#define EPS_FOR_SKILLS 10e-3
 #define SMALL_CONSTANT_1 0.1
 #define SMALL_INF 179  
 

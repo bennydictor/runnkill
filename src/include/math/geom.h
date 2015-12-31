@@ -6,8 +6,15 @@
 #include <math/ortohedron.h>
 
 template <class T>
+T Max(T a, T b) {
+    if (a > b)
+        return a;
+    return b;
+}
+
+template <class T>
 T dist(vec3<T> a, vec3<T> b) {
-    return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
+    return sqrt(Max((T)0, (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z)));
 }
 
 template <class T>
@@ -54,7 +61,7 @@ bool intersect_seg_plain(vec3<T> plain1, vec3<T>plain2, vec3<T> plain3, vec3<T> 
         res = seg1 + res1 * vec3<T>(seg1, seg2);    
     }
 //    std::cerr << res1 << std::std::endl;
-    return (!(res1 < 0 or res1 > 1 + EPS));
+    return (!(res1 < 0 or res1 > 1 + EPS_FOR_MOVE));
     
 }
 
@@ -115,10 +122,10 @@ template <class T>
 
 bool intersect_segment_sphere(vec3<T> p1, vec3<T> p2, vec3<T> centre, T rad, vec3<T> &res, bool f=false) {
     vec3<T> ab(p1, p2), bc(centre, p1), ac(centre, p2);
-    if (ab.sqlen() < EPS)
+    if (ab.sqlen() < EPS_FOR_MOVE)
         return intersect_point_sphere(p1, centre, rad, res);
-    if ((ab.crs(bc).sqlen()) < EPS) {
-        if (vec3<T>(p1, centre).dot(vec3<T>(p2, centre)) > EPS)
+    if ((ab.crs(bc).sqlen()) < EPS_FOR_MOVE) {
+        if (vec3<T>(p1, centre).dot(vec3<T>(p2, centre)) > EPS_FOR_MOVE)
             return false;
         res = centre;
         //std::cout << "seg" << std::endl;
@@ -128,14 +135,14 @@ bool intersect_segment_sphere(vec3<T> p1, vec3<T> p2, vec3<T> centre, T rad, vec
     T our_h = sqrt(bc.crs(ac).sqlen()) / (dist(p1, p2));
     vec3<T> our_plain = plain(p1, p2, centre), normal;
     normal = plain(p1, p2, p1 + our_plain);
-    if (our_h > rad + EPS) {
+    if (our_h > rad + EPS_FOR_MOVE) {
         return false;
     }
     normal.resize(our_h);
     vec3<T> projection = centre + normal;
-    if ((ab.crs(vec3<T>(p1, projection)).sqlen()) > EPS)
+    if ((ab.crs(vec3<T>(p1, projection)).sqlen()) > EPS_FOR_MOVE)
         projection = centre - normal;
-    if (!f and vec3<T>(p1, projection).dot(vec3<T>(p2, projection)) > EPS)
+    if (!f and vec3<T>(p1, projection).dot(vec3<T>(p2, projection)) > EPS_FOR_MOVE)
         return false;
     res = projection;
     //std::cout << "seg" << std::endl;
@@ -153,7 +160,7 @@ bool intersect_plain_sphere(vec3<T> p1, vec3<T> p2, vec3<T> p3, vec3<T> centre, 
         return intersect_segment_sphere(p2, p3, centre, rad, res);
     vec3<T> cur_plain = plain(p1, p2, p3);
     T d = -cur_plain.dot(p1);
-    if (fabs(dist_to_plain(cur_plain, d, centre)) > rad + EPS)
+    if (fabs(dist_to_plain(cur_plain, d, centre)) > rad + EPS_FOR_MOVE)
         return false;
     vec3<T> normal = cur_plain;
     normal.resize(dist_to_plain(cur_plain, d, centre));
@@ -253,12 +260,15 @@ bool intersect_ortohedron_sphere(ortohedron& d, vec3<T> centre, T rad, vec3<T>& 
 
 template <class T>
 
-bool intersect_segment_sphere_ortohedron(ortohedron& a, vec3<T> start, vec3<T> &finish, T rad, vec3<T> &res, int depth = 0)
+char intersect_segment_sphere_ortohedron(ortohedron& a, vec3<T> start, vec3<T> &finish, T rad, vec3<T> &res, int depth = 0)
 {
     if (depth > 5) {
-        return true;
-    }
+        return false;
+    } 
     vec3<T> mid, low = start, hig = finish;
+    if (intersect_ortohedron_sphere(a, low, rad, res)) {
+        return -1;
+    }
     if (!intersect_ortohedron_sphere(a, hig, rad, res)) {
         if (dist(start, finish) < SMALL_CONSTANT_1)
             return false;

@@ -62,17 +62,17 @@ void man::get_effect_1(mod_t res) {
 }
 
 void man::get_effect_2(mod_t res) {
-    if (res.agility > EPS) 
+    if (res.agility > EPS_FOR_SKILLS) 
         agility *= res.agility;
-    if (res.strength >  EPS) 
+    if (res.strength >  EPS_FOR_SKILLS) 
         strength *= res.strength;
-    if (res.intellect > EPS) 
+    if (res.intellect > EPS_FOR_SKILLS) 
         intellect *= res.intellect;
-    if (res.speed > EPS) 
+    if (res.speed > EPS_FOR_SKILLS) 
         abs_speed *= res.speed;
-    if (res.def_mod > EPS) 
+    if (res.def_mod > EPS_FOR_SKILLS) 
         def_mod *= res.def_mod;
-    if (res.atk_mod > EPS) 
+    if (res.atk_mod > EPS_FOR_SKILLS) 
         atk_mod *= res.atk_mod;
     cout << '!' << abs_speed << endl; 
 }
@@ -104,7 +104,11 @@ vec3<float> man::in_time(float time) {
 void man::move(float time) {
     if (time <= 0)
         return;
-    assert(time > 0);
+    if (!(time >= 0 or time <= 0)) {
+        cout << "WE RECIEVED NAN" << endl;
+        assert(time >= 0 or time <= 0);
+        return;
+    }
     vector<effect> new_effects;
     for (size_t i = 0; i < effects.size(); i++)
     {
@@ -115,7 +119,7 @@ void man::move(float time) {
             get_effect_2(effects[i].mods_two_side * -1);
         }
         effects[i].time -= time;
-        if (effects[i].time > -EPS) {
+        if (effects[i].time > -EPS_FOR_SKILLS) {
             new_effects.push_back(effects[i]);
         }
     }
@@ -124,7 +128,7 @@ void man::move(float time) {
         skills[i].to_activate -= time; 
     }
     //cout << busy << endl;
-    busy = max((float)-EPS, busy - time);
+    busy = max((float)-EPS_FOR_SKILLS, busy - time);
     if (busy < 0) {
         curr_skill = -1;
     }
@@ -141,7 +145,7 @@ bool man::take_damage(int dmg) {
     } else {
         hp = max(hp - dmg, 1.0f);
     }
-    return (hp < EPS);
+    return (hp < EPS_FOR_SKILLS);
     
 }
 int count_attack(man z) {

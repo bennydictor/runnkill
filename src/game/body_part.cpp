@@ -1,7 +1,7 @@
 #include <game/body_part.h>
 #include <game/common.h>
 #include <iostream>
-
+#include <game/field.h>
 using namespace std;
 
 body_part::body_part(string _name, float _mod) {
@@ -32,5 +32,5 @@ int count_dmg(body_part bp, int atk) {
     else
         ret = bp.mod * atk;
     cout << bp.name << ' ' << ret << endl;
-    return (int)ret;
+    return (int)ret + get_rand((int)ret / 10, ret / 5);
 }

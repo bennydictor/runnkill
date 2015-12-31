@@ -17,7 +17,6 @@
 //#include <game/armour.h>
 #include <game/animation.h>
 #include <game/util/event.h>
-
 #include <math/geom.h>
 #include <util/logstream.h>
 #include <util/smth.h>
@@ -128,7 +127,7 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
             r = m2;
         }
     }
-    if (dist(centre, l) >= rad + rad2 + EPS or dist(centre, l) < EPS) {
+    if (dist(centre, l) >= rad + rad2 + EPS_FOR_MOVE or dist(centre, l) < EPS_FOR_MOVE) {
         return false;
     }
     l = begin;
@@ -141,7 +140,7 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
         }
     }
     vec3<float> end_vec(begin, l);
-    end_vec.resize(sqrt(end_vec.sqlen()) - 10 * EPS);
+    end_vec.resize(sqrt(end_vec.sqlen()) - 10 * EPS_FOR_MOVE);
     end = begin + end_vec;
     res = vec3<float>(end, centre);
     res.resize(rad2);
@@ -196,7 +195,7 @@ bool intersect_sector_ball(vec3<float> centre, float rad1, float rad2, int i, ve
         else
             r = m2;
     }
-    if (dist(centre, l) >= rad1 + rad2 - EPS or dist(centre, l) < EPS) {
+    if (dist(centre, l) >= rad1 + rad2 - EPS_FOR_MOVE or dist(centre, l) < EPS_FOR_MOVE) {
         return false;
     }
     l = begin;
@@ -234,6 +233,7 @@ bool intersect_sector_ball(vec3<float> centre, float rad1, float rad2, int i, ve
 void damage_last_explosion() {
     //cout << explosions.back().first << endl;
     for (int j = 0; j < (int)persons.size(); j++) {
+        //cout << dist(explosions.back().coords, persons[j]->coords) << ' ' << MAN_RAD << ' ' << explosions.back().rad << endl;
         if (dist(explosions.back().coords, persons[j]->coords) < MAN_RAD + explosions.back().rad) {
             int sector = detect_sector(persons[j]->coords, explosions.back().coords, persons[j]->orientation);
             is_alive[j] = !persons[j]->take_damage(
@@ -241,7 +241,6 @@ void damage_last_explosion() {
             if (is_alive[j]) {
                 for (int i = 0; i < (int)explosions.back().effects.size(); i++) {
                     persons[j]->add_effect((explosions.back().effects[i]));
-                    cout << "bagkalkf" << endl;
                 }
             }
         }
@@ -291,14 +290,14 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag, ve
     for (int k = 0; k < 1; k++) {
         for (int i = -(int)rad - 1; i <= (int)rad + 1; i++) {
             for (int j = -(int)rad - 1; j <= (int)rad + 1; j++) {
-                point1 = vec3<float>((int)finish.x + i - EPS, -SMALL_INF, (int)finish.z - EPS + j);
-                point2 = vec3<float>((int)finish.x + 1 + EPS + i, -SMALL_INF, (int)finish.z - EPS + j);
-                point3 = vec3<float>((int)finish.x - EPS + i, get_element(world_field, (int)finish.x + i, (int)finish.z + j) + EPS, 
-                                                                    (int)finish.z - EPS + j);
-                point4 = vec3<float>((int)finish.x - EPS + i, -SMALL_INF, (int)finish.z + 1 + EPS + j);
+                point1 = vec3<float>((int)finish.x + i - EPS_FOR_MOVE, -SMALL_INF, (int)finish.z - EPS_FOR_MOVE + j);
+                point2 = vec3<float>((int)finish.x + 1 + EPS_FOR_MOVE + i, -SMALL_INF, (int)finish.z - EPS_FOR_MOVE + j);
+                point3 = vec3<float>((int)finish.x - EPS_FOR_MOVE + i, get_element(world_field, (int)finish.x + i, (int)finish.z + j) + EPS_FOR_MOVE, 
+                                                                    (int)finish.z - EPS_FOR_MOVE + j);
+                point4 = vec3<float>((int)finish.x - EPS_FOR_MOVE + i, -SMALL_INF, (int)finish.z + 1 + EPS_FOR_MOVE + j);
                 ortohedron curr(point1, point2, point3, point4);
                 bool res1 = intersect_segment_sphere_ortohedron(
-                                curr, start, curr_finish, rad + (float)EPS, intersection);
+                                curr, start, curr_finish, rad + (float)EPS_FOR_MOVE, intersection);
                 res |= res1;
                 /*
                 if (res)
@@ -316,6 +315,7 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag, ve
 }
 
 bool move_bullet(int b_idx, float time) {
+        assert(time >= 0 or time <= 0);
     if (!is_bullet_alive[b_idx]) {
         return false;
     }
@@ -336,7 +336,8 @@ bool move_bullet(int b_idx, float time) {
     bool res = move_sphere(bullets[b_idx].coords, our_point, (float)bullets[b_idx].rad, bullets[b_idx].owner, true, touch_point);
     if (res) {
 //        cerr << "Strike #" << 179 << endl;
-        explosions.push_back(explosion(bullets[b_idx].coords, EXPLOSION_TIME, bullets[b_idx].exp_rad, bullets[b_idx].damage));
+        
+        explosions.push_back(explosion(touch_point, EXPLOSION_TIME, bullets[b_idx].exp_rad, bullets[b_idx].damage));
         for (int j = 0; j < (int)bullets[b_idx].effects.size(); j++) {
             explosions.back().effects.push_back(bullets[b_idx].effects[j]);
         }
@@ -350,6 +351,7 @@ bool move_bullet(int b_idx, float time) {
 }
 
 bool move_man(int idx, float time, int depth = 0) {
+        assert(time >= 0 or time <= 0);
     if (depth > 10) {
         return true;
     }
@@ -364,19 +366,17 @@ bool move_man(int idx, float time, int depth = 0) {
     //cout << persons[idx]->hp << endl;
     vec3<float> finish = persons[idx]->in_time(time);
     float beg_dist = dist(persons[idx]->coords, finish);
-    if (finish == persons[idx]->coords)
-    {
+    assert(beg_dist >= 0 or beg_dist <= 0);
+    if (beg_dist < EPS_FOR_MOVE) {
         persons[idx]->speed.y -= (time) * GRAVITATION;
         persons[idx]->move(time);
         return true;
     }
     persons[idx]->touch_ground = false;
     vec3<float> touch_point(0, 0, 0);
-    bool res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, false, touch_point);
-    if (res)
-    {
-        if (persons[idx]->coords == finish) {
-        }
+    char res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, false, touch_point);
+    cout << (int)res << ' ';
+    if (res == 1) {
             //cout << persons[idx]->coords << finish << persons[idx]->in_time(time) << endl;   
             //cout << persons[idx]->speed << endl;
         
@@ -386,25 +386,27 @@ bool move_man(int idx, float time, int depth = 0) {
         vec3<float> tmp_point = persons[idx]->coords + persons[idx]->speed, normal = our_plain;
         normal.resize(dist_to_plain(our_plain, d, tmp_point) * -2);
         float _res = dist_to_plain(our_plain, d, tmp_point) * dist_to_plain(our_plain, d, tmp_point + normal); 
-        if (_res > EPS)
+        if (_res > EPS_FOR_MOVE)
             normal = -1.0f * normal;
-        persons[idx]->speed = vec3<float>(persons[idx]->coords, tmp_point + normal) / 2.0f;
+
+        persons[idx]->speed = vec3<float>(persons[idx]->coords, tmp_point + normal);
         float time_2 =  time * (1 - (dist(persons[idx]->coords, finish) / beg_dist));
+        assert(time_2 >= 0 or time_2 <= 0);
         persons[idx]->move(time - time_2);
         vec3<float> rvector(persons[idx]->coords, touch_point);
         persons[idx]->speed.y -= (time - time_2) * GRAVITATION;
         move_man(idx, time_2, depth + 1);
         rvector.resize(1);
-        if (rvector.y - EPS <= -1)
+        if (rvector.y - EPS_FOR_SKILLS <= -1)
             persons[idx]->touch_ground = true;
-    //cout << (rvector.y - EPS <= -1) << endl;
-    }
-    else
-    {
+    //cout << (rvector.y - EPS_FOR_MOVE <= -1) << endl;
+    } else if (res == -1) {
+        persons[idx]->coords.y += get_rand(5, 15);
+    } else {
         persons[idx]->coords = (finish);
         persons[idx]->move(time);
         persons[idx]->speed.y -= (time) * GRAVITATION;
-        if (persons[idx]->coords.y - get_element(world_field, persons[idx]->coords.x, persons[idx]->coords.z) - MAN_RAD < EPS)
+        if (persons[idx]->coords.y - get_element(world_field, persons[idx]->coords.x, persons[idx]->coords.z) - MAN_RAD < EPS_FOR_MOVE)
             persons[idx]->touch_ground = true;
     }
 
@@ -415,7 +417,7 @@ void attack(int man_idx, int idx) {
     man* z = persons[man_idx];
     //cout << z->mp << ' ' << z->skills[idx].cost.mp << endl;
     //cout << z->busy << ' ' << z->skills.size() << ' ' << z->skills[idx].to_activate << ' ' << z->skills[idx].between_activate << endl;
-    if (z->busy > 0 or (int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp or z->skills[idx].to_activate > EPS) {
+    if (z->busy > 0 or (int)z->skills.size() <= idx or z->skills[idx].cost.mp > z->mp or z->skills[idx].to_activate > EPS_FOR_SKILLS) {
     //    cerr << "You missed!" << endl;
         return;
     }
@@ -519,7 +521,7 @@ void world_callback(void) {
         }
     }
     for (int i = 0; i < (int) explosions.size(); ++i) {
-        draw_objs[draw_obj_count++] = make_draw_sphere(explosions[i].coords, EXPLOSION_RADIUS * powf(EXPLOSION_TIME - explosions[i].end_time, 1.0 / 3), explosion_material.id);
+        draw_objs[draw_obj_count++] = make_draw_sphere(explosions[i].coords, EXPLOSION_RADIUS * powf(explosions[i].end_time, 1.0 / 3), explosion_material.id);
     }
     
     for (int i = 0; i < (int)bullets.size(); i++) {
@@ -535,6 +537,7 @@ void world_callback(void) {
 
 
 void world_update(float dt) {
+    assert(dt >= 0 or dt <= 0);
     vector<bullet> new_bullets;
     vector<bool> new_is_bullet_alive;
 
@@ -615,7 +618,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
             attack(man_idx, 2);
         }
     }
-    if (z->need_to_cast and z->curr_skill != -1 and fabs(z->busy - z->skills[z->curr_skill].activate_time) < EPS) {
+    if (z->need_to_cast and z->curr_skill != -1 and fabs(z->busy - z->skills[z->curr_skill].activate_time) < EPS_FOR_SKILLS) {
         skill_t curr = z->skills[z->curr_skill];
         z->need_to_cast = false;
         if (curr.type == 'R') {
@@ -626,7 +629,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
             bullets.back().speed = bullets.back().speed + z->speed;
             bullets.back().damage *= count_attack(*z);
             bullets.back().owner = z->number;
-            bullets.back().exp_rad = 3;
+            bullets.back().exp_rad = curr.sample.exp_rad;
             is_bullet_alive.push_back(1);
             cerr << "You shoot" << endl;
         } else if (curr.type == 'M') {
