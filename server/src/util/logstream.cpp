@@ -12,7 +12,9 @@ void logstream::flush_ss() {
         int log_time = difftime(current_t, begin_t);
         char header[20];
         printl_header(header, log_time, log_level);
-        out << header << buf.substr(0, buf.rfind("\n") + 1);
+        if (log_level >= min_log_level) {
+            out << header << buf.substr(0, buf.rfind("\n") + 1);
+        }
         buf = buf.substr(buf.rfind("\n") + 1);
     }
 }

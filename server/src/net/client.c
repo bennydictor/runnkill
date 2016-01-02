@@ -14,6 +14,7 @@
 
 #define MAX_CLIENTS 256
 #define PORT 12345
+#define PORT_STR #PORT
 
 #define MSG_BUF_LEN (1024 * 1024 * 1024)
 #define PUT(TYPE, VAL) do { *(TYPE *) ptr = (VAL); ptr += sizeof(TYPE); } while(0)
