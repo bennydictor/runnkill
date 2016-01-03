@@ -75,10 +75,10 @@ CXX_COMPILE	:= $(CXX) $(CXXFLAGS)
 LD_COMPILE	:= $(LD) $(LDFLAGS)
 AS_COMPILE	:= $(AS) $(ASFLAGS)
 
-CHANGED_SOURCES	:=	$(foreach src,$(C_SOURCES),$(if $(shell echo $(C_COMPILE) | diff - $(subst src,.make/buildopts,$(src) 2>&1 >/dev/null)),$(src),)) \
-					$(foreach src,$(CXX_SOURCES),$(if $(shell echo $(CXX_COMPILE) | diff - $(subst src,.make/buildopts,$(src) 2>&1 >/dev/null)),$(src),)) \
-					$(foreach src,$(AS_SOURCES),$(if $(shell echo $(AS_COMPILE) | diff - $(subst src,.make/buildopts,$(src)) 2>&1 >/dev/null),$(src),))
-CHANGED_NAME 	:= $(if $(shell echo $(LD_COMPILE) | diff - .make/buildopts/$(NAME) 2>&1 >/dev/null),$(NAME),)
+CHANGED_SOURCES	:=	$(foreach src,$(C_SOURCES),$(if $(shell echo $(C_COMPILE) | diff - $(subst src,.make/buildopts,$(src) 2>&1)),$(src),)) \
+					$(foreach src,$(CXX_SOURCES),$(if $(shell echo $(CXX_COMPILE) | diff - $(subst src,.make/buildopts,$(src) 2>&1)),$(src),)) \
+					$(foreach src,$(AS_SOURCES),$(if $(shell echo $(AS_COMPILE) | diff - $(subst src,.make/buildopts,$(src)) 2>&1),$(src),))
+CHANGED_NAME 	:= $(if $(shell echo $(LD_COMPILE) | diff - .make/buildopts/$(NAME) 2>&1),$(NAME),)
 CHANGED_OBJECTS	:= $(foreach src,$(CHANGED_SOURCES),$(subst src,obj,$(src).o))
 
 all: $(NAME)
@@ -142,10 +142,10 @@ print_vars:
 	@echo OPTSVARS = $(OPTSVARS)
 	@echo SHOULD_DEFINE = $(SHOULD_DEFINE)
 	@echo UNDEF_OPTS = $(UNDEF_OPTS)
-	@echo CFLAGS = $(CFLAGS)
-	@echo CXXFLAGS = $(CXXFLAGS)
-	@echo LDFLAGS = $(LDFLAGS)
-	@echo ASFLAGS = $(ASFLAGS)
+	@echo C_COMPILE = $(C_COMPILE)
+	@echo CXX_COMPILE = $(CXX_COMPILE)
+	@echo LD_COMPILE = $(LD_COMPILE)
+	@echo AS_COMPILE = $(AS_COMPILE)
 	@echo CHANGED_SOURCES = $(CHANGED_SOURCES)
 	@echo CHANGED_NAME = $(CHANGED_NAME)
 	@echo CHANGED_OBJECTS = $(CHANGED_OBJECTS)
