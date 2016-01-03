@@ -1,6 +1,8 @@
 gmon.out
 analysis
 obj
-.make/
+**/.make/depends
+**/.make/buildopts
+**/.make/options
 server/server
 client/client
