@@ -23,7 +23,7 @@ extern "C" {
 #define DRAW_SPHERE_SECTOR 1
 #define MAX_DRAW_OBJ 256
 
-extern int world_w, world_h;
+extern int world_w, world_h, render_distance;
 extern int **world_field;
 extern float coords[3];
 extern float speed[3];

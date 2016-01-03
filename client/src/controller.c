@@ -4,10 +4,7 @@
 #include <net/net.h>
 #include <world.h>
 
-using namespace std;
-
 #define MAX_DRAW_OBJ 256
-
 
 int controller(void) {
     delta();

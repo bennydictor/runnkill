@@ -357,11 +357,6 @@ bool move_man(int idx, float time, int depth = 0) {
     }
     if (time < 0)
         return true;
-    if (abs(persons[idx]->coords.y) > 20) {
-        is_alive[idx] = 0;
-        persons[idx]->hp = 0;
-        return false;
-    }
     assert(time >= 0);
     //cout << persons[idx]->hp << endl;
     vec3<float> finish = persons[idx]->in_time(time);

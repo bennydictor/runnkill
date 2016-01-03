@@ -1,6 +1,6 @@
 #include <world.h>
 
-int world_w, world_h;
+int world_w, world_h, render_distance = 100;
 int **world_field;
 
 float coords[3];

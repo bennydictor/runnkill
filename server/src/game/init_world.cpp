@@ -98,9 +98,9 @@ void in_materials() {
 }
 
 int init_world(void) {
-    world_w = world_h = 100;
+    world_w = world_h = 1000;
     cout << loglevel(LOG_I) << "world height: " << world_h << endl << "world width: " << world_w << endl << loglevel(LOG_D);
-    world_field = gen_field_sun(world_w, world_h);
+    world_field = gen_field_suns(world_w, world_h);
     gl_light_enable[0] = 1;
     gl_light[0].pos = make_vec3(100, 100, 100);
     gl_light[0].rot = make_vec3(3 * M_PI / 2, 0, 0);
@@ -197,7 +197,19 @@ int init_world(void) {
 void add_player(char *name, int clazz) {
     persons.push_back(new man(string(name), clazz));
     is_alive.push_back(true);
-    persons.back()->coords = vec3<float>(0, 2, 0);
+    int i = rand() % world_w;
+    int j = rand() % world_h;
+    i /= 2;
+    j /= 2;
+    while (world_field[i][j] != 0) {
+        ++j;
+        if (j == world_h) {
+            ++i;
+            j = 0;
+        }
+    }
+    persons.back()->coords = vec3<float>(i, 19, j);
+    persons.back()->speed = vec3<float>(0, 0, 0);
 }
 
 void free_world(void) {

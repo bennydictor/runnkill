@@ -69,7 +69,7 @@ draw_obj make_draw_field(material_t _material) {
     ret.ibo = NULL;
     ret.count = field_w * field_h * 4 * 6;
     ret.material = _material;
-    ret.free_mat_m = 0;
+    ret.free_mat_m = 1;
     ret.free_ibo = 0;
     return ret;
 }
@@ -91,7 +91,7 @@ draw_obj make_draw_subfield(int x1, int y1, int x2, int y2, material_t _material
     }
     ret.count = (x2 - x1) * (y2 - y1) * 4 * 6;
     ret.material = _material;
-    ret.free_mat_m = 0;
-    ret.free_ibo = 0;
+    ret.free_mat_m = 1;
+    ret.free_ibo = 1;
     return ret;
 }

@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 
-int make_local_socket(uint16_t port);
+int make_local_tcp_socket(void);
+int make_local_udp_socket(void);
 
 #endif // NET_SOCKET_H

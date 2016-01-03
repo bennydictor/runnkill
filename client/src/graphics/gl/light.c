@@ -3,6 +3,7 @@
 #include <graphics/gl/pp.h>
 #include <graphics/gl.h>
 #include <graphics/glfw.h>
+#include <world.h>
 
 unsigned int prog_light;
 
@@ -17,8 +18,8 @@ void prog_light_uniforms(void) {
     glUniformMatrix4fv(prog_light_unif_mat_p, 1, GL_FALSE, mat_p);
     glUniform1f(prog_light_unif_z_near, gl_z_near);
     glUniform1f(prog_light_unif_z_far, gl_z_far);
-    glUniform1f(prog_light_unif_fog_near, 15);
-    glUniform1f(prog_light_unif_fog_far, 20);
+    glUniform1f(prog_light_unif_fog_near, render_distance * 2 / 3);
+    glUniform1f(prog_light_unif_fog_far, render_distance);
     for (int i = 0; i < LIGHT_COUNT; ++i) {
         sprintf(unif_name, "light_enable[%d]", i);
         glUniform1i(glGetUniformLocation(prog_light, unif_name), gl_light_enable[i]);

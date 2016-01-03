@@ -11,11 +11,9 @@ extern "C" {
 #endif
 
 typedef struct {
-    struct sockaddr_in addr;
-    socklen_t addrlen;
     char evs[WORLD_EVENT_COUNT];
     float orientation[3];
-    char upd;
+    int tcp;
     char alive;
 } client_t;
 
