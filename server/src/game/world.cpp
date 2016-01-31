@@ -29,6 +29,7 @@
 #include <cassert>
 #define INF 10000000
 #define VEC3F vec3<float>()
+#define EXP_CONSTANT 20
 using namespace std;
 
 const int len = 1;
@@ -39,10 +40,13 @@ char gl_light_enable[LIGHT_COUNT];
 draw_obj draw_objs[MAX_DRAW_OBJ];
 int draw_obj_count;
 
+map<int, man*> get_by_id;
+map<int, int> exp_add;
 vector<bullet> bullets;
 vector<trap> traps;
 vector<man*> persons;
-vector<bool> is_alive, is_bullet_alive;
+vector<char> is_alive;
+vector<bool>is_bullet_alive;
 vector<explosion> explosions;
 vector<vector<skill_t > > default_skills;
 vector<item_t> default_items;
@@ -111,6 +115,12 @@ int detect_sector(vec3<T> centre, vec3<T> point, vec3<T> orientation) {
     };
     //cout << "your number is " << names[x > 0][y > 0][z > 0] << endl;
     return ret[x < 0][y > 0][z < 0];
+}
+
+void add_exp(man* p, int e) {
+    for (pair<int, int> i : p->healers)  {
+        exp_add[i.first] += (i.second / p->max_hp) * e;
+    }
 }
 
 bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin, vec3<float>& end, vec3<float>& res) {
@@ -187,7 +197,7 @@ bool intersect_sector_ball(vec3<float> centre, float rad1, float rad2, int i, ve
     vec3<float> l, r, m1, m2, m;
     l = begin;
     r = end;
-    for (int _ = 0; _ < 40; _++) {
+    for (int _ = 0; _ < 20; _++) {
         m1 = ((float)2 * l + r) / (float)3;
         m2 = ((float)2 * r + l) / (float)3;
         if (dist(centre, m1) > dist(centre, m2))
@@ -200,7 +210,7 @@ bool intersect_sector_ball(vec3<float> centre, float rad1, float rad2, int i, ve
     }
     l = begin;
     vec3<float> last_r = r;
-    for (int _ = 0; _ < 30; _++) {
+    for (int _ = 0; _ < 15; _++) {
         m = (l + r) / (float)2;
         if (dist(centre, m) < rad1 + rad2)
             r = m;
@@ -215,7 +225,7 @@ bool intersect_sector_ball(vec3<float> centre, float rad1, float rad2, int i, ve
     l = last_r;
     r = end;
 
-    for (int _ = 0; _ < 30; _++) {
+    for (int _ = 0; _ < 15; _++) {
         m = (l + r) / (float)2;
         if (dist(centre, m) > rad1 + rad2)
             r = m;
@@ -237,8 +247,9 @@ void damage_last_explosion() {
         if (dist(explosions.back().coords, persons[j]->coords) < MAN_RAD + explosions.back().rad) {
             int sector = detect_sector(persons[j]->coords, explosions.back().coords, persons[j]->orientation);
             is_alive[j] = !persons[j]->take_damage(
-                        count_dmg(persons[j]->body_parts[sector], explosions.back().damage));
-            if (is_alive[j]) {
+                        count_dmg(persons[j]->body_parts[sector], explosions.back().damage), explosions.back().owner);
+            is_alive[j]++;
+            if (is_alive[j] == 2) {
                 for (int i = 0; i < (int)explosions.back().effects.size(); i++) {
                     persons[j]->add_effect((explosions.back().effects[i]));
                 }
@@ -267,7 +278,7 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag, ve
     curr_intersection = finish;
     vec3<float> curr_finish = finish;
     for (int i = 0; i < (int)persons.size(); i++) {
-        if (persons[i]->number != owner)
+        if (is_alive[i] == 2 && persons[i]->number != owner)
         {
             if (is_intersected(persons[i]->coords, rad, MAN_RAD, start,
                                curr_finish, curr_intersection)) {
@@ -321,11 +332,10 @@ bool move_bullet(int b_idx, float time) {
     }
     if (abs(bullets[b_idx].coords.y) > 100) {
         explosions.push_back(explosion(bullets[b_idx].coords, EXPLOSION_TIME, bullets[b_idx].exp_rad, bullets[b_idx].damage));
+        explosions.back().owner = bullets[b_idx].owner;
         for (int j = 0; j < (int)bullets[b_idx].effects.size(); j++) {
             explosions.back().effects.push_back(bullets[b_idx].effects[j]);
-            cout << 1 << ' ';
         }
-        cout << endl;
         damage_last_explosion();
         is_bullet_alive[b_idx] = 0;
         return false;
@@ -338,6 +348,7 @@ bool move_bullet(int b_idx, float time) {
 //        cerr << "Strike #" << 179 << endl;
         
         explosions.push_back(explosion(touch_point, EXPLOSION_TIME, bullets[b_idx].exp_rad, bullets[b_idx].damage));
+        explosions.back().owner = bullets[b_idx].owner;
         for (int j = 0; j < (int)bullets[b_idx].effects.size(); j++) {
             explosions.back().effects.push_back(bullets[b_idx].effects[j]);
         }
@@ -370,7 +381,6 @@ bool move_man(int idx, float time, int depth = 0) {
     persons[idx]->touch_ground = false;
     vec3<float> touch_point(0, 0, 0);
     char res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, false, touch_point);
-    cout << (int)res << ' ';
     if (res == 1) {
             //cout << persons[idx]->coords << finish << persons[idx]->in_time(time) << endl;   
             //cout << persons[idx]->speed << endl;
@@ -547,15 +557,18 @@ void world_update(float dt) {
     bullets = new_bullets; 
     is_bullet_alive = new_is_bullet_alive;
     for (int i = 0; i < (int)persons.size(); i++) {
-        if (is_alive[i]) {
+        persons[i]->exp += exp_add[persons[i]->number];
+        exp_add[persons[i]->number] = 0;
+        get_by_id[persons[i]->number] = persons[i];
+        if (is_alive[i] == 2) {
             move_man(i, dt);
             if (persons[i]->skills.size() < 1) {
                 for (skill_t k : default_skills[persons[i]->cls])
                 persons[i]->skills.push_back(k);
             }
         }
-        if (persons[i]->hp < 0) {
-            is_alive[i] = false;
+        if (persons[i]->hp < 0 and is_alive[i] == 2) {
+            is_alive[i] = 1;
             persons[i]->hp = 0;
         }
     }
@@ -582,8 +595,20 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     z->set_orientation(curr_orientation);
     vec3<float> move_orientation = curr_orientation;
     move_orientation.y /= z->abs_speed / 2;
-    if (!is_alive[man_idx])
+    if (is_alive[man_idx] == 1) {
+        cout << "take this expp" << endl;
+        for (pair<int, int> i : persons[man_idx]->damagers) {
+            cout << i.first << ' ' << EXP_CONSTANT * i.second << ' ' << persons[man_idx]->max_hp << endl;
+            int EP = (EXP_CONSTANT * i.second) / persons[man_idx]->max_hp;
+            exp_add[i.first] += EP; 
+            add_exp(get_by_id[i.first], EP);
+        }
+        persons[man_idx]->damagers.clear();
+        persons[man_idx]->healers.clear();
+        is_alive[man_idx] = 0;
         return;
+
+    }
     if (pressed[WORLD_MOVE_FORWARD_EVENT] and pressed[WORLD_MOVE_BACKWARD_EVENT])
         pressed[WORLD_MOVE_FORWARD_EVENT] = pressed[WORLD_MOVE_BACKWARD_EVENT] = false;
     if (pressed[WORLD_MOVE_LEFT_EVENT] and pressed[WORLD_MOVE_RIGHT_EVENT])
@@ -648,7 +673,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
 //                            to_me.y += curr.height;
                             sector = detect_sector(persons[i]->coords, persons[i]->coords + to_me, persons[i]->orientation);
                             is_alive[i] = !persons[i]->take_damage(
-                                    count_dmg(persons[i]->body_parts[sector], curr.dmg * count_attack(*z)));
+                                    count_dmg(persons[i]->body_parts[sector], curr.dmg * count_attack(*z)), z->number);
                         }
                     }
                 }

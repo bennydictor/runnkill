@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
+#include <map>
 //#include <game/armour.h>
 #include <game/body_part.h>
 #include <game/common.h>
@@ -21,7 +21,7 @@
 struct man {
     std::string name;
     int cls, curr_skill;
-    float def_mod, atk_mod, busy, attack_rad;
+    float def_mod, atk_mod, busy, attack_rad, sum_damage;
     bool can_die, have_shield, is_running, touch_ground, need_to_cast;
     mod_t recovery;
     std::vector<item_t*> bag;
@@ -29,10 +29,11 @@ struct man {
     std::vector<effect> effects;
     std::vector<skill_t> skills;
     //armour* weapon;
+    std::map<int, int> damagers, healers;
     vec3<float> coords, speed, orientation;
     float hp, mp;
     float max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high;
-    int level, exp, number;
+    int exp, level, number;
     man();
     man(std::string _name, int cl);
     vec3<float> in_time(float time);
@@ -46,7 +47,7 @@ struct man {
     void out(std::ostream& stream);
     void run();
     void put_on(item_t* item, int idx);
-    bool take_damage(int dmg);
+    bool take_damage(float dmg, int owner);
 };
 
 int count_attack(man z);

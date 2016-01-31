@@ -41,7 +41,7 @@ extern vec3<float> sector_points_a[8];
 extern vec3<float> sector_points_b[8];
 extern vec3<float> sector_points_c[8];
 extern std::vector<man*> persons;
-extern std::vector<bool> is_alive;
+extern std::vector<char> is_alive;
 void man_update(int man_idx, char* pressed, vec3<float> curr_orientation);
 
 extern "C" {

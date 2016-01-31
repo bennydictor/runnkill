@@ -138,13 +138,28 @@ void man::move(float time) {
     mp = min(mp, (float)max_mp);
 }
 
-bool man::take_damage(int dmg) {
-    cout << dmg << endl;
+bool man::take_damage(float dmg, int p) {
     if (can_die) {
-        hp = max(hp - dmg, 0.0f);
+        dmg = min(dmg, hp);
     } else {
-        hp = max(hp - dmg, 1.0f);
+        dmg = min(dmg, hp - 1);
     }
+    dmg = max(dmg, hp - max_hp);
+    if (dmg < 0) {
+        healers[p] -= dmg;
+        for (auto it = damagers.begin(); it != damagers.end(); it++) {
+            it->second += dmg * (it->second / sum_damage);
+        }
+        sum_damage += dmg;
+    } else {
+        damagers[p] += dmg;
+        for (auto it = healers.begin(); it != healers.end(); it++) {
+            it->second -= dmg * (it->second / sum_damage);
+        }
+        sum_damage += dmg;
+    }
+    cout << dmg << endl;
+    hp -= dmg;
     return (hp < EPS_FOR_SKILLS);
     
 }

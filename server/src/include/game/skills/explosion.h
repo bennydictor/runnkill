@@ -8,7 +8,7 @@
 #define EXPLOSION_TIME .3
 
 struct explosion {
-    
+    int owner; 
     float rad, time, end_time, damage;
     vec3<float> coords;
     std::vector<effect> effects;
