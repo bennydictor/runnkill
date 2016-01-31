@@ -61,7 +61,6 @@ CXXFLAGS 	+= $(foreach opt,$(OPTS_OFF),$($(opt)_OFF_CXXFLAGS))
 LDFLAGS 	+= $(foreach opt,$(OPTS_OFF),$($(opt)_OFF_LDFLAGS))
 ASFLAGS 	+= $(foreach opt,$(OPTS_OFF),$($(opt)_OFF_ASFLAGS))
 
-CFLAGS 		+= -Isrc/include
 CXXFLAGS 	+= -Isrc/include
 LDFLAGS		+= $(addprefix -l,$(LIBS))
 
@@ -88,7 +87,7 @@ $(NAME): $(OBJECTS)
 	@echo $(LD) $(LDFLAGS) >.make/buildopts/$(NAME)
 
 obj/%.c.o: src/%.c | $(OBJECTS_SUBDIRS) $(OPTIONS_SUBDIRS)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@ -Isrc/include
 	@echo $(CC) $(CFLAGS) >$(subst src,.make/buildopts,$<)
 
 obj/%.cpp.o: src/%.cpp | $(OBJECTS_SUBDIRS) $(OPTIONS_SUBDIRS)
