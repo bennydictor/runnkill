@@ -135,12 +135,14 @@ void gl_update(int n, draw_obj *objs) {
     render_light(n, objs);
     render_pp();
     char fps_string[1024 * 1024];
-    sprintf(fps_string, "fps: %d\ncoords: %f %f %f\nspeed: %f %f %f\norientation: %f %f %f\nhp: %f\nmp: %f\nmax_hp: %f\nmax_mp: %f\nagility: %f\nstrength: %f\nintellect: %f\nabs_speed: %f\njump_high: %f",
+    sprintf(fps_string, "fps: %d\ncoords: %f %f %f\nspeed: %f %f %f\norientation: %f %f %f\nhp: %f\nmp: %f\nmax_hp: %f\nmax_mp: %f\nagility: %f\nstrength: %f\nintellect: %f\nabs_speed: %f\njump_high: %f\n EP: %d; level: %d; number?: %d\n",
             fps,
             coords[0], coords[1], coords[2],
             speed[0], speed[1], speed[2],
             orientation[0], orientation[1], orientation[2],
-            hp, mp, max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high);
+            hp, mp, max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high,
+            EP, level, number
+            );
     render_text(10, window_height - ft_font_size - 10, fps_string);
 
     glfwSwapBuffers(window);

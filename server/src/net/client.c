@@ -180,7 +180,7 @@ void net_update(void) {
         default:
             msg[0] = MSG_NOPE;
             sendto(local_udp_socket, msg, 1, 0, (struct sockaddr *) &src_addr, addrlen);
-            printl(LOG_W, "Error while receiving message: wrong messgae type");
+            printl(LOG_W, "Error while receiving message: wrong message type");
             break;
         }
     }

@@ -458,7 +458,7 @@ void *get_person_data_begin(int idx) {
 }
 
 void *get_person_data_end(int idx) {
-    return ((char *)&persons[idx]->jump_high) + sizeof(persons[idx]->jump_high);
+    return ((char *)&persons[idx]->number) + sizeof(persons[idx]->number);
 }
 
 void world_callback(void) {

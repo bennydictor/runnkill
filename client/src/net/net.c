@@ -221,6 +221,9 @@ int net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs) {
     GET(float, intellect);
     GET(float, abs_speed);
     GET(float, jump_high);
+    GET(int, EP);
+    GET(int, level);
+    GET(int, number);
     GET(int, *draw_obj_count);
     gl_pos[0] = coords[0] - 5 * orientation[0];
     gl_pos[1] = coords[1] + 1;

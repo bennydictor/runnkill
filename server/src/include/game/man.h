@@ -21,7 +21,6 @@
 struct man {
     std::string name;
     int cls, curr_skill;
-    int level, exp, number;
     float def_mod, atk_mod, busy, attack_rad;
     bool can_die, have_shield, is_running, touch_ground, need_to_cast;
     mod_t recovery;
@@ -33,6 +32,7 @@ struct man {
     vec3<float> coords, speed, orientation;
     float hp, mp;
     float max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high;
+    int level, exp, number;
     man();
     man(std::string _name, int cl);
     vec3<float> in_time(float time);
