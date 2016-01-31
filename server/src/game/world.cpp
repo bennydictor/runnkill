@@ -471,6 +471,10 @@ void *get_person_data_end(int idx) {
     return ((char *)&persons[idx]->number) + sizeof(persons[idx]->number);
 }
 
+char *get_person_text(int idx) {
+    return (persons[idx]->get_text());
+}
+
 void world_callback(void) {
     draw_obj_count = 0;
     for (int i = 0; i < (int)persons.size(); i++) {
@@ -557,7 +561,7 @@ void world_update(float dt) {
     bullets = new_bullets; 
     is_bullet_alive = new_is_bullet_alive;
     for (int i = 0; i < (int)persons.size(); i++) {
-        persons[i]->exp += exp_add[persons[i]->number];
+        persons[i]->get_exp(exp_add[persons[i]->number]);
         exp_add[persons[i]->number] = 0;
         get_by_id[persons[i]->number] = persons[i];
         if (is_alive[i] == 2) {

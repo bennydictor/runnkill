@@ -14,7 +14,7 @@
 #include <game/items.h>
 #include <game/mod_type.h>
 #include <game/skills/skill_type.h>
-
+#include <game/message.h>
 #include <math/vec2.h>
 #include <math/vec3.h>
 
@@ -23,11 +23,13 @@ struct man {
     int cls, curr_skill;
     float def_mod, atk_mod, busy, attack_rad, sum_damage;
     bool can_die, have_shield, is_running, touch_ground, need_to_cast;
+    char buff[2048];
     mod_t recovery;
     std::vector<item_t*> bag;
     std::vector<body_part> body_parts;
     std::vector<effect> effects;
     std::vector<skill_t> skills;
+    std::vector<message> messages;
     //armour* weapon;
     std::map<int, int> damagers, healers;
     vec3<float> coords, speed, orientation;
@@ -46,7 +48,10 @@ struct man {
     void fortify(int idx);
     void out(std::ostream& stream);
     void run();
+    void get_exp(int e);
     void put_on(item_t* item, int idx);
+    void new_message(char* s, float t);
+    char* get_text();
     bool take_damage(float dmg, int owner);
 };
 

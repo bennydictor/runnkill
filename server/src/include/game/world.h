@@ -77,6 +77,7 @@ void world_update(float dt);
 void kill_person(int idx);
 void *get_person_data_begin(int idx);
 void *get_person_data_end(int idx);
+char *get_person_text(int idx);
 //extern draw_obj **world_map;
 //void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp);
 

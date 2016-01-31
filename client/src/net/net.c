@@ -232,9 +232,9 @@ int net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs) {
     int field_x2 = min_int32(world_w, ((int) coords[0]) + render_distance);
     int field_y1 = max_int32(0, ((int) coords[2]) - render_distance);
     int field_y2 = min_int32(world_w, ((int) coords[2]) + render_distance);
-    draw_objs[0] = make_draw_subfield(field_x1, field_y1, field_x2, field_y2, materials[0]);
-    ++*draw_obj_count;
-    for (int i = 1; i < *draw_obj_count; ++i) {
+    //draw_objs[0] = make_draw_subfield(field_x1, field_y1, field_x2, field_y2, materials[0]);
+    //++*draw_obj_count;
+    for (int i = 0; i < *draw_obj_count; ++i) {
         GET(char, type);
         GET(float, pos[0]);
         GET(float, pos[1]);
@@ -249,6 +249,11 @@ int net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs) {
             draw_objs[i] = make_draw_sphere_sector3fv2f(pos, rot, rad, s, materials[mat_id]);
         }
     }
+    /* 
+    int mes_len = strlen(ptr);
+    memcpy(message, ptr, mes_len);
+    ptr += mes_len;
+    */
     return 0;
 }
 

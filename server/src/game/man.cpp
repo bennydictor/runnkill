@@ -136,6 +136,13 @@ void man::move(float time) {
     hp = min(hp, (float)max_hp);
     mp += (recovery.mp * time);
     mp = min(mp, (float)max_mp);
+    vector<message> new_messages;
+    for (int i = 0; i < (int)messages.size(); i++) {
+        messages[i].time -= time;
+        if (messages[i].time > 0) {
+            new_messages.push_back(messages[i]);
+        }
+    }
 }
 
 bool man::take_damage(float dmg, int p) {
@@ -145,18 +152,20 @@ bool man::take_damage(float dmg, int p) {
         dmg = min(dmg, hp - 1);
     }
     dmg = max(dmg, hp - max_hp);
-    if (dmg < 0) {
-        healers[p] -= dmg;
-        for (auto it = damagers.begin(); it != damagers.end(); it++) {
-            it->second += dmg * (it->second / sum_damage);
+    if (p != number) {
+        if (dmg < 0) {
+            healers[p] -= dmg;
+            for (auto it = damagers.begin(); it != damagers.end(); it++) {
+                it->second += dmg * (it->second / sum_damage);
+            }
+            sum_damage += dmg;
+        } else {
+            damagers[p] += dmg;
+            for (auto it = healers.begin(); it != healers.end(); it++) {
+                it->second -= dmg * (it->second / sum_damage);
+            }
+            sum_damage += dmg;
         }
-        sum_damage += dmg;
-    } else {
-        damagers[p] += dmg;
-        for (auto it = healers.begin(); it != healers.end(); it++) {
-            it->second -= dmg * (it->second / sum_damage);
-        }
-        sum_damage += dmg;
     }
     cout << dmg << endl;
     hp -= dmg;
@@ -203,4 +212,29 @@ void man::put_on(item_t* item, int idx) {
     get_effect_2(item->effects);
     max_hp += item->hp;
     max_mp += item->mp;
+}
+
+void man::new_message(char* s, float t) {
+    messages.push_back(message());
+    messages.back().str = s;
+    messages.back().time = t;
+}
+
+char* man::get_text() {
+    char* curr = buff;
+    for (int i = 0; i < int(messages.size()); i++) {
+        memcpy(curr, messages[i].str, messages[i].len());
+        curr += messages[i].len();
+        *curr = '\n';
+        curr++;
+    }
+    *curr = 0;
+    return buff;
+}
+
+void man::get_exp(int e) {
+    exp += e;
+    char m[200];
+    sprintf(m, "New points: %d!", e);
+    new_message(m, 3);
 }

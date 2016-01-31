@@ -30,7 +30,7 @@ extern float speed[3];
 extern float orientation[3];
 extern float hp, mp, max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high;
 extern int EP, level, number;
-
+extern char message[2048];
 #ifdef __cplusplus
 }
 #endif
