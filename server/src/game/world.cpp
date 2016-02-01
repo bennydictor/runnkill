@@ -447,7 +447,7 @@ bool move_trap(int idx, float time) {
             vec3<float> to(persons[i]->coords, traps[idx].centre);
             to.resize(MAN_RAD);
             explosions.push_back(explosion(persons[i]->coords + to, EXPLOSION_TIME, EXPLOSION_RADIUS, traps[idx].dmg));
-            
+            explosions.back().owner = traps[idx].owner; 
             for (int j = 0; j < (int)traps[idx].effects.size(); j++) {
                 explosions.back().effects.push_back(traps[idx].effects[j]);
             }
@@ -583,11 +583,14 @@ void world_update(float dt) {
             explosions.push_back(nexp[i]);
         }
     }
+    vector<trap> ntraps;
     for (int i = 0; i < (int)traps.size(); i++) {
         if (traps[i].is_alive) {
             move_trap(i, dt);
+            ntraps.push_back(traps[i]);
         }
     }
+    traps = ntraps;
     for (int i = 0; i < (int)explosions.size(); i++) {
         explosions[i].time += dt;
     }
@@ -687,6 +690,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
                 vec3<float> centre = z->coords;
                 centre.y -= MAN_RAD;
                 traps.push_back(trap(centre, curr.distance, curr.dmg * count_attack(*z), curr.busy_time, curr.material_idx));
+                traps.back().owner = z->number;
                 for (int i = 0; i < (int)curr.effects.size(); i++) {
                     traps.back().effects.push_back(curr.effects[i]);
                 }

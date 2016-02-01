@@ -6,7 +6,7 @@
 
 struct trap {
     float rad, dmg, time, activate_time;
-    int material_idx;
+    int material_idx, owner;
     bool is_alive;
     vec3<float> centre;
     std::vector<effect> effects;
