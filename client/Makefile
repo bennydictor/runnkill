@@ -84,11 +84,11 @@ CHANGED_OBJECTS	:= $(foreach src,$(CHANGED_SOURCES),$(subst src,obj,$(src).o))
 all: $(NAME)
 
 $(NAME): $(OBJECTS)
-	$(LD) $(OBJECTS) -o $@ $(LDFLAGS) 
+	$(LD) $(OBJECTS) $(LDFLAGS) -o $@ 
 	@echo $(LD) $(LDFLAGS) >.make/buildopts/$(NAME)
 
 obj/%.c.o: src/%.c | $(OBJECTS_SUBDIRS) $(OPTIONS_SUBDIRS)
-	$(CC) $(CFLAGS) -c $< -o $@ -Isrc/include
+	$(CC) $(CFLAGS) -c $< -o $@ 
 	@echo $(CC) $(CFLAGS) >$(subst src,.make/buildopts,$<)
 
 obj/%.cpp.o: src/%.cpp | $(OBJECTS_SUBDIRS) $(OPTIONS_SUBDIRS)

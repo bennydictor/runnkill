@@ -1,5 +1,5 @@
 NAME           := client
-LIBS           := m GL glfw GLEW freetype
+LIBS           := m glfw GL GLEW freetype
 
 CC                     := gcc
 CFLAGS                 := -std=c99 -march=native -pipe -Wall -Wextra -Wshadow -I/usr/include/freetype2
