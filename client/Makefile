@@ -63,8 +63,7 @@ ASFLAGS 	+= $(foreach opt,$(OPTS_OFF),$($(opt)_OFF_ASFLAGS))
 
 CFLAGS      += -Isrc/include
 CXXFLAGS 	+= -Isrc/include
-LDFLAGS		+= $(addprefix -l,$(LIBS))
-
+#LDFLAGS		+= 
 CFLAGS		:= $(shell echo $(CFLAGS) 	| sed -E 's/\s{2,}/ /')
 CXXFLAGS	:= $(shell echo $(CXXFLAGS)	| sed -E 's/\s{2,}/ /')
 LDFLAGS		:= $(shell echo $(LDFLAGS)	| sed -E 's/\s{2,}/ /')
@@ -84,8 +83,9 @@ CHANGED_OBJECTS	:= $(foreach src,$(CHANGED_SOURCES),$(subst src,obj,$(src).o))
 all: $(NAME)
 
 $(NAME): $(OBJECTS)
-	$(LD) $(OBJECTS) $(LDFLAGS) -o $@ 
+	$(LD) $(OBJECTS) $(LDFLAGS) -o $@ $(addprefix -l,$(LIBS))
 	@echo $(LD) $(LDFLAGS) >.make/buildopts/$(NAME)
+
 
 obj/%.c.o: src/%.c | $(OBJECTS_SUBDIRS) $(OPTIONS_SUBDIRS)
 	$(CC) $(CFLAGS) -c $< -o $@ 
