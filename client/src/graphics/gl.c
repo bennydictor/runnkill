@@ -17,11 +17,13 @@
 #include <graphics/objects/sphere.h>
 #include <graphics/objects/sphere_sector.h>
 #include <graphics/objects/box.h>
+#include <graphics/objects/rect.h>
 #include <graphics/objects/pp.h>
 
 #include <graphics/gl/depth.h>
 #include <graphics/gl/light.h>
 #include <graphics/gl/pp.h>
+#include <graphics/gl/bars.h>
 
 #include <world.h>
 
@@ -78,6 +80,7 @@ int init_gl(void) {
     init_sphere_object();
     init_sphere_sector_object();
     init_box_object();
+    init_rect_object();
     init_pp_object();
 
     mat_p = make_mat4();
@@ -101,6 +104,10 @@ int init_gl(void) {
     }
     if (init_gl_pp()) {
         printl(LOG_W, "Error while initializing gl: cannot initialize pp module.\n");
+        return 1;
+    }
+    if (init_gl_bars()) {
+        printl(LOG_W, "Error while initializing gl: cannot initialize bars module\n");
         return 1;
     }
     if (init_ft()) {
@@ -143,6 +150,7 @@ void gl_update(int n, draw_obj *objs) {
             hp, mp, max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high,
             EP, level, number
             );
+    render_bars();
     render_text(10, window_height - ft_font_size - 10, fps_string);
 
     glfwSwapBuffers(window);
@@ -184,10 +192,12 @@ void free_gl(void) {
     free_gl_depth();
     free_gl_light();
     free_gl_pp();
+    free_gl_bars();
     free_ft();
     free_sphere_object();
     free_sphere_sector_object();
     free_box_object();
+    free_rect_object();
     free_pp_object();
     free(mat_v);
     free(mat_p);
