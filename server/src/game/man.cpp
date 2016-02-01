@@ -155,14 +155,28 @@ bool man::take_damage(float dmg, int p) {
     if (p != number) {
         if (dmg < 0) {
             healers[p] -= dmg;
+            vector<int> to_erase;
             for (auto it = damagers.begin(); it != damagers.end(); it++) {
                 it->second += dmg * (it->second / sum_damage);
+                if (it->second < 0) {
+                    to_erase.push_back(it->first);
+                }
+            }
+            for (int i : to_erase) {
+                damagers.erase(i);
             }
             sum_damage += dmg;
         } else {
             damagers[p] += dmg;
+            vector<int> to_erase;
             for (auto it = healers.begin(); it != healers.end(); it++) {
                 it->second -= dmg * (it->second / sum_damage);
+                if (it->second < 0) {
+                    to_erase.push_back(it->first);
+                }
+            }
+            for (int i : to_erase) {
+                healers.erase(i);
             }
             sum_damage += dmg;
         }
