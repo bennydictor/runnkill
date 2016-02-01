@@ -48,3 +48,18 @@ class X
     <animation number> <when activate>
 
 busy = animation busy
+
+amount of skills
+    [MRT] #type of skill (Meelee, Range, Trap)
+    <hp cost> <mp cost> <cooldown>
+    if type is M, you should write damage, left_angle, right_angle, height distance
+    if type is R, you should write damage, speed of bullet, size of bullet
+    if type is T, you should write damage, size of trap, time before activation, number of material
+    here must be amount of effects
+    for each effect:
+        name
+        duration
+        damage (in hp and mp)
+        modifiers strength, agility, intellect, speed
+        here number of material of the ball 
+
