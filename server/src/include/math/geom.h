@@ -7,7 +7,7 @@
 
 template <class T>
 T Max(T a, T b) {
-    if (a > b)
+    if (!(a < b))
         return a;
     return b;
 }

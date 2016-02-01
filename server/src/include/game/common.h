@@ -21,7 +21,7 @@ extern std::map<std::string, int> to_idx;
 extern int cl_init_hp[];
 extern std::map<std::string, std::map<std::string, int>> init_params;
 extern float bp_init_mods[];
-
+extern int exp_to_next_level[];
 extern int atk_strength_mods[];
 extern int atk_agi_mods[];
 extern int atk_int_mods[];

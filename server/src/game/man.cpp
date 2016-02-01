@@ -21,6 +21,7 @@ man::man() {
     curr_skill = -1;
 
     exp = level = 0;
+    level_exp = exp_to_next_level[0];
     number = rand();
     recovery.hp = 0;
     recovery.mp = 3;
@@ -39,6 +40,7 @@ man::man(string _name, int cl) {
     }
     init_values(hp, mp, agility, strength, intellect, abs_speed, jump_high, attack_rad, cl);
     busy = exp = level = 0;
+    level_exp = exp_to_next_level[0];
     speed = vec3<float>(abs_speed, 0, 0);
     number = rand();
     max_hp = hp;
@@ -251,4 +253,11 @@ void man::get_exp(int e) {
     char m[200];
     sprintf(m, "New points: %d!", e);
     new_message(m, 3);
+    if (exp > level_exp) {
+        level++;
+        sprintf(m, "New level: %d! Congratulations!", level);
+        new_message(m, 5);
+        exp -= level_exp;
+        level_exp = exp_to_next_level[level];
+    }
 }

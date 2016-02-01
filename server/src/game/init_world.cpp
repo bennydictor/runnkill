@@ -100,7 +100,7 @@ void in_materials() {
 int init_world(void) {
     world_w = world_h = 100;
     cout << loglevel(LOG_I) << "world height: " << world_h << endl << "world width: " << world_w << endl << loglevel(LOG_D);
-    world_field = gen_field_sun(world_w, world_h);
+    world_field = gen_field_empty(world_w, world_h);
     gl_light_enable[0] = 1;
     gl_light[0].pos = make_vec3(100, 100, 100);
     gl_light[0].rot = make_vec3(3 * M_PI / 2, 0, 0);

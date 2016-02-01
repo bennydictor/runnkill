@@ -45,22 +45,31 @@ void render_bars(void) {
 
     glEnableVertexAttribArray(prog_bars_attr_v_coord);
 
-    draw_obj bar = make_draw_rect(window_width / 2 * (max_hp - hp) / max_hp, 0, window_width / 2, 20, default_material);
+    //draw_obj bar = make_draw_rect(window_width / 2 * (max_hp - hp) / max_hp, 0, window_width / 2, 20, default_material);
+    draw_obj bar = make_draw_rect(5, window_height - 5, window_width / 4 * (hp) / max_hp, window_height - 20, default_material);
     glUniformMatrix4fv(prog_bars_unif_mat_m, 1, GL_FALSE, bar.mat_m);
-    glUniform3f(prog_bars_unif_color, 1, 0, 0);
+    glUniform3f(prog_bars_unif_color, 0.8, 0, 0.1);
     glBindBuffer(GL_ARRAY_BUFFER, bar.vbo);
     glVertexAttribPointer(prog_bars_attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
     glDrawArrays(bar.mode, 0, bar.count);
     free_draw_obj(bar);
 
-    bar = make_draw_rect(window_width / 2, 0, window_width - window_width / 2 * (max_mp - mp) / max_mp, 20, default_material);
+    //bar = make_draw_rect(window_width / 2, 0, window_width - window_width / 2 * (max_mp - mp) / max_mp, 20, default_material);
+    bar = make_draw_rect(5, window_height - 28, window_width / 4 * (mp) / max_mp, window_height - 43, default_material);
     glUniformMatrix4fv(prog_bars_unif_mat_m, 1, GL_FALSE, bar.mat_m);
-    glUniform3f(prog_bars_unif_color, 0, 0, 1);
+    glUniform3f(prog_bars_unif_color, 0, 0, 0.5);
     glBindBuffer(GL_ARRAY_BUFFER, bar.vbo);
     glVertexAttribPointer(prog_bars_attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
     glDrawArrays(bar.mode, 0, bar.count);
     free_draw_obj(bar);
-
+    
+    bar = make_draw_rect(5, window_height - 45, window_width / 3 * EP / level_exp, window_height - 50, default_material);
+    glUniformMatrix4fv(prog_bars_unif_mat_m, 1, GL_FALSE, bar.mat_m);
+    glUniform3f(prog_bars_unif_color, 1, 0.5, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, bar.vbo);
+    glVertexAttribPointer(prog_bars_attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
+    glDrawArrays(bar.mode, 0, bar.count);
+    free_draw_obj(bar);
     glDisableVertexAttribArray(prog_bars_attr_v_coord);
 }
 

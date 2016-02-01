@@ -32,6 +32,7 @@ float init_attack_rad[] = {1.8, 1.5, 1.7};
 int atk_strength_mods[] = {4, 2, 1};
 int atk_agi_mods[] = {2, 3, 1};
 int atk_int_mods[] = {0, 1, 5};
+int exp_to_next_level[] = {25, 40, 80, 160, 320, 640, 1280};
 map<string, int> to_idx;
 map<string, map<string, int>> init_params;
 
