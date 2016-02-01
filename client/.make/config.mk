@@ -1,10 +1,10 @@
 NAME           := client
-LIBS           := m glfw GL GLEW freetype
+LIBS           := m GL GLEW glfw freetype X11 Xxf86vm Xrandr pthread Xi dl Xinerama Xcursor
 
 CC                     := gcc
-CFLAGS                 := -std=c99 -march=native -pipe -Wall -Wextra -Wshadow -I/usr/include/freetype2
+CFLAGS                 := -std=c99 -march=native -pipe -Wall -Wextra -Wshadow -I/usr/include/freetype2 -Bstatic -llibglfw3.a -Bdynamic
 CXX            := g++
-CXXFLAGS       := -std=c++11 -march=native -pipe -Wall -Wextra -Wshadow -I/usr/include/freetype2
+CXXFLAGS       := -std=c++11 -march=native -pipe -Wall -Wextra -Wshadow -I/usr/include/freetype2 -Bstatic -llibglfw3.a -Bdynamic
 LD                     := g++
 LDFLAGS        :=
 AS                     := as
@@ -35,3 +35,4 @@ PROFILE_OFF_CXXFLAGS   :=
 PROFILE_OFF_LDFLAGS    :=
 PROFILE_OFF_ASFLAGS    :=
 
+#in Ubuntu you must write glfw3 instead glfw in line 2
