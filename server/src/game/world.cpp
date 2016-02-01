@@ -565,6 +565,10 @@ void world_update(float dt) {
         exp_add[persons[i]->number] = 0;
         get_by_id[persons[i]->number] = persons[i];
         if (is_alive[i] == 2) {
+            if (persons[i]->coords.y < -100) {
+                is_alive[i] = 1;
+                continue;
+            }
             move_man(i, dt);
             if (persons[i]->skills.size() < 1) {
                 for (skill_t k : default_skills[persons[i]->cls])
@@ -603,6 +607,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     vec3<float> move_orientation = curr_orientation;
     move_orientation.y /= z->abs_speed / 2;
     if (is_alive[man_idx] == 1) {
+        persons[man_idx]->hp = 0;
         cout << "take this expp" << endl;
         for (pair<int, int> i : persons[man_idx]->damagers) {
             cout << i.first << ' ' << EXP_CONSTANT * i.second << ' ' << persons[man_idx]->max_hp << endl;
