@@ -69,7 +69,7 @@ CXXFLAGS	:= $(shell echo $(CXXFLAGS)	| sed -E 's/\s{2,}/ /')
 LDFLAGS		:= $(shell echo $(LDFLAGS)	| sed -E 's/\s{2,}/ /')
 ASFLAGS		:= $(shell echo $(ASFLAGS)	| sed -E 's/\s{2,}/ /')
 
-C_COMPILE	:= $(CC) $(CFLAGS)
+C_COMPILE	:= $(CC) $(CFLAGS) -Isrc/include
 CXX_COMPILE	:= $(CXX) $(CXXFLAGS)
 LD_COMPILE	:= $(LD) $(LDFLAGS)
 AS_COMPILE	:= $(AS) $(ASFLAGS)
@@ -87,7 +87,7 @@ $(NAME): $(OBJECTS)
 	@echo $(LD) $(LDFLAGS) >.make/buildopts/$(NAME)
 
 obj/%.c.o: src/%.c | $(OBJECTS_SUBDIRS) $(OPTIONS_SUBDIRS)
-	$(CC) $(CFLAGS) -c $< -o $@ -Isrc/include
+	$(CC) $(CFLAGS) -c $< -Isrc/include -o $@ 
 	@echo $(CC) $(CFLAGS) >$(subst src,.make/buildopts,$<)
 
 obj/%.cpp.o: src/%.cpp | $(OBJECTS_SUBDIRS) $(OPTIONS_SUBDIRS)
