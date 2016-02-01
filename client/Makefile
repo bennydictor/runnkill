@@ -87,7 +87,7 @@ $(NAME): $(OBJECTS)
 	@echo $(LD) $(LDFLAGS) >.make/buildopts/$(NAME)
 
 obj/%.c.o: src/%.c | $(OBJECTS_SUBDIRS) $(OPTIONS_SUBDIRS)
-	$(CC) $(CFLAGS) -c $< -Isrc/include -o $@ 
+	$(CC) $(CFLAGS) -c $< -o $@ -Isrc/include
 	@echo $(CC) $(CFLAGS) >$(subst src,.make/buildopts,$<)
 
 obj/%.cpp.o: src/%.cpp | $(OBJECTS_SUBDIRS) $(OPTIONS_SUBDIRS)
