@@ -59,7 +59,7 @@ void man::set_orientation(vec3<float> orient) {
     orientation.resize(1);
 }
 void man::get_effect_1(mod_t res) {
-    hp += res.hp;
+    take_damage(res.hp, res.owner);   
     mp += res.mp;
 }
 
@@ -149,7 +149,7 @@ void man::move(float time) {
 
 bool man::take_damage(float dmg, int p) {
     if (can_die) {
-        dmg = min(dmg, hp);
+        dmg = min(dmg, float(hp + EPS_FOR_SKILLS));
     } else {
         dmg = min(dmg, hp - 1);
     }

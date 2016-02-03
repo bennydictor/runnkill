@@ -351,6 +351,7 @@ bool move_bullet(int b_idx, float time) {
         explosions.back().owner = bullets[b_idx].owner;
         for (int j = 0; j < (int)bullets[b_idx].effects.size(); j++) {
             explosions.back().effects.push_back(bullets[b_idx].effects[j]);
+            explosions.back().effects.back().owner = bullets[b_idx].owner;
         }
         damage_last_explosion();
         is_bullet_alive[b_idx] = 0;
@@ -488,7 +489,7 @@ void world_callback(void) {
                     draw_objs[draw_obj_count++] = (make_draw_sphere(centre, 0.1, fake_materials_idx[persons[i]->effects[j].material_idx]));
                 }
             }
-            float alpha = atan2(persons[i]->orientation.x, persons[i]->orientation.z);
+            float alpha = atan2(persons[i]->orientation.z, persons[i]->orientation.x);
             for (int j = 0; j < BP_AMOUNT; j++) {
                 if (persons[i]->body_parts[j].is_fortified)
                     draw_objs[draw_obj_count++] = make_draw_sphere_sector(persons[i]->coords, alpha, 1.5 * MAN_RAD, j, shield_material.id);
@@ -605,7 +606,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     man* z = persons[man_idx];
     z->set_orientation(curr_orientation);
     vec3<float> move_orientation = curr_orientation;
-    move_orientation.y /= z->abs_speed / 2;
+    //move_orientation.y /= z->abs_speed / 2;
     if (is_alive[man_idx] == 1) {
         persons[man_idx]->hp = 0;
         cout << "take this expp" << endl;
@@ -620,6 +621,18 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         is_alive[man_idx] = 0;
         return;
 
+    }
+    if (pressed[WORLD_BLOCK_UL]) {
+        z->fortify(LEFT_FRONT_UP);
+    }
+    if (pressed[WORLD_BLOCK_UR]) {
+        z->fortify(RIGHT_FRONT_UP);
+    }
+    if (pressed[WORLD_BLOCK_DL]) {
+        z->fortify(LEFT_FRONT_DOWN);
+    }
+    if (pressed[WORLD_BLOCK_DR]) {
+        z->fortify(RIGHT_FRONT_DOWN);
     }
     if (pressed[WORLD_MOVE_FORWARD_EVENT] and pressed[WORLD_MOVE_BACKWARD_EVENT])
         pressed[WORLD_MOVE_FORWARD_EVENT] = pressed[WORLD_MOVE_BACKWARD_EVENT] = false;
@@ -648,6 +661,12 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         }
         if (pressed[WORLD_SYM_3]) {
             attack(man_idx, 2);
+        }
+        if (pressed[WORLD_SYM_4]) {
+            attack(man_idx, 3);
+        }
+        if (pressed[WORLD_SYM_5]) {
+            attack(man_idx, 4);
         }
     }
     if (z->need_to_cast and z->curr_skill != -1 and fabs(z->busy - z->skills[z->curr_skill].activate_time) < EPS_FOR_SKILLS) {
@@ -698,6 +717,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
                 traps.back().owner = z->number;
                 for (int i = 0; i < (int)curr.effects.size(); i++) {
                     traps.back().effects.push_back(curr.effects[i]);
+                    traps.back().effects.back().owner = z->number;
                 }
                 cout << "Охота началась!" << endl;
             }

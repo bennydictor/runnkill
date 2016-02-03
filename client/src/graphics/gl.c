@@ -180,11 +180,20 @@ void gl_callback(char *evs) {
     evs[WORLD_MOVE_BACKWARD_EVENT]  = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
     evs[WORLD_MOVE_LEFT_EVENT]      = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
     evs[WORLD_ATTACK_EVENT]         = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
-    evs[WORLD_SYM_1]                = glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS;
-    evs[WORLD_SYM_2]                = glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS;
-    evs[WORLD_SYM_3]                = glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS;
-    //evs[WORLD_SYM_4]                = glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS;
-
+    evs[WORLD_SYM_1]                = glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS;
+    evs[WORLD_SYM_2]                = glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS;
+    evs[WORLD_SYM_3]                = glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS;
+    evs[WORLD_SYM_4]                = glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS;
+    evs[WORLD_SYM_5]                = glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS;
+    evs[WORLD_SYM_6]                = glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS;
+    evs[WORLD_SYM_7]                = glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS;
+    evs[WORLD_SYM_8]                = glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS;
+    evs[WORLD_SYM_9]                = glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS;
+    evs[WORLD_SYM_0]                = glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS;
+    evs[WORLD_BLOCK_UL]             = glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS;
+    evs[WORLD_BLOCK_DL]             = glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS;
+    evs[WORLD_BLOCK_UR]             = glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS;
+    evs[WORLD_BLOCK_DR]             = glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS;
 }
 
 

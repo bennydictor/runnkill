@@ -1,7 +1,7 @@
 #ifndef GAME_WORLD_H
 #define GAME_WORLD_H
 
-#define WORLD_EVENT_COUNT 8
+#define WORLD_EVENT_COUNT 19
 #define WORLD_MOVE_FORWARD_EVENT 0
 #define WORLD_MOVE_RIGHT_EVENT 1
 #define WORLD_MOVE_BACKWARD_EVENT 2
@@ -10,6 +10,17 @@
 #define WORLD_SYM_1 5
 #define WORLD_SYM_2 6
 #define WORLD_SYM_3 7
+#define WORLD_SYM_4 8
+#define WORLD_SYM_5 9
+#define WORLD_SYM_6 10
+#define WORLD_SYM_7 11
+#define WORLD_SYM_8 12
+#define WORLD_SYM_9 13
+#define WORLD_SYM_0 14
+#define WORLD_BLOCK_UL 15
+#define WORLD_BLOCK_UR 16
+#define WORLD_BLOCK_DL 17
+#define WORLD_BLOCK_DR 18
 
 #define LIGHT_COUNT 8
 

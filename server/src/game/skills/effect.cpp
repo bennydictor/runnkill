@@ -5,6 +5,7 @@ using namespace std;
 mod_t effect::tic(float t) {
     mod_t ret;
     ret = mods_one_side * t;
+    ret.owner = owner;
     return ret;
 }
 
