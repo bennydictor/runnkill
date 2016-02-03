@@ -160,7 +160,7 @@ draw_obj make_draw_sphere_sector3fv1f(vec3f pos, float radius, int s, material_t
     return ret;
 }
 
-draw_obj make_draw_sphere_sector3fv2f(vec3f pos, float rot, float radius, int s, material_t _material) {
+draw_obj make_draw_sphere_sector3fv2f(vec3f pos, float radius, float rot, int s, material_t _material) {
     draw_obj ret;
     ret.mat_m = make_mat4();
     vec3f v = make_vec3(radius * SIGN_BIT(s, 2), radius * SIGN_BIT(s, 1), radius * SIGN_BIT(s, 0));
