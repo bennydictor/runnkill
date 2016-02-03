@@ -84,7 +84,7 @@ void man::add_effect(effect a) {
 }
 vec3<float> man::in_time(float time) {
     int amount_of_f = 0;
-    for (int j = 1; j < BP_AMOUNT; j++) {
+    for (int j = 0; j < BP_AMOUNT; j++) {
         if (body_parts[j].is_fortified) {
             amount_of_f++;
         }
@@ -128,6 +128,9 @@ void man::move(float time) {
     effects = new_effects;
     for (int i = 0; i < (int)skills.size(); i++) {
         skills[i].to_activate -= time; 
+    }
+    for (int i = 0; i < (int)body_parts.size(); i++) {
+        body_parts[i].can_changed = max(0.0, body_parts[i].can_changed - time);
     }
     //cout << busy << endl;
     busy = max((float)-EPS_FOR_SKILLS, busy - time);
@@ -193,7 +196,10 @@ int count_attack(man z) {
 }
 
 void man::fortify(int idx) {
+    if (body_parts[idx].can_changed > 0)
+        return;
     body_parts[idx].is_fortified ^= 1;
+    body_parts[idx].can_changed = TIME_AFTER_FORTIFY;
 }
 
 void man::out(ostream& stream) {

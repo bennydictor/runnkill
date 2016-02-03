@@ -9,6 +9,7 @@
 #define RIGHT_BACK_DOWN 5
 #define LEFT_BACK_UP 6
 #define RIGHT_BACK_UP 7
+#define TIME_AFTER_FORTIFY 1
 #include <game/items.h>
 #include <string>
 
@@ -17,6 +18,7 @@ struct body_part {
     float mod;
     item_t* item;
     bool is_fortified;
+    double can_changed;
     body_part(std::string _name, float _mod);
 
     item_t* put_on(item_t* thing);
