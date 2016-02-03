@@ -492,11 +492,11 @@ void world_callback(void) {
             float alpha = atan2(-persons[i]->orientation.z, persons[i]->orientation.x) + M_PI;
             for (int j = 0; j < BP_AMOUNT; j++) {
                 if (persons[i]->body_parts[j].is_fortified)
-                    draw_objs[draw_obj_count++] = make_draw_sphere_sector(persons[i]->coords, 1.5 * MAN_RAD, alpha, j, shield_material.id);
+                    draw_objs[draw_obj_count++] = make_draw_sphere_sector(persons[i]->coords, alpha, 1.5 * MAN_RAD, j, shield_material.id);
                 else if (persons[i]->body_parts[j].item)
                 {
-                    draw_objs[draw_obj_count++] = make_draw_sphere_sector(persons[i]->coords, 
-                             1.1 * MAN_RAD, alpha, j, fake_materials_idx[persons[i]->body_parts[j].item->material_idx]);
+                    draw_objs[draw_obj_count++] = make_draw_sphere_sector(persons[i]->coords, alpha, 
+                             1.1 * MAN_RAD, j, fake_materials_idx[persons[i]->body_parts[j].item->material_idx]);
                 }
             }
             /*
