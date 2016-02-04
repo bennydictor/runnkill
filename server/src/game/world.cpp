@@ -382,7 +382,6 @@ bool move_man(int idx, float time, int depth = 0) {
     float beg_dist = dist(persons[idx]->coords, finish);
     assert(beg_dist >= 0 or beg_dist <= 0);
     if (beg_dist < EPS_FOR_MOVE) {
-        cout << " in the wall" << endl;
         persons[idx]->speed.y -= (time) * GRAVITATION;
         persons[idx]->move(time);
         return true;

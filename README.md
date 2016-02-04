@@ -8,14 +8,19 @@
 Thank you for playing runnkill!
 
 
-For now you need to find and kill a ball hiding somewhere in the labyrinth.
+You have to run server and then client <your ip>
+Multiplayering enabled.
 Try not to kill yourself!
 
 Controls:
 
 * WASD - movement
-* Space - shoot
+* Space - jump
 
+* 1-0   - skills
+* IKLO  - Shields
+
+In directory Dependencies you can find all what you need;
 If you want to build the binary manually, run make.
 
 Following libraries are required:
