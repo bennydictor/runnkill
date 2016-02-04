@@ -115,6 +115,7 @@ int init_world(void) {
     in_animations();
     init_material();
     in_materials();
+    cout << "Initialize of world succeed" << endl;
 /*
 =======
     w = h = 500;

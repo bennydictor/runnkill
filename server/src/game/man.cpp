@@ -76,13 +76,17 @@ void man::get_effect_2(mod_t res) {
         def_mod *= res.def_mod;
     if (res.atk_mod > EPS_FOR_SKILLS) 
         atk_mod *= res.atk_mod;
-    cout << '!' << abs_speed << endl; 
+    //cout << '!' << abs_speed << endl; 
 }
 void man::add_effect(effect a) {
     effects.push_back(a);
     get_effect_2(a.mods_two_side);
 }
 vec3<float> man::in_time(float time) {
+    if (!(time > 0)) {
+        cout << "BAD TIME" << endl;
+        return coords;
+    }
     int amount_of_f = 0;
     for (int j = 0; j < BP_AMOUNT; j++) {
         if (body_parts[j].is_fortified) {
@@ -186,7 +190,6 @@ bool man::take_damage(float dmg, int p) {
             sum_damage += dmg;
         }
     }
-    cout << dmg << endl;
     hp -= dmg;
     return (hp < EPS_FOR_SKILLS);
     

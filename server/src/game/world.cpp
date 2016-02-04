@@ -137,7 +137,7 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
             r = m2;
         }
     }
-    if (dist(centre, l) >= rad + rad2 + EPS_FOR_MOVE or dist(centre, l) < EPS_FOR_MOVE) {
+    if (dist(centre, l) >= rad + rad2 or dist(centre, l) < EPS_FOR_MOVE) {
         return false;
     }
     l = begin;
@@ -150,6 +150,13 @@ bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin
         }
     }
     vec3<float> end_vec(begin, l);
+    if (end_vec.sqlen() < EPS_FOR_MOVE) {
+        end = l;
+        res = vec3<float>(end, centre);
+        res.resize(rad2);
+        res = res + end;
+        return true;
+    }
     end_vec.resize(sqrt(end_vec.sqlen()) - 10 * EPS_FOR_MOVE);
     end = begin + end_vec;
     res = vec3<float>(end, centre);
@@ -192,7 +199,7 @@ bool in_sector(vec3<float> centre, int i, vec3<float> orientation, vec3<float> p
     return _in_sector(centre, a + centre, b + centre, c + centre, point);
 }
 
-bool intersect_sector_ball(vec3<float> centre, float rad1, float rad2, int i, vec3<float> orientation, vec3<float> begin, vec3<float> end,vec3<float>& res)
+bool intersect_sector_ball(vec3<float> centre, float rad1, float rad2, int i, vec3<float> orientation, vec3<float> begin, vec3<float>& end,vec3<float>& res)
 {
     vec3<float> l, r, m1, m2, m;
     l = begin;
@@ -375,6 +382,7 @@ bool move_man(int idx, float time, int depth = 0) {
     float beg_dist = dist(persons[idx]->coords, finish);
     assert(beg_dist >= 0 or beg_dist <= 0);
     if (beg_dist < EPS_FOR_MOVE) {
+        cout << " in the wall" << endl;
         persons[idx]->speed.y -= (time) * GRAVITATION;
         persons[idx]->move(time);
         return true;
@@ -385,7 +393,6 @@ bool move_man(int idx, float time, int depth = 0) {
     if (res == 1) {
             //cout << persons[idx]->coords << finish << persons[idx]->in_time(time) << endl;   
             //cout << persons[idx]->speed << endl;
-        
         persons[idx]->coords = finish;
         vec3<float> our_plain = vec3<float>(persons[idx]->coords, touch_point);
         float d = -our_plain.dot(persons[idx]->coords);
