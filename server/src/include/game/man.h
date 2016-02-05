@@ -18,6 +18,8 @@
 #include <math/vec2.h>
 #include <math/vec3.h>
 
+extern int GAME_MAX_MAN_IDX;
+
 struct man {
     std::string name;
     int cls, curr_skill;

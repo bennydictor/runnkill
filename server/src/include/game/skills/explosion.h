@@ -5,7 +5,7 @@
 #include <vector>
 #include <game/skills/effect.h>
 #define EXPLOSION_RADIUS .2
-#define EXPLOSION_TIME .3
+#define EXPLOSION_TIME .5
 
 struct explosion {
     int owner; 

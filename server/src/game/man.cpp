@@ -3,6 +3,9 @@
 #include <game/animation.h>
 #include <cassert>
 #include <cstdlib>
+
+int GAME_MAX_MAN_IDX;
+
 using namespace std;
 man::man() {
     cls = 0;
@@ -22,7 +25,7 @@ man::man() {
 
     exp = level = 0;
     level_exp = exp_to_next_level[0];
-    number = rand();
+    number = GAME_MAX_MAN_IDX++;
     recovery.hp = 0;
     recovery.mp = 3;
 }
@@ -42,7 +45,7 @@ man::man(string _name, int cl) {
     busy = exp = level = 0;
     level_exp = exp_to_next_level[0];
     speed = vec3<float>(abs_speed, 0, 0);
-    number = rand();
+    number = GAME_MAX_MAN_IDX++;
     max_hp = hp;
     max_mp = mp;
     curr_skill = -1;
@@ -145,6 +148,7 @@ void man::move(float time) {
     hp = min(hp, (float)max_hp);
     mp += (recovery.mp * time);
     mp = min(mp, (float)max_mp);
+    mp = max(mp, 0.0f);
     vector<message> new_messages;
     for (int i = 0; i < (int)messages.size(); i++) {
         messages[i].time -= time;

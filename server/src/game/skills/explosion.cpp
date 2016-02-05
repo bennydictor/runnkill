@@ -1,7 +1,5 @@
 #include <game/skills/explosion.h>
 #include <math/vec3.h>
-#define EXPLOSION_RADIUS .2
-#define EXPLOSION_TIME .3
 
 using namespace std;
 

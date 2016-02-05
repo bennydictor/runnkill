@@ -552,7 +552,8 @@ void world_callback(void) {
         }
     }
     for (int i = 0; i < (int) explosions.size(); ++i) {
-        draw_objs[draw_obj_count++] = make_draw_sphere(explosions[i].coords, EXPLOSION_RADIUS * powf(explosions[i].end_time, 1.0 / 3), explosion_material.id);
+        draw_objs[draw_obj_count++] = make_draw_sphere(explosions[i].coords,
+                                      explosions[i].rad * powf(explosions[i].time, 1.0 / 3), explosion_material.id);
     }
     
     for (int i = 0; i < (int)bullets.size(); i++) {
