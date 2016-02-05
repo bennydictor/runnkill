@@ -89,6 +89,8 @@ void kill_person(int idx);
 void *get_person_data_begin(int idx);
 void *get_person_data_end(int idx);
 char *get_person_text(int idx);
+float get_person_business(int idx);
+float get_person_max_business(int idx);
 //extern draw_obj **world_map;
 //void world_update(float dt, char *evs, vec3f rot, float* hp, float* mp);
 

@@ -145,6 +145,8 @@ void net_update(void) {
                     int client = msg[1];
                     memcpy(ptr, get_person_data_begin(client), get_person_data_end(client) - get_person_data_begin(client));
                     ptr += get_person_data_end(client) - get_person_data_begin(client);
+                    PUT(float, get_person_business(client));
+                    PUT(float, get_person_max_business(client));
                     PUT(int, draw_obj_count);
                     for (int i = 0; i < draw_obj_count; ++i) {
                         PUT(char, draw_objs[i].type);

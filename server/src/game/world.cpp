@@ -481,6 +481,21 @@ void *get_person_data_end(int idx) {
 char *get_person_text(int idx) {
     return (persons[idx]->get_text());
 }
+float get_person_business(int idx) {
+    man* z = persons[idx];
+    if (z->curr_skill == -1 or (!z->need_to_cast)) {
+        return -1;
+    }
+    return max(0.0f, z->busy - z->skills[z->curr_skill].activate_time);
+}
+
+float get_person_max_business(int idx) {
+    man* z = persons[idx];
+    if (z->curr_skill == -1 or (!z->need_to_cast)) {
+        return -1;
+    }
+    return animations[z->skills[z->curr_skill].animation_idx].events[0].dt;
+}
 
 void world_callback(void) {
     draw_obj_count = 0;
@@ -659,21 +674,21 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         if (pressed[WORLD_ATTACK_EVENT]) {
             z->speed.y += z->jump_high;
         }
-        if (pressed[WORLD_SYM_1]) {
-            attack(man_idx, 0);
-        }
-        if (pressed[WORLD_SYM_2]) {
-            attack(man_idx, 1);
-        }
-        if (pressed[WORLD_SYM_3]) {
-            attack(man_idx, 2);
-        }
-        if (pressed[WORLD_SYM_4]) {
-            attack(man_idx, 3);
-        }
-        if (pressed[WORLD_SYM_5]) {
-            attack(man_idx, 4);
-        }
+    }
+    if (pressed[WORLD_SYM_1]) {
+        attack(man_idx, 0);
+    }
+    if (pressed[WORLD_SYM_2]) {
+        attack(man_idx, 1);
+    }
+    if (pressed[WORLD_SYM_3]) {
+        attack(man_idx, 2);
+    }
+    if (pressed[WORLD_SYM_4]) {
+        attack(man_idx, 3);
+    }
+    if (pressed[WORLD_SYM_5]) {
+        attack(man_idx, 4);
     }
     if (z->need_to_cast and z->curr_skill != -1 and fabs(z->busy - z->skills[z->curr_skill].activate_time) < EPS_FOR_SKILLS) {
         skill_t curr = z->skills[z->curr_skill];

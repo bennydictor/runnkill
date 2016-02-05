@@ -40,7 +40,7 @@ extern int **world_field;
 extern float coords[3];
 extern float speed[3];
 extern float orientation[3];
-extern float hp, mp, max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high;
+extern float hp, mp, max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high, business, max_business;
 extern int EP, level, level_exp;
 extern char message[2048];
 #ifdef __cplusplus

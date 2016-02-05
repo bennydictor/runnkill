@@ -2,21 +2,23 @@ class_0
 1
     M
     0 12 5
-    1.5 -0.4 0.4 0.1 2
+    1.5
+    -0.4 0.4 0.1 2
     0
     0 0.7
     
 class_1
-2
+3
     R
-    0 2 0.1
+    0 2 0.2
     1
-    20 0.1 0.2
+    40 0.1 0.2
     0
-    1 0.005
+    2 0
     T
     0 10 20
-    3 0.5 2 4
+    3
+    0.5 2 4
     2
         ICE
         5
@@ -28,7 +30,19 @@ class_1
         100 0
         1 1 1 1
         1
+    2 0
+    R
+    0 10 12
+    2.5
+    30 0.5 2
+    1
+        FIRE
+        10
+        300 30
+        1 1 1 1.4
+        5
     1 0
+
 class_2
 0
     0 -10
@@ -41,9 +55,10 @@ class X
 amount of skills
     [MRT] #type of skill (Meelee, Range, Trap)
     <hp cost> <mp cost> <cooldown>
-    if type is M, you should write damage, left_angle, right_angle, height distance
-    if type is R, you should write damage, speed of bullet, size of bullet
-    if type is T, you should write damage, size of trap, time before activation, number of material
+    <damage>
+    if type is M, you should write left_angle, right_angle, height distance
+    if type is R, you should write speed of bullet, size of bullet, size of explosion
+    if type is T, you should write size of trap, time before activation, number of material
     here must be amount of effects
     for each effect:
         name
@@ -51,4 +66,5 @@ amount of skills
         damage (in hp and mp)
         modifiers strength, agility, intellect, speed
         here number of material of the ball 
+    then write number of animation and moment from begin of animation, when you want to use skill
 

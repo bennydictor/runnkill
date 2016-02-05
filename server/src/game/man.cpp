@@ -60,7 +60,7 @@ void man::set_orientation(vec3<float> orient) {
 }
 void man::get_effect_1(mod_t res) {
     take_damage(res.hp, res.owner);   
-    mp += res.mp;
+    mp -= res.mp;
 }
 
 void man::get_effect_2(mod_t res) {
