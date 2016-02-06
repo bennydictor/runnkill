@@ -194,6 +194,7 @@ void gl_callback(char *evs) {
     evs[WORLD_BLOCK_DL]             = glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS;
     evs[WORLD_BLOCK_UR]             = glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS;
     evs[WORLD_BLOCK_DR]             = glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS;
+    evs[WORLD_RUN_EVENT]            = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 }
 
 

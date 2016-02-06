@@ -644,6 +644,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         return;
 
     }
+    z->run(pressed[WORLD_RUN_EVENT]);
     if (pressed[WORLD_BLOCK_UL]) {
         z->fortify(LEFT_FRONT_UP);
     }
@@ -661,19 +662,23 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     if (pressed[WORLD_MOVE_LEFT_EVENT] and pressed[WORLD_MOVE_RIGHT_EVENT])
         pressed[WORLD_MOVE_LEFT_EVENT] = pressed[WORLD_MOVE_RIGHT_EVENT] = false;
     if (z->touch_ground) {
-        if (0 == pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT])
-        {
-            z->set_speed(vec3<float>(0, 0, 0));
-        }
-        else
-        {
-            float angle = (pressed[WORLD_MOVE_RIGHT_EVENT] + 2 * pressed[WORLD_MOVE_BACKWARD_EVENT] + 3 * pressed[WORLD_MOVE_LEFT_EVENT] + 4 * pressed[WORLD_MOVE_FORWARD_EVENT] * pressed[WORLD_MOVE_LEFT_EVENT]) * M_PI / 2;
-            angle /= pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT];
+        if (z->is_running) {
             z->set_speed((float)z->abs_speed * move_orientation);
-            z->speed.rotate(angle);
-        }
-        if (pressed[WORLD_ATTACK_EVENT]) {
-            z->speed.y += z->jump_high;
+        } else {
+            if (0 == pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT])
+            {
+                z->set_speed(vec3<float>(0, 0, 0));
+            }
+            else
+            {
+                float angle = (pressed[WORLD_MOVE_RIGHT_EVENT] + 2 * pressed[WORLD_MOVE_BACKWARD_EVENT] + 3 * pressed[WORLD_MOVE_LEFT_EVENT] + 4 * pressed[WORLD_MOVE_FORWARD_EVENT] * pressed[WORLD_MOVE_LEFT_EVENT]) * M_PI / 2;
+                angle /= pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT];
+                z->set_speed((float)z->abs_speed * move_orientation);
+                z->speed.rotate(angle);
+            }
+            if (pressed[WORLD_ATTACK_EVENT]) {
+                z->speed.y += z->jump_high;
+            }
         }
     }
     if (pressed[WORLD_SYM_1]) {

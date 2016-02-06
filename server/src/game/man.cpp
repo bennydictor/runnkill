@@ -101,7 +101,7 @@ vec3<float> man::in_time(float time) {
     }
     vec3<float> speed_tmp = speed;
     speed_tmp.y = 0;
-    vec3<float> ret = coords + (float)((time * max(0.1f, (1 - (float)0.2 * amount_of_f))) * (is_running ? (have_shield ? 1.6 : 2) : 1)) * speed_tmp;
+    vec3<float> ret = coords + (float)((time * max(0.1f, (1 - (float)0.2 * amount_of_f))) * (is_running ? (have_shield ? 1.3 : 1.6) : 1)) * speed_tmp;
     ret.y += time * speed.y;
     char a;
     if (!(abs(speed.x) >= 0))
@@ -140,13 +140,15 @@ void man::move(float time) {
         body_parts[i].can_changed = max(0.0, body_parts[i].can_changed - time);
     }
     //cout << busy << endl;
-    busy = max((float)-EPS_FOR_SKILLS, busy - time);
-    if (busy < 0) {
-        curr_skill = -1;
+    if (!is_running) {
+        busy = max((float)-EPS_FOR_SKILLS, busy - time);
+        if (busy < 0) {
+            curr_skill = -1;
+        }
     }
-    hp += (recovery.hp * time);
+    hp += (recovery.hp * time / (1 + int(is_running)));
     hp = min(hp, (float)max_hp);
-    mp += (recovery.mp * time);
+    mp += (recovery.mp * time / (1 + int(is_running)));
     mp = min(mp, (float)max_mp);
     mp = max(mp, 0.0f);
     vector<message> new_messages;
@@ -216,15 +218,21 @@ void man::out(ostream& stream) {
     stream << "I`m in " << coords << endl;
 }
 
-void man::run() {
-    is_running = true;
-    for (int i = 0; i < (int) body_parts.size(); i++)
-    {
-        body_parts[i].is_fortified = false;
-    }
-    if (have_shield)
-    {
-        body_parts[LEFT_FRONT_UP].is_fortified = true;
+void man::run(bool must_run) {
+    if (must_run) {
+        if (!is_running) {
+            is_running = true;
+            for (int i = 0; i < (int) body_parts.size(); i++)
+            {
+                body_parts[i].is_fortified = false;
+            }
+            if (have_shield)
+            {
+                body_parts[LEFT_FRONT_UP].is_fortified = true;
+            }
+        }
+    } else {
+        is_running = false;
     }
 }
 

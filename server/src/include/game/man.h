@@ -49,7 +49,7 @@ struct man {
     void get_effect_2(mod_t res);
     void fortify(int idx);
     void out(std::ostream& stream);
-    void run();
+    void run(bool must_run);
     void get_exp(int e);
     void put_on(item_t* item, int idx);
     void new_message(char* s, float t);
