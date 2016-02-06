@@ -35,7 +35,7 @@ struct man {
     std::vector<message> messages;
     //armour* weapon;
     aura* my_aura;
-    std::map<int, int> damagers, healers;
+    std::map<int, float> damagers, healers;
     vec3<float> coords, speed, orientation;
     float hp, mp;
     float max_hp, max_mp, agility, strength, intellect, abs_speed, jump_high;

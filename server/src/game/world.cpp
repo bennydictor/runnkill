@@ -641,8 +641,8 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     if (is_alive[man_idx] == 1) {
         persons[man_idx]->hp = 0;
         cout << "take this expp" << endl;
-        for (pair<int, int> i : persons[man_idx]->damagers) {
-            cout << i.first << ' ' << EXP_CONSTANT * i.second << ' ' << persons[man_idx]->max_hp << endl;
+        for (pair<int, float> i : persons[man_idx]->damagers) {
+            cout << i.first << ' ' << i.second << ' ' << persons[man_idx]->max_hp << endl;
             int EP = (EXP_CONSTANT * i.second) / persons[man_idx]->max_hp;
             exp_add[i.first] += EP; 
             add_exp(get_by_id[i.first], EP);
