@@ -23,7 +23,7 @@ Controls:
 
 In directory Dependencies you can find all what you need;
 If you want to build the binary manually, run make.
-If you have problems with compiling, in client/.make/config.mk replace glfw to glfw3 in line 2
+If you have problems with compiling, in client/.make/config.mk replace glfw with glfw3 in line 2
 
 Following libraries are required:
 
