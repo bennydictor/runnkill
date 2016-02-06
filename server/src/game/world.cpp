@@ -587,6 +587,15 @@ void world_update(float dt) {
         persons[i]->get_exp(exp_add[persons[i]->number]);
         exp_add[persons[i]->number] = 0;
         get_by_id[persons[i]->number] = persons[i];
+        if (persons[i]->my_aura && persons[i]->my_aura->can_use < 0) {
+            for (int j = 0; j < (int)persons.size(); j++) {
+                if (dist(persons[i]->coords, persons[j]->coords) < persons[i]->my_aura->distance) {
+                    for (effect k : persons[i]->my_aura->effects) {
+                        persons[j]->add_effect(k);
+                    }
+                }
+            }
+        }
         if (is_alive[i] == 2) {
             if (persons[i]->coords.y < -100) {
                 is_alive[i] = 1;
@@ -748,6 +757,12 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
                 }
                 cout << "Охота началась!" << endl;
             }
+        } else if (curr.type == 'A') {
+            if (!z->my_aura) {
+                z->my_aura = new aura(curr.dmg, curr.height, curr.distance, curr.effects);
+                z->my_aura->set_owner(z->number);
+            }
         }
+
     }
 }

@@ -8,6 +8,7 @@
 #include <vector>
 #include <map>
 //#include <game/armour.h>
+#include <game/skills/aura.h>
 #include <game/body_part.h>
 #include <game/common.h>
 #include <game/skills/effect.h>
@@ -33,6 +34,7 @@ struct man {
     std::vector<skill_t> skills;
     std::vector<message> messages;
     //armour* weapon;
+    aura* my_aura;
     std::map<int, int> damagers, healers;
     vec3<float> coords, speed, orientation;
     float hp, mp;

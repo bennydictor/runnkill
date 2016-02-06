@@ -13,6 +13,7 @@ man::man() {
     can_die = true;
     have_shield = false;
     touch_ground = false;
+    my_aura = NULL;
 //    weapon = NULL;
     orientation = vec3<float>(1, 0, 0);
     for (size_t i = 0; i < BP_AMOUNT; i++) {
@@ -36,6 +37,7 @@ man::man(string _name, int cl) {
     can_die = true;
     have_shield = false;
     touch_ground = false;
+    my_aura = NULL;
 //    weapon = NULL;
     orientation = vec3<float>(1, 0, 0);
     for (size_t i = 0; i < BP_AMOUNT; i++) {
@@ -156,6 +158,16 @@ void man::move(float time) {
         messages[i].time -= time;
         if (messages[i].time > 0) {
             new_messages.push_back(messages[i]);
+        }
+    }
+    if (my_aura) {
+        my_aura->time -= time;
+        if (my_aura->can_use < 0) {
+            my_aura->can_use = my_aura->tic;
+        }
+        my_aura->can_use -= time;
+        if (my_aura->time < 0) {
+            my_aura = NULL;
         }
     }
 }
