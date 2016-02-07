@@ -22,18 +22,32 @@ void in_skills() {
     fstream in;
     in.open("skills");
     string garbage;
-    int amount;
+    int amount, level;
     char type;
     default_skills.resize(3);
+    skills_amounts.resize(3);
     for (int i = 0; i < 3; i++) {
         in >> garbage;
         in >> amount;
         default_skills[i].resize(amount);
+        vector<int> levs;
         for (int j = 0; j < amount; j++) {
-            in >> type;
+            in >> level >> type;
             cout << '!' << type << endl;
             default_skills[i][j].type = type;
             default_skills[i][j].in_damage(in);
+            levs.push_back(level);
+        }
+        skills_amounts[i].resize(100);
+        int k = 0;
+        for (int j = 0; j < 100; j++) {
+            while (k < int(levs.size()) and levs[k] == j) {
+                skills_amounts[i][j]++;
+                k++;
+            }
+        }
+        for (int j = 1; j < 100; j++) {
+            skills_amounts[i][j] += skills_amounts[i][j - 1];
         }
     }
     in.close();
@@ -196,6 +210,7 @@ int init_world(void) {
 }
 
 void add_player(char *name, int clazz) {
+    clazz = 0;
     persons.push_back(new man(string(name), clazz));
     is_alive.push_back(2);
     int i = rand() % world_w;

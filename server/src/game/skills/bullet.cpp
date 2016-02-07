@@ -11,3 +11,9 @@ vec3<float> bullet::in_time(float time) {
 void bullet::in(istream& stream) {
     stream >> speed.x >> rad >> exp_rad;
 }
+
+void bullet::upgrade(float attack) {
+    for (effect& k : effects) {
+        k.upgrade(attack);
+    }
+}

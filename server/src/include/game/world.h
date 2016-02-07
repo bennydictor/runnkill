@@ -45,6 +45,7 @@ typedef struct {
 #include <game/man.h>
 
 extern std::vector<std::vector<skill_t>> default_skills;
+extern std::vector<std::vector<int>> skills_amounts;
 extern std::vector<item_t> default_items;
 //extern std::vector<armour> default_armours;
 extern std::vector<animation> animations;

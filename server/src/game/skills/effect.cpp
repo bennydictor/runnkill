@@ -22,3 +22,7 @@ void effect::in(istream& stream) {
     stream >> mods_two_side.strength >> mods_two_side.agility >> mods_two_side.intellect >> mods_two_side.speed;
     stream >> material_idx;
 }
+
+void effect::upgrade(float attack) {
+    mods_one_side.hp *= attack;
+}

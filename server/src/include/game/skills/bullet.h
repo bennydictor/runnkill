@@ -18,6 +18,7 @@ struct bullet {
     float rad, exp_rad;
     bullet();
     void in(std::istream& stream);
+    void upgrade(float attack);
     vec3<float> in_time(float time);
     int owner;
 };

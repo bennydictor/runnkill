@@ -18,6 +18,7 @@ public:
     effect(std::string _name);
     mod_t tic(float t);
     void in(std::istream& stream);
+    void upgrade(float attack);
 };
 
 

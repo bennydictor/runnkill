@@ -50,6 +50,7 @@ vector<char> is_alive;
 vector<bool>is_bullet_alive;
 vector<explosion> explosions;
 vector<vector<skill_t > > default_skills;
+vector<vector<int> > skills_amounts;
 vector<item_t> default_items;
 //vector<armour> default_armours;
 vector<animation> animations;
@@ -589,12 +590,15 @@ void world_update(float dt) {
         persons[i]->get_exp(exp_add[persons[i]->number]);
         exp_add[persons[i]->number] = 0;
         get_by_id[persons[i]->number] = persons[i];
+        int my_attack = count_attack(*persons[i]);
         if (persons[i]->my_aura && persons[i]->my_aura->can_use < 0) {
             for (int j = 0; j < (int)persons.size(); j++) {
                 if (dist(persons[i]->coords, persons[j]->coords) < persons[i]->my_aura->distance) {
                     for (effect k : persons[i]->my_aura->effects) {
                         persons[j]->add_effect(k);
+                        persons[j]->effects.back().upgrade(my_attack);
                     }
+
                 }
             }
         }
@@ -604,9 +608,10 @@ void world_update(float dt) {
                 continue;
             }
             move_man(i, dt);
-            if (persons[i]->skills.size() < 1) {
-                for (skill_t k : default_skills[persons[i]->cls])
-                persons[i]->skills.push_back(k);
+            if (int(persons[i]->skills.size()) < skills_amounts[persons[i]->cls][persons[i]->level]) {
+                for (int j = persons[i]->skills.size(); j < skills_amounts[persons[i]->cls][persons[i]->level]; j++) {
+                    persons[i]->skills.push_back(default_skills[persons[i]->cls][j]);
+                }
             }
         }
         if (persons[i]->hp < 0 and is_alive[i] == 2) {
@@ -685,6 +690,9 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     if (z->touch_ground) {
         if (z->is_running) {
             z->set_speed((float)z->abs_speed * move_orientation);
+            if (pressed[WORLD_ATTACK_EVENT]) {
+                z->speed.y += z->jump_high;
+            }
         } else {
             if (0 == pressed[WORLD_MOVE_FORWARD_EVENT] + pressed[WORLD_MOVE_RIGHT_EVENT] + pressed[WORLD_MOVE_BACKWARD_EVENT] + pressed[WORLD_MOVE_LEFT_EVENT])
             {
@@ -717,6 +725,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     if (pressed[WORLD_SYM_5]) {
         attack(man_idx, 4);
     }
+    int curr_attack = count_attack(*z);
     if (z->need_to_cast and z->curr_skill != -1 and fabs(z->busy - z->skills[z->curr_skill].activate_time) < EPS_FOR_SKILLS) {
         skill_t curr = z->skills[z->curr_skill];
         z->need_to_cast = false;
@@ -729,6 +738,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
             bullets.back().damage *= count_attack(*z);
             bullets.back().owner = z->number;
             bullets.back().exp_rad = curr.sample.exp_rad;
+            bullets.back().upgrade(curr_attack);
             is_bullet_alive.push_back(1);
             cerr << "You shoot" << endl;
         } else if (curr.type == 'M') {
@@ -753,6 +763,12 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
                             sector = detect_sector(persons[i]->coords, persons[i]->coords + to_me, persons[i]->orientation);
                             is_alive[i] = !persons[i]->take_damage(
                                     count_dmg(persons[i]->body_parts[sector], curr.dmg * count_attack(*z)), z->number);
+                            is_alive[i] *= 2;
+                            for (int j = 0; j < (int)curr.effects.size(); j++) {
+                                persons[i]->add_effect(curr.effects[j]);
+                                persons[i]->effects.back().owner = z->number;
+                                persons[i]->effects.back().upgrade(curr_attack);
+                            }
                         }
                     }
                 }
@@ -766,6 +782,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
                 for (int i = 0; i < (int)curr.effects.size(); i++) {
                     traps.back().effects.push_back(curr.effects[i]);
                     traps.back().effects.back().owner = z->number;
+                    traps.back().effects.back().upgrade(curr_attack);
                 }
                 cout << "Охота началась!" << endl;
             }
