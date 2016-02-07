@@ -2,11 +2,13 @@
 #define GAME_MAN_H
 #define MAN_RAD .4
 
-#include <cstdlib>
+#include <stdlib.h>
+#ifdef __cplusplus
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
+#endif
 //#include <game/armour.h>
 #include <game/skills/aura.h>
 #include <game/body_part.h>
@@ -42,6 +44,7 @@ struct man {
     int exp, level, level_exp, number;
     man();
     man(std::string _name, int cl);
+    man(std::istream& file);
     vec3<float> in_time(float time);
     void move(float time);
     void add_effect(effect a);
@@ -51,6 +54,7 @@ struct man {
     void get_effect_2(mod_t res);
     void fortify(int idx);
     void out(std::ostream& stream);
+    void write_info(std::ostream& file); 
     void run(bool must_run);
     void get_exp(int e);
     void put_on(item_t* item, int idx);

@@ -23,6 +23,7 @@
 #define WORLD_BLOCK_DR 18
 #define WORLD_RUN_EVENT 19
 #define LIGHT_COUNT 8
+#define BETWEEN_SAVING 20
 
 typedef struct {
     char type;
@@ -86,6 +87,8 @@ extern int world_max_height;
 void world_callback(void);
 void world_update(float dt);
 void kill_person(int idx);
+void save_player(int idx);
+void load_player(int idx);
 void *get_person_data_begin(int idx);
 void *get_person_data_end(int idx);
 char *get_person_text(int idx);
