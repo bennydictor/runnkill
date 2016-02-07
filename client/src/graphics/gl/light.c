@@ -4,6 +4,7 @@
 #include <graphics/gl.h>
 #include <graphics/glfw.h>
 #include <world.h>
+#include <assert.h>
 
 unsigned int prog_light;
 
@@ -54,6 +55,7 @@ void prog_light_uniforms_obj(draw_obj obj) {
     glUniform3fv(glGetUniformLocation(prog_light, "material.diffuse"), 1, obj.material.diffuse);
     glUniform3fv(glGetUniformLocation(prog_light, "material.specular"), 1, obj.material.specular);
     glUniform1f(glGetUniformLocation(prog_light, "material.shininess"), obj.material.shininess);
+    glUniform1f(glGetUniformLocation(prog_light, "material.alpha"), obj.material.alpha);
 }
 
 int init_gl_light(void) {

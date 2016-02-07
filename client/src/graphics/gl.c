@@ -18,6 +18,7 @@
 #include <graphics/objects/sphere_sector.h>
 #include <graphics/objects/box.h>
 #include <graphics/objects/rect.h>
+#include <graphics/objects/circle.h>
 #include <graphics/objects/pp.h>
 
 #include <graphics/gl/depth.h>
@@ -81,6 +82,7 @@ int init_gl(void) {
     init_sphere_sector_object();
     init_box_object();
     init_rect_object();
+    init_circle_object();
     init_pp_object();
 
     mat_p = make_mat4();
@@ -90,10 +92,6 @@ int init_gl(void) {
         light_mat_v[i] = make_mat4();
     }
 
-    if (init_material()) {
-        printl(LOG_W, "Error while initializing gl: cannot initialize material module.\n");
-        return 1;
-    }
     if (init_gl_depth()) {
         printl(LOG_W, "Error while initializing gl: cannot initialize depth module.\n");
         return 1;
@@ -208,6 +206,7 @@ void free_gl(void) {
     free_sphere_sector_object();
     free_box_object();
     free_rect_object();
+    init_circle_object();
     free_pp_object();
     free(mat_v);
     free(mat_p);

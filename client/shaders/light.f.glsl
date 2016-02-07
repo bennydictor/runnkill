@@ -6,6 +6,7 @@ uniform struct {
     vec3 diffuse;
     vec3 specular;
     float shininess;
+    float alpha;
 } material;
 
 uniform struct {
@@ -78,7 +79,7 @@ float pcf(vec4 light_coord, int i) {
 }
 
 void main() {
-    gl_FragColor.rgba = vec4(0, 0, 0, 1);
+    gl_FragColor = vec4(0, 0, 0, material.alpha);
     vec3 ambient_fc = vec3(0, 0, 0);
     vec3 diffuse_fc = vec3(0, 0, 0);
     vec3 specular_fc = vec3(0, 0, 0);
