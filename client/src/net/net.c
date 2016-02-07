@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <math.h>
+#include <assert.h>
 
 #include <world.h>
 #include <graphics/gl.h>
@@ -71,12 +72,13 @@ int init_net(const char *hostname, uint16_t port) {
     server.sin_port = htons(port == 0 ? PORT : port);
     server.sin_addr.s_addr = *(in_addr_t *) host->h_addr_list[0];
     msg[0] = MSG_HELLO;
-    sendto(local_udp_socket, msg, 1, 0, (struct sockaddr *) &server, server_addrlen); 
+    printf("What is your name today? ");
+    assert(scanf("%s", msg + 1) == 1);
+    sendto(local_udp_socket, msg, 1 + strlen(msg + 1), 0, (struct sockaddr *) &server, server_addrlen); 
     if (connect(local_tcp_socket, (struct sockaddr *) &server, server_addrlen) == -1) {
         printl(LOG_W, "Error while initializing network: cannot connect to server %s", host->h_name);
         return 1;
     }
-    printl(LOG_D, "local_tcp_socket = %d", local_tcp_socket);
     if (recvfrom_timeout() == -1 || msg[0] != MSG_OK) {
         printl(LOG_W, "Error while initializing network: cannot login to %s", host->h_name);
         return 1;

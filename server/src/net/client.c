@@ -32,7 +32,7 @@ void net_update(void) {
     while ((msg_len = recvfrom(local_udp_socket, msg, MSG_BUF_LEN, MSG_DONTWAIT, (struct sockaddr *) &src_addr, &addrlen)) > 0) {
         switch (msg[0]) {
         case MSG_HELLO:
-            if (msg_len == 1 && client_count < MAX_CLIENTS) {
+            if (msg_len > 1 && client_count < MAX_CLIENTS) {
                 clients[client_count].tcp = accept(local_tcp_socket, NULL, NULL);
                 if (clients[client_count].tcp == -1) {
                     printl(LOG_W, "Error while accepting new client: cannot accept tcp connection");
@@ -41,7 +41,7 @@ void net_update(void) {
                     break;
                 }
                 clients[client_count].alive = 1;
-                add_player("Derrior", 1);
+                add_player(msg + 1, 1);
                 printl(LOG_I, "Client %d is online", client_count + 1);
                 msg[0] = MSG_OK;
                 msg[1] = client_count;
