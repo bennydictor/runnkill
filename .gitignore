@@ -6,3 +6,4 @@ obj
 **/.make/options
 server/server
 client/client
+server/players/*
