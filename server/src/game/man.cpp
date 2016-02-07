@@ -333,3 +333,15 @@ void man::write_info(ostream& file) {
     }
     move(0);
 }
+
+void man::respawn() {
+    hp = max_hp;
+    mp = max_mp;
+    touch_ground = false;
+    is_running = false;
+    exp = float(exp) * 0.9;
+    for (effect& k : effects) {
+        k.time = 0;
+    }
+    move(0);
+}

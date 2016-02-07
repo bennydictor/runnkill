@@ -57,6 +57,7 @@ struct man {
     void write_info(std::ostream& file); 
     void run(bool must_run);
     void get_exp(int e);
+    void respawn();
     void put_on(item_t* item, int idx);
     void new_message(char* s, float t);
     char* get_text();

@@ -125,6 +125,22 @@ void add_exp(man* p, int e) {
     }
 }
 
+vec3<float> get_rand_coords() {
+    int i = rand() % world_w;
+    int j = rand() % world_h;
+    i /= 2;
+    j /= 2;
+    while (world_field[i][j] != 0) {
+        ++j;
+        if (j == world_h) {
+            ++i;
+            j = 0;
+        }
+    }
+    return vec3<float>(i, 19, j); 
+    
+}
+
 bool is_intersected(vec3<float> centre, float rad, float rad2, vec3<float> begin, vec3<float>& end, vec3<float>& res) {
     vec3<float> l, r, m1, m2, m;
     l = begin;
@@ -627,6 +643,11 @@ void world_update(float dt) {
         last_save = curr_time;
         for (int i = 0; i < (int)persons.size(); i++) {
             save_player(i);
+            if (!is_alive[i]) {
+                persons[i]->respawn();
+                persons[i]->coords = get_rand_coords();
+                is_alive[i] = 2;
+            }
         }
     }
     vector<explosion> nexp = explosions;
