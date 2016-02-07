@@ -17,9 +17,9 @@ Controls:
 * WASD - movement
 * Space - jump
 
-* 1-0   - skills
+* 1-9   - skills
 * IKLO  - Shields
-
+* Shift - RUN!!
 
 In directory Dependencies you can find all what you need;
 If you want to build the binary manually, run make.
