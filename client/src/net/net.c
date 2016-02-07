@@ -73,7 +73,7 @@ int init_net(const char *hostname, uint16_t port) {
     server.sin_addr.s_addr = *(in_addr_t *) host->h_addr_list[0];
     msg[0] = MSG_HELLO;
     printf("What is your name today? ");
-    assert(scanf("%s", msg + 1) == 1);
+    assert(scanf("%s", msg + 2) == 1);
     msg[1] = 3;
     while (msg[1] > 2) {
         printf("What is your class today?\n0 - Warrior\n1 - Hunter\n2 - Mage\n? ");
