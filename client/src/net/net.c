@@ -164,6 +164,7 @@ int init_net(const char *hostname, uint16_t port) {
         GET_TCP(float, materials[i].specular[1]);
         GET_TCP(float, materials[i].specular[2]);
         GET_TCP(float, materials[i].shininess);
+        GET_TCP(float, materials[i].alpha);
     }
     printl(LOG_D, "Got materials!");
 

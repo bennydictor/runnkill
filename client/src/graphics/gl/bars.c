@@ -2,6 +2,7 @@
 #include <graphics/gl.h>
 #include <graphics/glfw.h>
 #include <graphics/objects/rect.h>
+#include <graphics/objects/circle.h>
 #include <world.h>
 
 unsigned int prog_bars;
@@ -45,36 +46,45 @@ void render_bars(void) {
 
     glEnableVertexAttribArray(prog_bars_attr_v_coord);
 
-    //draw_obj bar = make_draw_rect(window_width / 2 * (max_hp - hp) / max_hp, 0, window_width / 2, 20, default_material);
-    draw_obj bar = make_draw_rect(5, window_height - 5, window_width / 4 * (hp) / max_hp + 5, window_height - 20, default_material);
+    //draw_obj bar = make_draw_rect(window_width / 2 * (max_hp - hp) / max_hp, 0, window_width / 2, 20, materials[0]);
+    draw_obj bar = make_draw_rect(5, window_height - 5, window_width / 4 * (hp) / max_hp + 5, window_height - 20, materials[0]);
     glUniformMatrix4fv(prog_bars_unif_mat_m, 1, GL_FALSE, bar.mat_m);
-    glUniform3f(prog_bars_unif_color, 0.8, 0, 0.1);
+    glUniform4f(prog_bars_unif_color, 0.8, 0, 0.1, 1);
     glBindBuffer(GL_ARRAY_BUFFER, bar.vbo);
     glVertexAttribPointer(prog_bars_attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
     glDrawArrays(bar.mode, 0, bar.count);
     free_draw_obj(bar);
 
-    //bar = make_draw_rect(window_width / 2, 0, window_width - window_width / 2 * (max_mp - mp) / max_mp, 20, default_material);
-    bar = make_draw_rect(5, window_height - 28, window_width / 4 * (mp) / max_mp + 5, window_height - 43, default_material);
+    //bar = make_draw_rect(window_width / 2, 0, window_width - window_width / 2 * (max_mp - mp) / max_mp, 20, materials[0]);
+    bar = make_draw_rect(5, window_height - 28, window_width / 4 * (mp) / max_mp + 5, window_height - 43, materials[0]);
     glUniformMatrix4fv(prog_bars_unif_mat_m, 1, GL_FALSE, bar.mat_m);
-    glUniform3f(prog_bars_unif_color, 0, 0, 0.5);
+    glUniform4f(prog_bars_unif_color, 0, 0, 0.5, 1);
     glBindBuffer(GL_ARRAY_BUFFER, bar.vbo);
     glVertexAttribPointer(prog_bars_attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
     glDrawArrays(bar.mode, 0, bar.count);
     free_draw_obj(bar);
    
-    //bar = make_draw_rect(0, 20, window_width * ((double)EP / level_exp), 27, default_material);
-    bar = make_draw_rect(5, window_height - 45, window_width / 3 * EP / level_exp + 5, window_height - 50, default_material);
+    //bar = make_draw_rect(0, 20, window_width * ((double)EP / level_exp), 27, materials[0]);
+    bar = make_draw_rect(5, window_height - 45, window_width / 3 * EP / level_exp + 5, window_height - 50, materials[0]);
    
     glUniformMatrix4fv(prog_bars_unif_mat_m, 1, GL_FALSE, bar.mat_m);
-    glUniform3f(prog_bars_unif_color, 0.5, 0, 1);
+    glUniform4f(prog_bars_unif_color, 0.5, 0, 1, 1);
+    glBindBuffer(GL_ARRAY_BUFFER, bar.vbo);
+    glVertexAttribPointer(prog_bars_attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
+    glDrawArrays(bar.mode, 0, bar.count);
+    free_draw_obj(bar);
+
+    bar = make_draw_circle(window_width - 60, window_height - 60, 50, materials[0]);
+   
+    glUniformMatrix4fv(prog_bars_unif_mat_m, 1, GL_FALSE, bar.mat_m);
+    glUniform4f(prog_bars_unif_color, 0.5, 0, 1, 0.5);
     glBindBuffer(GL_ARRAY_BUFFER, bar.vbo);
     glVertexAttribPointer(prog_bars_attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
     glDrawArrays(bar.mode, 0, bar.count);
     free_draw_obj(bar);
 
     if (business >= 0) {
-        bar = make_draw_rect(window_width / 4, 50, window_width / 4 + window_width * business / max_business / 2, 60, default_material);
+        bar = make_draw_rect(window_width / 4, 50, window_width / 4 + window_width * business / max_business / 2, 60, materials[0]);
        
         glUniformMatrix4fv(prog_bars_unif_mat_m, 1, GL_FALSE, bar.mat_m);
         glUniform3f(prog_bars_unif_color, 0, 0.5, 0.5);

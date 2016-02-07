@@ -133,6 +133,7 @@ void net_update(void) {
                         PUT(float, materials[i].specular[1]);
                         PUT(float, materials[i].specular[2]);
                         PUT(float, materials[i].shininess);
+                        PUT(float, materials[i].alpha);
                     }
                     sendto(local_udp_socket, msg, 1, 0, (struct sockaddr *) &src_addr, addrlen);
                     if (msg[0] == MSG_OK) {

@@ -91,7 +91,7 @@ void in_materials() {
         in >> r >> g >> b;
         spec = cpp_make_vec3(r, g, b);
         in >> shininess;
-        fake_materials_idx[j] = make_material(amb, dif, spec, shininess).id;
+        fake_materials_idx[j] = make_material(amb, dif, spec, shininess, 1 /* TODO */).id;
 
     }
     in.close();
