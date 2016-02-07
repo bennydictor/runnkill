@@ -74,7 +74,12 @@ int init_net(const char *hostname, uint16_t port) {
     msg[0] = MSG_HELLO;
     printf("What is your name today? ");
     assert(scanf("%s", msg + 1) == 1);
-    sendto(local_udp_socket, msg, 1 + strlen(msg + 1), 0, (struct sockaddr *) &server, server_addrlen); 
+    msg[1] = 3;
+    while (msg[1] > 2) {
+        printf("What is your class today?\n0 - Warrior\n1 - Hunter\n2 - Mage\n? ");
+        assert(scanf("%hhu", msg + 1) == 1);
+    }
+    sendto(local_udp_socket, msg, 2 + strlen(msg + 2), 0, (struct sockaddr *) &server, server_addrlen); 
     if (connect(local_tcp_socket, (struct sockaddr *) &server, server_addrlen) == -1) {
         printl(LOG_W, "Error while initializing network: cannot connect to server %s", host->h_name);
         return 1;
