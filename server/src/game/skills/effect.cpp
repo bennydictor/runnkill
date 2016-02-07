@@ -2,6 +2,13 @@
 #include <game/mod_type.h>
 using namespace std;
 
+effect::effect() {
+}
+
+effect::effect(string _name) {
+    name = _name;
+}
+
 mod_t effect::tic(float t) {
     mod_t ret;
     ret = mods_one_side * t;

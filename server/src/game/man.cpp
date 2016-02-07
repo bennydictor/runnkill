@@ -55,6 +55,26 @@ man::man(string _name, int cl) {
     recovery.mp = 3;
 }
 
+man::man(istream& file) {
+    file >> name >> cls >> def_mod >> atk_mod >> can_die >> have_shield;
+    touch_ground = false;
+    my_aura = NULL;
+    orientation = vec3<float>(1, 0, 0);
+
+    for (size_t i = 0; i < BP_AMOUNT; i++) {
+        body_parts.push_back(body_part(bp_names[i], bp_init_mods[i]));
+    }
+
+    file >> hp >> mp >> agility >> strength >> intellect >> abs_speed >> jump_high >> attack_rad;
+    file >> exp >> level >> level_exp;
+    speed = vec3<float>(abs_speed, 0, 0);
+    file >> number;
+    max_hp = hp;
+    max_mp = mp;
+    curr_skill = -1;
+    file >> recovery.hp >> recovery.mp;
+}
+
 void man::set_speed(vec3<float> spd) {
     speed = spd;
 }
@@ -113,7 +133,7 @@ vec3<float> man::in_time(float time) {
 }
 
 void man::move(float time) {
-    if (time <= 0)
+    if (time < 0)
         return;
     if (!(time >= 0 or time <= 0)) {
         cout << "WE RECIEVED NAN" << endl;
@@ -142,7 +162,7 @@ void man::move(float time) {
         body_parts[i].can_changed = max(0.0, body_parts[i].can_changed - time);
     }
     //cout << busy << endl;
-    if (!is_running) {
+if (!is_running) {
         busy = max((float)-EPS_FOR_SKILLS, busy - time);
         if (busy < 0) {
             curr_skill = -1;
@@ -293,4 +313,23 @@ void man::get_exp(int e) {
         exp -= level_exp;
         level_exp = exp_to_next_level[level];
     }
+}
+
+void man::write_info(ostream& file) {
+    vector<effect> my_effects = effects;
+    for (effect& k : effects) {
+        k.time = 0;
+    }
+    move(0);
+
+    file << ' ' << name << ' ' << cls << ' ' << def_mod << ' ' << atk_mod << ' ' << can_die << ' ' << have_shield << endl;
+    file << ' ' << max_hp << ' ' << max_mp << ' ' << agility << ' ' << strength << ' ' << intellect << ' ' << abs_speed << ' ' << jump_high << ' ' << attack_rad;
+    file << ' ' << exp << ' ' << level << ' ' << level_exp;
+    file << ' ' << number;
+    file << ' ' << recovery.hp << ' ' << recovery.mp;
+    effects.clear();
+    for (effect& k : my_effects) {
+        add_effect(k);
+    }
+    move(0);
 }

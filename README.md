@@ -31,3 +31,7 @@ Following libraries are required:
 * Glfw
 * GLEW
 * freetype2
+
+For your own server configuring, look files in directory server. 
+There are "skills", "materials", etc. 
+

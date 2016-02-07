@@ -3,9 +3,10 @@
 
 
 #ifdef __cplusplus
+#include <game/man.h>
+void add_player(man* player);
 extern "C" {
 #endif
-
 void in_skills();
 void in_items();
 //void in_armours();

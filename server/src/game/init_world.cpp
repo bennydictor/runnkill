@@ -213,5 +213,23 @@ void add_player(char *name, int clazz) {
     persons.back()->speed = vec3<float>(0, 0, 0);
 }
 
+void add_player(man* player) {
+    persons.push_back(player);
+    is_alive.push_back(2);
+    int i = rand() % world_w;
+    int j = rand() % world_h;
+    i /= 2;
+    j /= 2;
+    while (world_field[i][j] != 0) {
+        ++j;
+        if (j == world_h) {
+            ++i;
+            j = 0;
+        }
+    }
+    persons.back()->coords = vec3<float>(i, 19, j);
+    persons.back()->speed = vec3<float>(0, 0, 0);
+}
+
 void free_world(void) {
 }

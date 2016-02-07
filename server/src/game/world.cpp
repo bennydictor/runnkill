@@ -39,7 +39,8 @@ light_t gl_light[LIGHT_COUNT];
 char gl_light_enable[LIGHT_COUNT];
 draw_obj draw_objs[MAX_DRAW_OBJ];
 int draw_obj_count;
-
+float last_save;
+float curr_time;
 map<int, man*> get_by_id;
 map<int, int> exp_add;
 vector<bullet> bullets;
@@ -583,6 +584,7 @@ void world_update(float dt) {
     //cout << bullets.size() << endl;
     bullets = new_bullets; 
     is_bullet_alive = new_is_bullet_alive;
+    curr_time += dt;
     for (int i = 0; i < (int)persons.size(); i++) {
         persons[i]->get_exp(exp_add[persons[i]->number]);
         exp_add[persons[i]->number] = 0;
@@ -610,6 +612,16 @@ void world_update(float dt) {
         if (persons[i]->hp < 0 and is_alive[i] == 2) {
             is_alive[i] = 1;
             persons[i]->hp = 0;
+        }
+    }
+    if (curr_time > 1e9) {
+        curr_time = last_save = 0;
+    }
+    if (curr_time - last_save > BETWEEN_SAVING) {
+        cout << "begin saving players" << curr_time << endl;
+        last_save = curr_time;
+        for (int i = 0; i < (int)persons.size(); i++) {
+            save_player(i);
         }
     }
     vector<explosion> nexp = explosions;
@@ -765,4 +777,25 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         }
 
     }
+}
+
+void save_player(int idx) {
+    ofstream file;
+    char name[100];
+    sprintf(name, "players/%d", persons[idx]->number);
+    file.open(name);
+    persons[idx]->write_info(file);
+    file.close();
+}
+
+void load_player(int idx) {
+    if (idx < 0 or GAME_MAX_MAN_IDX < idx) {
+        return;
+    }
+    char name[100];
+    sprintf(name, "players/%d", idx);
+    ifstream file;
+    file.open(name);
+    man* new_man = new man(file);
+    add_player(new_man);
 }
