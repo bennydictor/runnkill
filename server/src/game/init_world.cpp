@@ -210,7 +210,6 @@ int init_world(void) {
 }
 
 void add_player(char *name, int clazz) {
-    clazz = 0;
     persons.push_back(new man(string(name), clazz));
     is_alive.push_back(2);
     int i = rand() % world_w;
