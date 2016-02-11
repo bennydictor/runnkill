@@ -33,7 +33,7 @@ struct man {
     std::vector<item_t*> bag;
     std::vector<body_part> body_parts;
     std::vector<effect> effects;
-    std::vector<skill_t> skills;
+    std::vector<abstract_skill_t* > skills;
     std::vector<message> messages;
     //armour* weapon;
     aura* my_aura;

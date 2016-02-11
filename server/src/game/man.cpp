@@ -156,16 +156,17 @@ void man::move(float time) {
     }
     effects = new_effects;
     for (int i = 0; i < (int)skills.size(); i++) {
-        skills[i].to_activate -= time; 
+        skills[i]->to_activate_skill -= time; 
     }
     for (int i = 0; i < (int)body_parts.size(); i++) {
         body_parts[i].can_changed = max(0.0, body_parts[i].can_changed - time);
     }
     //cout << busy << endl;
-if (!is_running) {
-        busy = max((float)-EPS_FOR_SKILLS, busy - time);
-        if (busy < 0) {
+    if (!is_running) {
+        busy -= time;
+        if (busy < -EPS_FOR_SKILLS) {
             curr_skill = -1;
+            busy = 0;
         }
     }
     hp += (recovery.hp * time / (1 + int(is_running)));

@@ -34,8 +34,15 @@ void in_skills() {
         for (int j = 0; j < amount; j++) {
             in >> level >> type;
             cout << '!' << type << endl;
-            default_skills[i][j].type = type;
-            default_skills[i][j].in_damage(in);
+            if (type == 'M') 
+                default_skills[i][j] = new meelee_skill_t();
+            else if (type == 'R')
+                default_skills[i][j] = new range_skill_t();
+            else if (type == 'T') 
+                default_skills[i][j] = new trap_skill_t();
+            else if (type == 'A') 
+                default_skills[i][j] = new aura_skill_t();
+            default_skills[i][j]->in_damage(in);
             levs.push_back(level);
         }
         skills_amounts[i].resize(100);

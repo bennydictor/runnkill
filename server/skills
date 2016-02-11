@@ -2,36 +2,38 @@ class_0
 2
     0 M
     0 1 5
-    2
-    -0.4 0.4 0.1 4
+    0 0.7
+
     1
         WOUND
         10
         1 0
         0.8 0.8 0.8 0.8
         4
-    0 0.7
+
+    2
+    -0.4 0.4 0.1 4
 
     1 M
     0 2 11
+    0 0
+    0
     3
     -0.7 0.7 0.1 5
-    0
-    0 0
 
 class_1
 2
     0 R
     0 2 0.2
+    2 0
+    0
     1
     40 0.1 0.2
-    0
-    2 0
 
     1 T
     0 10 20
-    3
-    0.5 2 4
+    2 0
+
     2
         ICE
         5
@@ -43,50 +45,57 @@ class_1
         1 0
         1 1 1 1
         1
-    2 0
+
+    3
+    0.5 2 4
 
 class_2
 3
 
     0 A
     20 20 60
-    60
-    10 0.105
+    2 0
+
     1
         HEAL
         0.1
         -1 0
         1 1 1 1
         0
-    2 0
+
+    60
+    10 0.105
 
     0 R
     0 10 0.5
+    1 0.5
+    
+    0
+
     2
     20 0.2 0.5
-    0
+
+
     1 R
     0 30 12
-    2.5
-    30 0.5 2
+    1 0 
     1
         FIRE
         10
         2 30
         1 1 1 1.4
         5
-    1 0
 
+
+    2.5
+    30 0.5 2
 class X
 
 amount of skills
     
     level [MART] #type of skill (Meelee, Aura, Range, Trap)
     <hp cost> <mp cost> <cooldown>
-    <damage>
-    if type is M, you should write left_angle, right_angle, height distance
-    if type is R, you should write speed of bullet, size of bullet, size of explosion
-    if type is T, you should write size of trap, time before activation, number of material
+    then write number of animation and moment from begin of animation, when you want to use skill
     here must be amount of effects
     for each effect:
         name
@@ -94,5 +103,9 @@ amount of skills
         damage (in hp and mp)
         modifiers strength, agility, intellect, speed
         here number of material of the ball 
-    then write number of animation and moment from begin of animation, when you want to use skill
+
+    if A - duration else - <damage>
+    if type is M, you should write left_angle, right_angle, height distance
+    if type is R, you should write speed of bullet, size of bullet, size of explosion
+    if type is T, you should write size of trap, time before activation, number of material
 
