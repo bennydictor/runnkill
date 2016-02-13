@@ -3,6 +3,7 @@
 #ifdef __cplusplus
 #include <iostream>
 #include <string>
+#include <math/vec3.h>
 #endif
 #include <game/mod_type.h>
 
@@ -13,6 +14,8 @@ public:
     mod_t mods_one_side;
     mod_t mods_two_side;
     float time;
+    bool is_stunning, cancel;
+    vec3<float> speed;
     int material_idx, owner;
     effect();
     effect(std::string _name);

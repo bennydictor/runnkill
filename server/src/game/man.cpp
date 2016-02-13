@@ -12,6 +12,7 @@ man::man() {
     def_mod = atk_mod = 1; 
     can_die = true;
     have_shield = false;
+    is_stunned = 0;
     touch_ground = false;
     my_aura = NULL;
 //    weapon = NULL;
@@ -36,6 +37,7 @@ man::man(string _name, int cl) {
     def_mod = atk_mod = 1; 
     can_die = true;
     have_shield = false;
+    is_stunned = false;
     touch_ground = false;
     my_aura = NULL;
 //    weapon = NULL;
@@ -58,6 +60,7 @@ man::man(string _name, int cl) {
 man::man(istream& file) {
     file >> name >> cls >> def_mod >> atk_mod >> can_die >> have_shield;
     touch_ground = false;
+    is_stunned = false;
     my_aura = NULL;
     orientation = vec3<float>(1, 0, 0);
 
@@ -103,9 +106,13 @@ void man::get_effect_2(mod_t res) {
         atk_mod *= res.atk_mod;
     //cout << '!' << abs_speed << endl; 
 }
+
 void man::add_effect(effect a) {
     effects.push_back(a);
     get_effect_2(a.mods_two_side);
+    if (a.is_stunning) {
+        is_stunned++;
+    }
 }
 vec3<float> man::in_time(float time) {
     if (!(time > 0)) {
@@ -141,13 +148,14 @@ void man::move(float time) {
         return;
     }
     vector<effect> new_effects;
-    for (size_t i = 0; i < effects.size(); i++)
-    {
+    for (size_t i = 0; i < effects.size(); i++) {
         mod_t res = effects[i].tic(time);
         get_effect_1(res);
-        if (effects[i].time >= 0 and effects[i].time - time <= 0)
-        {
+        if (effects[i].time >= 0 and effects[i].time - time <= 0) {
             get_effect_2(effects[i].mods_two_side * -1);
+            if (effects[i].is_stunning) {
+                is_stunned--;
+            }
         }
         effects[i].time -= time;
         if (effects[i].time > -EPS_FOR_SKILLS) {
@@ -255,6 +263,8 @@ void man::run(bool must_run) {
     if (must_run) {
         if (!is_running) {
             is_running = true;
+            curr_skill = 1;
+            busy = 0;
             for (int i = 0; i < (int) body_parts.size(); i++)
             {
                 body_parts[i].is_fortified = false;
@@ -340,9 +350,17 @@ void man::respawn() {
     mp = max_mp;
     touch_ground = false;
     is_running = false;
+    is_stunned = 0;
     exp = float(exp) * 0.9;
     for (effect& k : effects) {
         k.time = 0;
     }
     move(0);
+}
+
+bool man::can_cast(int idx) {
+    return !(busy > 0 or (int)skills.size() <= idx 
+    or skills[idx]->cost.mp > mp or 
+    skills[idx]->to_activate_skill > EPS_FOR_SKILLS 
+    or is_stunned or is_running);
 }

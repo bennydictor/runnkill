@@ -7,7 +7,7 @@
 #include <string>
 #include <math/vec3.h>
 
-#define GRAVITATION 10
+#define GRAVITATION 9
 
 
 struct bullet {

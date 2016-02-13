@@ -28,6 +28,7 @@ struct man {
     int cls, curr_skill;
     float def_mod, atk_mod, busy, attack_rad, sum_damage;
     bool can_die, have_shield, is_running, touch_ground, need_to_cast;
+    int is_stunned;
     char buff[2048];
     mod_t recovery;
     std::vector<item_t*> bag;
@@ -62,6 +63,7 @@ struct man {
     void new_message(char* s, float t);
     char* get_text();
     bool take_damage(float dmg, int owner);
+    bool can_cast(int idx);
 };
 
 int count_attack(man z);

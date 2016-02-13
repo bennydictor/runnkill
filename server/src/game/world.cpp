@@ -451,7 +451,7 @@ void attack(int man_idx, int idx) {
     man* z = persons[man_idx];
     //cout << z->mp << ' ' << z->skills[idx].cost.mp << endl;
     //cout << z->busy << ' ' << z->skills.size() << ' ' << z->skills[idx].to_activate << ' ' << z->skills[idx].between_activate << endl;
-    if (z->busy > 0 or (int)z->skills.size() <= idx or z->skills[idx]->cost.mp > z->mp or z->skills[idx]->to_activate_skill > EPS_FOR_SKILLS) {
+    if (!z->can_cast(idx)) {
     //    cerr << "You missed!" << endl;
         return;
     }
@@ -720,7 +720,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         pressed[WORLD_MOVE_FORWARD_EVENT] = pressed[WORLD_MOVE_BACKWARD_EVENT] = false;
     if (pressed[WORLD_MOVE_LEFT_EVENT] and pressed[WORLD_MOVE_RIGHT_EVENT])
         pressed[WORLD_MOVE_LEFT_EVENT] = pressed[WORLD_MOVE_RIGHT_EVENT] = false;
-    if (z->touch_ground) {
+    if (z->touch_ground && !z->is_stunned) {
         if (z->is_running) {
             z->set_speed((float)z->abs_speed * move_orientation);
             if (pressed[WORLD_ATTACK_EVENT]) {
