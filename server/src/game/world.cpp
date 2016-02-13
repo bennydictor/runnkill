@@ -615,12 +615,18 @@ void world_update(float dt) {
         int my_attack = count_attack(*persons[i]);
         if (persons[i]->my_aura && persons[i]->my_aura->can_use < 0) {
             for (int j = 0; j < (int)persons.size(); j++) {
-                if (dist(persons[i]->coords, persons[j]->coords) < persons[i]->my_aura->distance) {
-                    for (effect k : persons[i]->my_aura->effects) {
+                if (i != j) {
+                    if (dist(persons[i]->coords, persons[j]->coords) < persons[i]->my_aura->distance) {
+                        for (effect k : persons[i]->my_aura->effects) {
+                            persons[j]->add_effect(k);
+                            persons[j]->effects.back().upgrade(my_attack);
+                        }
+                    }
+                } else {
+                    for (effect k : persons[i]->my_aura->my_effects) {
                         persons[j]->add_effect(k);
                         persons[j]->effects.back().upgrade(my_attack);
                     }
-
                 }
             }
         }
@@ -815,7 +821,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
             }
         } else if (curr->type == 'A') {
             if (!z->my_aura) {
-                z->my_aura = new aura(((AST)curr)->duration, ((AST)curr)->tic, ((AST)curr)->rad, ((AST)curr)->effects);
+                z->my_aura = new aura(((AST)curr)->duration, ((AST)curr)->tic, ((AST)curr)->rad, ((AST)curr)->effects, ((AST)curr)->my_effects);
                 z->my_aura->set_owner(z->number);
             }
         }

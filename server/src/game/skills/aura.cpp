@@ -3,12 +3,13 @@
 #include <vector>
 
 using namespace std;
-aura::aura(float t, float dt, float d, vector<effect>& e) {
+aura::aura(float t, float dt, float d, vector<effect>& e, vector<effect>& my_e) {
     can_use = 0;
     tic = dt;
     time = t;
     distance = d;
     effects = e;
+    my_effects = my_e;
 }
 
 void aura::set_owner(int o) {

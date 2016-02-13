@@ -63,6 +63,13 @@ class_2
         1 1 1 1
         0
 
+    1
+        HEAL
+        0.1
+        -2 -1
+        1 1 1 1
+        0
+
     60
     10 0.105
 
@@ -103,6 +110,8 @@ amount of skills
         damage (in hp and mp)
         modifiers strength, agility, intellect, speed
         here number of material of the ball 
+    
+    if A - write effects for you like previous
 
     if A - duration else - <damage>
     if type is M, you should write left_angle, right_angle, height distance

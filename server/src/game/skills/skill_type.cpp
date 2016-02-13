@@ -45,6 +45,15 @@ void trap_skill_t::in_damage(istream& stream) {
 
 void aura_skill_t::in_damage(istream& stream) {
     abstract_input(stream);
+    int amount_of_effects;
+    stream >> amount_of_effects;
+
+    string eff_name;
+    for (int i = 0; i < amount_of_effects; i++) {
+        stream >> eff_name;
+        my_effects.push_back(effect(eff_name));
+        my_effects.back().in(stream);
+    }
     type = 'A';
     stream >> duration >> rad >> tic;
 }
