@@ -14,7 +14,9 @@ public:
     mod_t mods_one_side;
     mod_t mods_two_side;
     float time;
-    bool is_stunning, cancel;
+    bool is_stunning;
+    bool is_moving;
+    char type;
     vec3<float> speed;
     int material_idx, owner;
     effect();

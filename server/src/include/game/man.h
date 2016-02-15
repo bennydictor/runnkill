@@ -20,6 +20,7 @@
 #include <game/message.h>
 #include <math/vec2.h>
 #include <math/vec3.h>
+#include <math/geom.h>
 
 extern int GAME_MAX_MAN_IDX;
 
@@ -48,7 +49,7 @@ struct man {
     man(std::istream& file);
     vec3<float> in_time(float time);
     void move(float time);
-    void add_effect(effect a);
+    void add_effect(effect a, vec3<float> _coords);
     void set_speed(vec3<float> spd);
     void set_orientation(vec3<float> orient);
     void get_effect_1(mod_t res);

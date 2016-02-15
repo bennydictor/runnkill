@@ -1,5 +1,5 @@
 class_0
-2
+3
     0 M
     0 1 5
     0 0.7
@@ -10,9 +10,36 @@ class_0
         1 0
         0.8 0.8 0.8 0.8
         4
+        1 1
+        -10 1 0
 
     2
     -0.4 0.4 0.1 4
+    
+    0 A
+    
+    0 5 20
+    2 0
+
+    1
+        Fear
+        0.1 1
+        1 0
+        1 1 1 1
+        4
+        1 1
+        -4 1 0
+
+    1
+        Forward
+        0.1 1
+        0 0
+        1 1 1 1
+        4
+        1 0
+        0.7 0.6 0
+    2
+    1.5 0.1
 
     1 M
     0 2 11
@@ -40,11 +67,13 @@ class_1
         0 10
         1 1 1 0.3 
         3
+        0
         POISON
         6 0
         1 0
         1 1 1 1
         1
+        0
 
     3
     0.5 2 4
@@ -62,6 +91,8 @@ class_2
         -1 0
         1 1 1 1
         0
+        1 1
+        -0.2 0.3 0
 
     1
         HEAL
@@ -69,8 +100,10 @@ class_2
         -2 -1
         1 1 1 1
         0
+        1 0
+        1 0.3 0
 
-    60
+    10
     10 0.105
 
     0 R
@@ -92,6 +125,7 @@ class_2
         2 30
         1 1 1 1.4
         5
+        0
 
 
     2.5
@@ -110,6 +144,8 @@ amount of skills
         damage (in hp and mp)
         modifiers strength, agility, intellect, speed
         here number of material of the ball 
+        here is a flag, move this effect or not
+        if flag, you need to type the type (1 or 0) and then speed if orientation is (1, 0, 0)
     
     if A - write effects for you like previous
 

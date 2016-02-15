@@ -279,8 +279,9 @@ void damage_last_explosion() {
                         count_dmg(persons[j]->body_parts[sector], explosions.back().damage), explosions.back().owner);
             is_alive[j]++;
             if (is_alive[j] == 2) {
+               man* owner = get_by_id[explosions.back().owner];
                 for (int i = 0; i < (int)explosions.back().effects.size(); i++) {
-                    persons[j]->add_effect((explosions.back().effects[i]));
+                    persons[j]->add_effect((explosions.back().effects[i]), owner->coords);
                 }
             }
         }
@@ -618,13 +619,13 @@ void world_update(float dt) {
                 if (i != j) {
                     if (dist(persons[i]->coords, persons[j]->coords) < persons[i]->my_aura->distance) {
                         for (effect k : persons[i]->my_aura->effects) {
-                            persons[j]->add_effect(k);
+                            persons[j]->add_effect(k, persons[i]->coords);
                             persons[j]->effects.back().upgrade(my_attack);
                         }
                     }
                 } else {
                     for (effect k : persons[i]->my_aura->my_effects) {
-                        persons[j]->add_effect(k);
+                        persons[j]->add_effect(k, persons[i]->coords);
                         persons[j]->effects.back().upgrade(my_attack);
                     }
                 }
@@ -798,7 +799,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
                                     count_dmg(persons[i]->body_parts[sector], ((MST)curr)->dmg * count_attack(*z)), z->number);
                             is_alive[i] *= 2;
                             for (int j = 0; j < (int)(curr->effects.size()); j++) {
-                                persons[i]->add_effect(curr->effects[j]);
+                                persons[i]->add_effect(curr->effects[j], z->coords);
                                 persons[i]->effects.back().owner = z->number;
                                 persons[i]->effects.back().upgrade(curr_attack);
                             }

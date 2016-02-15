@@ -22,6 +22,12 @@ void effect::in(istream& stream) {
     stream >> mods_one_side.hp >> mods_one_side.mp;
     stream >> mods_two_side.strength >> mods_two_side.agility >> mods_two_side.intellect >> mods_two_side.speed;
     stream >> material_idx;
+    stream >> is_moving;
+    cout << is_moving << endl;
+    if (is_moving) {
+        stream >> type;
+        stream >> speed.x >> speed.y >> speed.z;
+    }
 }
 
 void effect::upgrade(float attack) {

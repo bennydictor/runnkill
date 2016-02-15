@@ -107,11 +107,29 @@ void man::get_effect_2(mod_t res) {
     //cout << '!' << abs_speed << endl; 
 }
 
-void man::add_effect(effect a) {
+void man::add_effect(effect a, vec3<float> _coords) {
     effects.push_back(a);
     get_effect_2(a.mods_two_side);
     if (a.is_stunning) {
         is_stunned++;
+    }
+    if (a.is_moving) {
+        touch_ground = false;
+        vec3<float> orient;
+        if (a.type) {
+            orient = vec3<float>(coords, _coords);
+            if (dist(coords, _coords) < EPS_FOR_SKILLS) {
+                orient = orientation;
+            }
+            orient.resize(1);
+        } else {
+            orient = (orientation);
+        }
+        float angle = atan2(orient.z, orient.x);
+        a.speed.rotate(angle, 0, 0);
+        speed = speed + a.speed;
+        cout << speed << endl;
+        a.is_moving = 0;
     }
 }
 vec3<float> man::in_time(float time) {
@@ -128,6 +146,7 @@ vec3<float> man::in_time(float time) {
     if (have_shield) {
         amount_of_f--;
     }
+    //cout << speed << endl;
     vec3<float> speed_tmp = speed;
     speed_tmp.y = 0;
     vec3<float> ret = coords + (float)((time * max(0.1f, (1 - (float)0.2 * amount_of_f))) * (is_running ? (have_shield ? 1.3 : 1.6) : 1)) * speed_tmp;
@@ -340,7 +359,7 @@ void man::write_info(ostream& file) {
     file << ' ' << recovery.hp << ' ' << recovery.mp;
     effects.clear();
     for (effect& k : my_effects) {
-        add_effect(k);
+        add_effect(k, coords);
     }
     move(0);
 }
