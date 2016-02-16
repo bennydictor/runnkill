@@ -461,7 +461,7 @@ void attack(int man_idx, int idx) {
     //cerr << "Well, " << endl;
     abstract_skill_t* curr = z->skills[idx];
     z->busy += animations[curr->animation_idx].events[0].dt;
-    cout << z->busy << endl;
+    //cout << z->busy << endl;
     z->curr_skill = idx;
     z->skills[idx]->to_activate_skill = z->skills[idx]->between_activate_skill;
     z->need_to_cast = true;
@@ -510,7 +510,7 @@ float get_person_business(int idx) {
     if (z->curr_skill == -1 or (!z->need_to_cast)) {
         return -1;
     }
-    cout << z->busy - z->skills[z->curr_skill]->activate_time << endl;
+    //cout << z->busy - z->skills[z->curr_skill]->activate_time << endl;
     return max(0.0f, z->busy - z->skills[z->curr_skill]->activate_time);
 }
 
@@ -620,7 +620,7 @@ void world_update(float dt) {
                     if (dist(persons[i]->coords, persons[j]->coords) < persons[i]->my_aura->distance) {
                         for (effect k : persons[i]->my_aura->effects) {
                             persons[j]->add_effect(k, persons[i]->coords);
-                            cout << k.mods_one_side.hp << endl;
+                            //cout << k.mods_one_side.hp << endl;
                             persons[j]->effects.back().upgrade(my_attack);
                         }
                     }
@@ -691,7 +691,6 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     vec3<float> move_orientation = curr_orientation;
     //move_orientation.y /= z->abs_speed / 2;
     if (is_alive[man_idx] == 1) {
-        persons[man_idx]->hp = 0;
         cout << "take this expp" << endl;
         for (pair<int, float> i : persons[man_idx]->damagers) {
             cout << i.first << ' ' << i.second << ' ' << persons[man_idx]->max_hp << endl;
@@ -699,6 +698,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
             exp_add[i.first] += EP; 
             add_exp(get_by_id[i.first], EP);
         }
+        persons[man_idx]->die();
         persons[man_idx]->damagers.clear();
         persons[man_idx]->healers.clear();
         is_alive[man_idx] = 0;

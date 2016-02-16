@@ -7,6 +7,19 @@
 int GAME_MAX_MAN_IDX;
 
 using namespace std;
+
+void man::die() {
+    exp = float(exp) * 0.9;
+    for (effect& k : effects) {
+        k.time = 0;
+    }
+    move(0);
+    touch_ground = false;
+    is_stunned = 0;
+    is_running = false;
+    speed = vec3<float>(0, 0, 0);
+}
+
 man::man() {
     cls = 0;
     def_mod = atk_mod = 1; 
@@ -284,8 +297,9 @@ void man::run(bool must_run) {
     if (must_run) {
         if (!is_running) {
             is_running = true;
-            curr_skill = 1;
+            curr_skill = -1;
             busy = 0;
+            need_to_cast = 0;
             for (int i = 0; i < (int) body_parts.size(); i++)
             {
                 body_parts[i].is_fortified = false;
@@ -367,17 +381,9 @@ void man::write_info(ostream& file) {
 }
 
 void man::respawn() {
+    
     hp = max_hp;
     mp = max_mp;
-    touch_ground = false;
-    is_running = false;
-    is_stunned = 0;
-    speed = vec3<float>(0, 0, 0);
-    exp = float(exp) * 0.9;
-    for (effect& k : effects) {
-        k.time = 0;
-    }
-    move(0);
 }
 
 bool man::can_cast(int idx) {
@@ -386,3 +392,4 @@ bool man::can_cast(int idx) {
     skills[idx]->to_activate_skill > EPS_FOR_SKILLS 
     or is_stunned or is_running);
 }
+
