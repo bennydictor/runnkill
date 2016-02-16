@@ -620,6 +620,7 @@ void world_update(float dt) {
                     if (dist(persons[i]->coords, persons[j]->coords) < persons[i]->my_aura->distance) {
                         for (effect k : persons[i]->my_aura->effects) {
                             persons[j]->add_effect(k, persons[i]->coords);
+                            cout << k.mods_one_side.hp << endl;
                             persons[j]->effects.back().upgrade(my_attack);
                         }
                     }

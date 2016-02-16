@@ -108,6 +108,7 @@ void man::get_effect_2(mod_t res) {
 }
 
 void man::add_effect(effect a, vec3<float> _coords) {
+    //cout << a.mods_one_side.hp << endl;
     effects.push_back(a);
     get_effect_2(a.mods_two_side);
     if (a.is_stunning) {
@@ -221,6 +222,7 @@ void man::move(float time) {
 }
 
 bool man::take_damage(float dmg, int p) {
+    //cout << dmg << endl;
     if (can_die) {
         dmg = min(dmg, float(hp + EPS_FOR_SKILLS));
     } else {
@@ -370,6 +372,7 @@ void man::respawn() {
     touch_ground = false;
     is_running = false;
     is_stunned = 0;
+    speed = vec3<float>(0, 0, 0);
     exp = float(exp) * 0.9;
     for (effect& k : effects) {
         k.time = 0;
