@@ -39,6 +39,7 @@ struct trap_skill_t : public abstract_skill_t {
 
 struct aura_skill_t : public abstract_skill_t {
     float duration, rad, tic;
+    int circle_material_idx;
     std::vector<effect> my_effects;
     virtual void in_damage(std::istream& stream);
 };

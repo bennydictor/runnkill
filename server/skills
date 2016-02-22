@@ -40,6 +40,7 @@ class_0
         0.7 0.6 0
     2
     1.5 0.1
+    4
 
     1 M
     0 2 11
@@ -106,6 +107,8 @@ class_2
     10
     10 0.105
 
+    2
+
     0 R
     0 10 0.5
     1 0.5
@@ -153,4 +156,5 @@ amount of skills
     if type is M, you should write left_angle, right_angle, height distance
     if type is R, you should write speed of bullet, size of bullet, size of explosion
     if type is T, you should write size of trap, time before activation, number of material
+    if type is A, write radius, tic, circle_material_idx from file 'materials'
 

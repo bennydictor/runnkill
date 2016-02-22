@@ -56,6 +56,7 @@ void aura_skill_t::in_damage(istream& stream) {
     }
     type = 'A';
     stream >> duration >> rad >> tic;
+    stream >> circle_material_idx;
 }
 
 abstract_skill_t* new_skill(abstract_skill_t* old) {
