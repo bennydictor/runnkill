@@ -8,6 +8,7 @@ aura::aura(float t, float dt, float d, int material_idx, vector<effect> e, vecto
     tic = dt;
     time = t;
     distance = d;
+    circle_material_idx = material_idx;
     effects = e;
     my_effects = my_e;
 }

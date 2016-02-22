@@ -100,7 +100,7 @@ void in_materials() {
     in.open("materials");
     int am;
     in >> am;
-    float r, g, b;
+    float r, g, b, alpha;
     float *amb, *dif, *spec, shininess;
     fake_materials_idx.resize(am);
     for (int j = 0; j < am; j++) {
@@ -111,8 +111,8 @@ void in_materials() {
         dif = cpp_make_vec3(r, g, b);
         in >> r >> g >> b;
         spec = cpp_make_vec3(r, g, b);
-        in >> shininess;
-        fake_materials_idx[j] = make_material(amb, dif, spec, shininess, 1 /* TODO */).id;
+        in >> shininess >> alpha;
+        fake_materials_idx[j] = make_material(amb, dif, spec, shininess, alpha).id;
 
     }
     in.close();
