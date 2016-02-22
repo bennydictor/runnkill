@@ -114,4 +114,5 @@ void main() {
     if (length(vertex_position) > fog_near) {
         gl_FragColor.rgb *= 1 - (length(vertex_position) - fog_near) / (fog_far - fog_near);
     }
+    gl_FragColor.a = material.alpha;
 }
