@@ -164,7 +164,6 @@ void net_update(void) {
                     memcpy(ptr, messages, strlen(messages));
                     */
                     sendto(local_udp_socket, msg, ((char *) ptr) - msg, 0, (struct sockaddr *) &src_addr, addrlen);
-                    
                 } else {
                     PUT(char, MSG_NOPE);
                     sendto(local_udp_socket, msg, ((char *) ptr) - msg, 0, (struct sockaddr *) &src_addr, addrlen);

@@ -32,6 +32,24 @@ void free_circle_object(void) {
     glDeleteBuffers(1, &circle_vbo);
 }
 
+draw_obj make_draw_circle_ny(vec3f pos, float radius, material_t _material) {
+    draw_obj ret;
+    ret.mat_m = make_mat4();
+    rot_x_mat(M_PI / 2, ret.mat_m);
+    vec3f v = make_vec3(radius, 1, radius);
+    iscale_mat(v, ret.mat_m);
+    free(v);
+    itrans_mat(pos, ret.mat_m);
+    ret.mode = GL_POLYGON;
+    ret.vbo = circle_vbo;
+    ret.ibo = NULL;
+    ret.count = CIRCLE_SIZE;
+    ret.material = _material;
+    ret.free_mat_m = 1;
+    ret.free_ibo = 0;
+    return ret;
+}
+
 draw_obj make_draw_circle(int x, int y, int radius, material_t _material) {
     draw_obj ret;
     ret.mat_m = make_mat4();

@@ -74,15 +74,6 @@ void render_bars(void) {
     glDrawArrays(bar.mode, 0, bar.count);
     free_draw_obj(bar);
 
-    bar = make_draw_circle(window_width - 60, window_height - 60, 50, materials[0]);
-   
-    glUniformMatrix4fv(prog_bars_unif_mat_m, 1, GL_FALSE, bar.mat_m);
-    glUniform4f(prog_bars_unif_color, 0.5, 0, 1, 0.5);
-    glBindBuffer(GL_ARRAY_BUFFER, bar.vbo);
-    glVertexAttribPointer(prog_bars_attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
-    glDrawArrays(bar.mode, 0, bar.count);
-    free_draw_obj(bar);
-
     if (business >= 0) {
         bar = make_draw_rect(window_width / 4, 50, window_width / 4 + window_width * business / max_business / 2, 60, materials[0]);
        

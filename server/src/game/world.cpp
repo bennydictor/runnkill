@@ -83,6 +83,15 @@ draw_obj make_draw_sphere(vec3f pos, float rad, short int material) {
     return ret;
 }
 
+draw_obj make_draw_circle(vec3f pos, float rad, short int material) {
+    draw_obj ret;
+    ret.type = DRAW_CIRCLE;
+    memcpy(ret.pos, pos, 3 * sizeof(float));
+    ret.rad = rad;
+    ret.material = material;
+    return ret;
+}
+
 draw_obj make_draw_sphere_sector(vec3f pos, float rad, float rot, int s, short int material) {
     draw_obj ret;
     ret.type = DRAW_SPHERE_SECTOR;
@@ -527,7 +536,9 @@ void world_callback(void) {
     for (int i = 0; i < (int)persons.size(); i++) {
         if (is_alive[i]) {
             draw_objs[draw_obj_count++] = make_draw_sphere(persons[i]->coords, MAN_RAD, man_material.id);
-            
+            if (persons[i]->my_aura) {
+                draw_objs[draw_obj_count++] = make_draw_circle(persons[i]->coords - vec3<float>(0, MAN_RAD, 0), persons[i]->my_aura->distance, persons[i]->my_aura->circle_material_idx);
+            }
             for (int j = 0; j < (int)persons[i]->effects.size(); j++) {
                 if (persons[i]->effects[j].time > 0) {
                     vec3<float> centre = persons[i]->coords;

@@ -64,6 +64,7 @@ extern "C" {
 
 #define DRAW_SPHERE 0
 #define DRAW_SPHERE_SECTOR 1
+#define DRAW_CIRCLE 2
 #define MAX_DRAW_OBJ 256
 
 typedef struct {
