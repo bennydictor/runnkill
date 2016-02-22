@@ -823,7 +823,8 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
             }
         } else if (curr->type == 'A') {
             if (!z->my_aura) {
-                z->my_aura = new aura(((AST)curr)->duration, ((AST)curr)->tic, ((AST)curr)->rad, ((AST)curr)->effects, ((AST)curr)->my_effects);
+                z->my_aura = new aura(((AST)curr)->duration, ((AST)curr)->tic, ((AST)curr)->rad, 
+                                      ((AST)curr)->circle_material_idx, ((AST)curr)->effects, ((AST)curr)->my_effects);
                 z->my_aura->set_owner(z->number);
             }
         }

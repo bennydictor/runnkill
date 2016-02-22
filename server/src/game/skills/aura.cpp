@@ -3,7 +3,7 @@
 #include <vector>
 
 using namespace std;
-aura::aura(float t, float dt, float d, vector<effect> e, vector<effect> my_e) {
+aura::aura(float t, float dt, float d, int material_idx, vector<effect> e, vector<effect> my_e) {
     can_use = 0;
     tic = dt;
     time = t;
