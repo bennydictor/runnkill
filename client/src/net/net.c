@@ -237,7 +237,7 @@ int net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs) {
     GET(float, max_business);
     GET(int, *draw_obj_count);
     gl_pos[0] = coords[0] - 5 * orientation[0];
-    gl_pos[1] = coords[1] + 2.5;
+    gl_pos[1] = coords[1] + 1.5;
     gl_pos[2] = coords[2] - 5 * orientation[2];
     int field_x1 = max_int32(0, ((int) coords[0]) - render_distance);
     int field_x2 = min_int32(world_w, ((int) coords[0]) + render_distance);
