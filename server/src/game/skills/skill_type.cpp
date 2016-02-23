@@ -19,7 +19,7 @@ void abstract_skill_t::abstract_input(istream& stream) {
     to_activate_skill = 0;
 }
 
-void meelee_skill_t::in_damage(istream& stream) {
+void melee_skill_t::in_damage(istream& stream) {
     abstract_input(stream);
     type = 'M';
     stream >> dmg;
@@ -62,7 +62,7 @@ void aura_skill_t::in_damage(istream& stream) {
 abstract_skill_t* new_skill(abstract_skill_t* old) {
     abstract_skill_t* ret = NULL;
     if (old->type == 'M') {
-        ret = new meelee_skill_t(*(meelee_skill_t* )old);
+        ret = new melee_skill_t(*(melee_skill_t* )old);
 
     } else if (old->type == 'R') {
         ret = new range_skill_t(*(range_skill_t* )old);

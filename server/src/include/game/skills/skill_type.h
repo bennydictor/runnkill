@@ -21,7 +21,7 @@ struct abstract_skill_t {
     virtual void in_damage(std::istream& stream) = 0;
 };
 
-struct meelee_skill_t : public abstract_skill_t {
+struct melee_skill_t : public abstract_skill_t {
     float dmg, left_angle, right_angle, height, distance;
     virtual void in_damage(std::istream& stream);
 };

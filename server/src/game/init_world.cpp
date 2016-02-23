@@ -50,7 +50,7 @@ void in_skills() {
             in >> level >> type;
             cout << '!' << type << endl;
             if (type == 'M') 
-                default_skills[i][j] = new meelee_skill_t();
+                default_skills[i][j] = new melee_skill_t();
             else if (type == 'R')
                 default_skills[i][j] = new range_skill_t();
             else if (type == 'T') 

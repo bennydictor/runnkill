@@ -31,7 +31,7 @@
 #define VEC3F vec3<float>()
 #define EXP_CONSTANT 20
 #define TST trap_skill_t *
-#define MST meelee_skill_t *
+#define MST melee_skill_t *
 #define RST range_skill_t *
 #define AST aura_skill_t *
 using namespace std;
