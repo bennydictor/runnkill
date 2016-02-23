@@ -4,7 +4,9 @@
 
 #ifdef __cplusplus
 #include <game/man.h>
+#include <math/vec3.h>
 void add_player(man* player);
+vec3<float> get_rand_coords();
 extern "C" {
 #endif
 void in_skills();
