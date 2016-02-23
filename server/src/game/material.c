@@ -23,7 +23,7 @@ int init_material(void) {
     default_material = make_material(make_vec3(1, 1, 1), make_vec3(1, 1, 1), make_vec3(.2, .2, .2), 32, 1);
     bullet_material = make_material(make_vec3(1, 0, 0), make_vec3(0, 1, 0), make_vec3(1, .5, 0), 32, 1);
     shield_material = make_material(make_vec3(0, .1, .5), make_vec3(0, .1, .5), make_vec3(0, .9, .5), 32, 0.3);
-    man_material = make_material(make_vec3(.6, .1, 0), make_vec3(1, 0, 0), make_vec3(1, 1, 1), 32, 1);
+//    man_material = make_material(make_vec3(.6, .1, 0), make_vec3(1, 0, 0), make_vec3(1, 1, 1), 32, 1);
     explosion_material = make_material(make_vec3(1, .5, .3), make_vec3(0, 0, 0), make_vec3(0, 0, 0), 32, 0.6);
     return 0;
 }

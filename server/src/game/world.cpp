@@ -535,7 +535,7 @@ void world_callback(void) {
     draw_obj_count = 0;
     for (int i = 0; i < (int)persons.size(); i++) {
         if (is_alive[i]) {
-            draw_objs[draw_obj_count++] = make_draw_sphere(persons[i]->coords, MAN_RAD, man_material.id);
+            draw_objs[draw_obj_count++] = make_draw_sphere(persons[i]->coords, MAN_RAD, fake_materials_idx[class_material_idx[persons[i]->cls]]);
             if (persons[i]->my_aura) {
                 draw_objs[draw_obj_count++] = make_draw_circle(persons[i]->coords - vec3<float>(0, MAN_RAD, 0), persons[i]->my_aura->distance, fake_materials_idx[persons[i]->my_aura->circle_material_idx]);
             }
