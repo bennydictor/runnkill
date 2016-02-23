@@ -25,8 +25,8 @@ class_0
         Fear
         0.1 1
         10 0
-        1 1 1 1
-        4
+        1 1 1 2
+        3
         1 1
         -4 1 0
 
@@ -34,8 +34,8 @@ class_0
         Forward
         0.1 1
         0 0
-        1 1 1 1
-        4
+        1 1 1 2
+        3
         1 0
         0.7 0.6 0
     2
@@ -57,6 +57,7 @@ class_1
     0
     1
     40 0.1 0.2
+    9 10
 
     1 T
     0 10 20
@@ -116,7 +117,7 @@ class_2
 
     2
     20 0.2 0.5
-
+    9 11
 
     1 R
     0 30 12
@@ -132,6 +133,9 @@ class_2
 
     2.5
     30 0.5 2
+    9 12
+
+
 class X
 
 amount of skills
@@ -153,7 +157,7 @@ amount of skills
 
     if A - duration else - <damage>
     if type is M, you should write left_angle, right_angle, height distance
-    if type is R, you should write speed of bullet, size of bullet, size of explosion
+    if type is R, you should write speed of bullet, size of bullet, size of explosion, material index of bullet, material index of explosion
     if type is T, you should write size of trap, time before activation, number of material
     if type is A, write radius, tic, circle_material_idx from file 'materials'
 

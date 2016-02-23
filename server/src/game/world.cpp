@@ -388,6 +388,7 @@ bool move_bullet(int b_idx, float time) {
         
         explosions.push_back(explosion(touch_point, EXPLOSION_TIME, bullets[b_idx].exp_rad, bullets[b_idx].damage));
         explosions.back().owner = bullets[b_idx].owner;
+        explosions.back().material_id = bullets[b_idx].explosion_m_idx;
         for (int j = 0; j < (int)bullets[b_idx].effects.size(); j++) {
             explosions.back().effects.push_back(bullets[b_idx].effects[j]);
             explosions.back().effects.back().owner = bullets[b_idx].owner;
@@ -589,12 +590,12 @@ void world_callback(void) {
     }
     for (int i = 0; i < (int) explosions.size(); ++i) {
         draw_objs[draw_obj_count++] = make_draw_sphere(explosions[i].coords,
-                                      explosions[i].rad * powf(explosions[i].time, 1.0 / 3), explosion_material.id);
+                                      explosions[i].rad * powf(explosions[i].time, 1.0 / 3), fake_materials_idx[explosions[i].material_id]);
     }
     
     for (int i = 0; i < (int)bullets.size(); i++) {
         if (is_bullet_alive[i])
-        draw_objs[draw_obj_count++] = make_draw_sphere(bullets[i].coords, bullets[i].rad, bullet_material.id);
+        draw_objs[draw_obj_count++] = make_draw_sphere(bullets[i].coords, bullets[i].rad, fake_materials_idx[bullets[i].bullet_m_idx]);
     }
 
     for (int i = 0; i < (int)traps.size(); i++) {
@@ -777,7 +778,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         z->need_to_cast = false;
         if (curr->type == 'R') {
             bullets.push_back(bullet(((RST)curr)->sample));
-            bullets.back().coords = z->coords + ((float)MAN_RAD + 2 * (float)((RST)curr)->sample.rad) * z->orientation;
+            bullets.back().coords = z->coords;
             bullets.back().speed = vec3<float>(z->orientation);
             bullets.back().speed.resize(((RST)curr)->sample.speed.x);
             bullets.back().speed = bullets.back().speed + z->speed;

@@ -16,6 +16,7 @@ struct bullet {
     std::vector<effect> effects;
     float damage;
     float rad, exp_rad;
+    int bullet_m_idx, explosion_m_idx;
     bullet();
     void in(std::istream& stream);
     void upgrade(float attack);

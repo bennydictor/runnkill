@@ -9,7 +9,9 @@ vec3<float> bullet::in_time(float time) {
     return coords + time * speed;
 }
 void bullet::in(istream& stream) {
-    stream >> speed.x >> rad >> exp_rad;
+    stream >> speed.x >> rad >> exp_rad >> bullet_m_idx >> explosion_m_idx; /*abs of speed, radius of bulet, 
+                                                                              radius of explosion, material idx of bullet,
+                                                                              material index of explosion */
 }
 
 void bullet::upgrade(float attack) {
