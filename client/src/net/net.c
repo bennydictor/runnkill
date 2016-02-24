@@ -73,12 +73,24 @@ int init_net(const char *hostname, uint16_t port) {
     server.sin_port = htons(port == 0 ? PORT : port);
     server.sin_addr.s_addr = *(in_addr_t *) host->h_addr_list[0];
     msg[0] = MSG_HELLO;
-    printf("What is your name today? ");
-    assert(scanf("%s", msg + 2) == 1);
-    msg[1] = 3;
-    while (msg[1] > 2) {
-        printf("What is your class today?\n0 - Warrior\n1 - Hunter\n2 - Mage\n? ");
-        assert(scanf("%hhu", msg + 1) == 1);
+    printf("Whould you like to use existing character? [yn] ");
+    char c;
+    scanf("%c", &c);
+    if (c == 'y') {
+        printf("What is your name today? ");
+        assert(scanf("%s", msg + 2) == 1);
+        msg[1] = 3;
+    } else if (c == 'n') {
+        printf("What is your name today? ");
+        assert(scanf("%s", msg + 2) == 1);
+        msg[1] = 3;
+
+        while (msg[1] > 2) {
+            printf("What is your class today?\n0 - Warrior\n1 - Hunter\n2 - Mage\n? ");
+            assert(scanf("%hhu", msg + 1) == 1);
+        }
+    } else {
+        return 1;
     }
     sendto(local_udp_socket, msg, 2 + strlen(msg + 2), 0, (struct sockaddr *) &server, server_addrlen); 
     if (connect(local_tcp_socket, (struct sockaddr *) &server, server_addrlen) == -1) {

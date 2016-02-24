@@ -11,12 +11,15 @@
 #include <math/geom.h>
 #include <util/logstream.h>
 #include <vector>
+#include <map>
 #include <cmath>
 #include <ctime>
 #include <cassert>
 
 
 using namespace std;
+
+map<char*, int> man_idx_by_name;
 
 vec3<float> get_rand_coords() {
     int i = rand() % world_w;
@@ -232,7 +235,12 @@ int init_world(void) {
 }
 
 void add_player(char *name, int clazz) {
+    if (clazz == 3) {
+        load_player(name);
+        return;
+    }
     persons.push_back(new man(name, clazz));
+    man_idx_by_name[name] = persons.back()->number;
     is_alive.push_back(2);
     persons.back()->coords = get_rand_coords();
     persons.back()->speed = vec3<float>(0, 0, 0);
@@ -244,6 +252,7 @@ void add_player(man* player) {
     persons.back()->coords = get_rand_coords();
     persons.back()->speed = vec3<float>(0, 0, 0);
 }
+
 
 void free_world(void) {
 }

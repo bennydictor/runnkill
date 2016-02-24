@@ -128,7 +128,7 @@ int detect_sector(vec3<T> centre, vec3<T> point, vec3<T> orientation) {
         {{"LEFT_BACK_DOWN", "RIGHT_BACK_DOWN"}, {"LEFT_BACK_UP", "RIGHT_BACK_UP"}},
         {{"LEFT_FRONT_DOWN", "RIGHT_FRONT_DOWN"}, {"LEFT_FRONT_UP", "RIGHT_FRONT_UP"}},
     };
-    //cout << "your number is " << names[x > 0][y > 0][z > 0] << endl;
+    cout << "your number is " << names[x > 0][y > 0][z > 0] << endl;
     return ret[x < 0][y > 0][z < 0];
 }
 
@@ -486,7 +486,7 @@ bool move_trap(int idx, float time) {
 }
 
 void kill_person(int idx) {
-    is_alive[idx] = false;
+    is_alive[idx] = -1;
 }
 
 void *get_person_data_begin(int idx) {
@@ -606,10 +606,12 @@ void world_update(float dt) {
     bullets = new_bullets; 
     is_bullet_alive = new_is_bullet_alive;
     curr_time += dt;
+    vector<man*> new_persons;
+    vector<char> new_is_alive;
     for (int i = 0; i < (int)persons.size(); i++) {
+        get_by_id[persons[i]->number] = persons[i];
         persons[i]->get_exp(exp_add[persons[i]->number]);
         exp_add[persons[i]->number] = 0;
-        get_by_id[persons[i]->number] = persons[i];
         int my_attack = count_attack(*persons[i]);
         if (persons[i]->my_aura && persons[i]->my_aura->can_use < 0) {
             for (int j = 0; j < (int)persons.size(); j++) {
@@ -645,7 +647,14 @@ void world_update(float dt) {
             is_alive[i] = 1;
             persons[i]->hp = 0;
         }
+
+        if (is_alive[i] >= 0) {
+            new_persons.push_back(persons[i]);
+            new_is_alive.push_back(is_alive[i]);
+        }
     }
+    persons = new_persons;
+    is_alive = new_is_alive;
     if (curr_time > 1e9) {
         curr_time = last_save = 0;
     }
@@ -838,14 +847,21 @@ void save_player(int idx) {
     file.close();
 }
 
-void load_player(int idx) {
+void load_player(char* name) {
+    if (!man_idx_by_name.count(name)) {
+        cout << "bad name" << endl;
+        return;
+    
+    }
+    int idx = man_idx_by_name[name];
     if (idx < 0 or GAME_MAX_MAN_IDX < idx) {
         return;
     }
-    char name[100];
-    sprintf(name, "players/%d", idx);
+    
+    char filename[100];
+    sprintf(filename, "players/%d", idx);
     ifstream file;
-    file.open(name);
+    file.open(filename);
     man* new_man = new man(file);
     add_player(new_man);
 }
