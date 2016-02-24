@@ -89,6 +89,7 @@ man::man(istream& file) {
     max_mp = mp;
     curr_skill = -1;
     file >> recovery.hp >> recovery.mp;
+    cout << "ok" << endl;
 }
 
 void man::set_speed(vec3<float> spd) {

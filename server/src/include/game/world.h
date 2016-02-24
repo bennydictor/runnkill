@@ -90,7 +90,7 @@ void world_callback(void);
 void world_update(float dt);
 void kill_person(int idx);
 void save_player(int idx);
-void load_player(int idx);
+void load_player(char* name);
 void *get_person_data_begin(int idx);
 void *get_person_data_end(int idx);
 char *get_person_text(int idx);

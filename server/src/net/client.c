@@ -64,6 +64,7 @@ void net_update(void) {
                 printl(LOG_I, "Client %d is offline", msg[1] + 1);
                 msg[0] = MSG_OK;
                 sendto(local_udp_socket, msg, 1, 0, (struct sockaddr *) &src_addr, addrlen);
+                --client_count;
             } else {
                 msg[0] = MSG_NOPE;
                 sendto(local_udp_socket, msg, 1, 0, (struct sockaddr *) &src_addr, addrlen);
