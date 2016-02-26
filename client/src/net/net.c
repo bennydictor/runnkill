@@ -53,7 +53,7 @@
 
 
 char msg[MSG_BUF_LEN];
-int local_udp_socket, local_tcp_socket, local_tcp_socket;
+SOCKET local_udp_socket, local_tcp_socket, local_tcp_socket;
 struct sockaddr_in server;
 socklen_t server_addrlen;
 int client_num;

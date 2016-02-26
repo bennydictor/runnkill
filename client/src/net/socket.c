@@ -29,7 +29,7 @@
 #include <string.h>
 
 int make_local_udp_socket(void) {
-    int ret = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    SOCKET ret = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (ret == -1) {
         printl(LOG_W, "Error while making local udp socket: cannot make socket (%s)", strerror(errno));
         return -1;
@@ -38,7 +38,7 @@ int make_local_udp_socket(void) {
 }
 
 int make_local_tcp_socket(void) {
-    int ret = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    SOCKET ret = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (ret == -1) {
         printl(LOG_W, "Error while making local tcp socket: cannot make socket (%s)", strerror(errno));
         return -1;
