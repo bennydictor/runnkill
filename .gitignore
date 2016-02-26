@@ -6,4 +6,6 @@ obj
 **/.make/options
 server/server
 client/client
+client/cmakeclient
+client/build/*
 server/players/*
