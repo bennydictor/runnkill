@@ -6,9 +6,11 @@
 #include <game/man.h>
 #include <math/vec3.h>
 #include <map>
+#include <string>
+#include <cstring>
 void add_player(man* player);
 vec3<float> get_rand_coords();
-extern std::map<char*, int> man_idx_by_name;
+extern std::map<std::string, int> man_idx_by_name;
 extern "C" {
 #endif
 void in_skills();

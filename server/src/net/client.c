@@ -41,7 +41,8 @@ void net_update(void) {
                     break;
                 }
                 clients[client_count].alive = 1;
-                add_player(msg + 2, msg[1]);
+                msg[3 + msg[2]] = 0;
+                add_player(msg + 3, msg[1]);
                 printl(LOG_I, "Client %d is online", client_count + 1);
                 msg[0] = MSG_OK;
                 msg[1] = client_count;

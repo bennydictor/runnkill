@@ -18,6 +18,7 @@ void man::die() {
     is_stunned = 0;
     is_running = false;
     speed = vec3<float>(0, 0, 0);
+    hp = 0;
 }
 
 man::man() {

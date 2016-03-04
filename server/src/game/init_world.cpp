@@ -19,7 +19,7 @@
 
 using namespace std;
 
-map<char*, int> man_idx_by_name;
+map<string, int> man_idx_by_name;
 
 vec3<float> get_rand_coords() {
     int i = rand() % world_w;
@@ -137,9 +137,9 @@ void in_materials() {
 }
 
 int init_world(void) {
-    world_w = world_h = 100;
+    world_w = world_h = 40;
     cout << loglevel(LOG_I) << "world height: " << world_h << endl << "world width: " << world_w << endl << loglevel(LOG_D);
-    world_field = gen_field_sun(world_w, world_h);
+    world_field = gen_field_empty(world_w, world_h);
     gl_light_enable[0] = 1;
     gl_light[0].pos = make_vec3(100, 100, 100);
     gl_light[0].rot = make_vec3(3 * M_PI / 2, 0, 0);
@@ -155,92 +155,18 @@ int init_world(void) {
     init_material();
     in_materials();
     cout << "Initialize of world succeed" << endl;
-/*
-=======
-    w = h = 500;
-    chunk = 10;
-    world_map = new draw_obj*[w / chunk];
-    for (int i = 0; i < w / chunk; ++i) {
-        world_map[i] = new draw_obj[h / chunk];
-    }
-    assert(w % chunk == 0);
-    assert(h % chunk == 0);
-    F = gen_field_suns(w, h);
-
-    world_max_height = 0;
-    for (int i = 0; i < w; ++i) {
-        for (int j = 0; j < h; ++j) {
-            world_max_height = max(world_max_height, F[i][j]);
-        }
-    }
-    init_field_object(w, h, F);
-    for (int i = 0; i < w; i += chunk) {
-        for (int j = 0; j < h; j += chunk) {
-            world_map[i / chunk][j / chunk] = make_draw_subfield(i, j, i + chunk, j + chunk, default_material);
-    //        cout << "chunk: [" << i << "-" << i + chunk << ")["<< j << "-" << j + chunk << ")" << endl;
-        }
-    }
-    in_skills();
-    in_items();
-    in_armours();
-    in_animations();
-    in_materials();
-    int i = 0;
-    int j = 0;
-    while (F[i][j] != 0)
-    {
-        j++;
-        if (j == h)
-        {
-            j = 0;
-            i++;
-        }
-    }
-    persons.push_back(new man("Derrior", 1));
-    is_alive.push_back(1);
-    persons[0]->coords = vec3<float>((float)i + 0.5, MAN_RAD, (float)j + 0.5);
-    persons[0]->set_speed(vec3<float>(0, 0, 0));
-    persons[0]->skills.push_back(default_skills[1][1]);
-    cout << persons[0]->skills[0].type << endl;
-    persons[0]->put_on(new item_t(default_items[0]), LEFT_BACK_DOWN);
-    persons[0]->put_on(new item_t(default_items[2]), LEFT_BACK_DOWN);
-    persons[0]->weapon = &default_armours[0];
-    persons.push_back(new man("Benny", 1));
-    is_alive.push_back(1);
-    i = rand() % w;
-    j = rand() % h;
-    while (i < w and F[i][j] != 0)
-    {
-        j++;
-        if (j == h)
-        {
-            j = 0;
-            i++;
-        }
-    }
-    i -= i / w;
-    cout << "i j: " << i << " " << j << endl;
-
-    persons[1]->coords = vec3<float>((float)i + 0.5, MAN_RAD,(float)j + 0.5);
-    persons[1]->set_speed(vec3<float>(0, 0, 0));
-    persons[1]->skills.push_back(default_skills[1][1]);
-    persons[1]->fortify(LEFT_FRONT_UP);
-    persons[1]->fortify(RIGHT_FRONT_UP);
-    persons[1]->fortify(LEFT_FRONT_DOWN);
-    persons[1]->fortify(RIGHT_FRONT_DOWN);
-    cout << persons[0]->skills.size() << endl;
->>>>>>> origin/derrior
-*/
     return 0;
 }
 
 void add_player(char *name, int clazz) {
+    printf("NEW PLAYER> %s\n", name);
     if (clazz == 3) {
         load_player(name);
         return;
     }
     persons.push_back(new man(name, clazz));
-    man_idx_by_name[name] = persons.back()->number;
+    string cppname(name);
+    man_idx_by_name[cppname] = persons.back()->number;
     is_alive.push_back(2);
     persons.back()->coords = get_rand_coords();
     persons.back()->speed = vec3<float>(0, 0, 0);

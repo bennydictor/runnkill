@@ -39,6 +39,7 @@ using namespace std;
 const int len = 1;
 int world_max_height;
 draw_obj **world_map;
+
 light_t gl_light[LIGHT_COUNT];
 char gl_light_enable[LIGHT_COUNT];
 draw_obj draw_objs[MAX_DRAW_OBJ];
@@ -487,6 +488,7 @@ bool move_trap(int idx, float time) {
 
 void kill_person(int idx) {
     is_alive[idx] = -1;
+    persons[idx]->die();
 }
 
 void *get_person_data_begin(int idx) {
@@ -594,6 +596,8 @@ void world_update(float dt) {
     assert(dt >= 0 or dt <= 0);
     vector<bullet> new_bullets;
     vector<bool> new_is_bullet_alive;
+    vector<char> new_is_alive;
+    vector<man*> new_persons;
 
     for (int i = 0; i < (int)bullets.size(); i++) {
         if (is_bullet_alive[i]) {
@@ -606,8 +610,6 @@ void world_update(float dt) {
     bullets = new_bullets; 
     is_bullet_alive = new_is_bullet_alive;
     curr_time += dt;
-    vector<man*> new_persons;
-    vector<char> new_is_alive;
     for (int i = 0; i < (int)persons.size(); i++) {
         get_by_id[persons[i]->number] = persons[i];
         persons[i]->get_exp(exp_add[persons[i]->number]);
@@ -633,6 +635,7 @@ void world_update(float dt) {
         }
         if (is_alive[i] == 2) {
             if (persons[i]->coords.y < -100) {
+                persons[i]->die();
                 is_alive[i] = 1;
                 continue;
             }
@@ -647,10 +650,9 @@ void world_update(float dt) {
             is_alive[i] = 1;
             persons[i]->hp = 0;
         }
-
         if (is_alive[i] >= 0) {
-            new_persons.push_back(persons[i]);
             new_is_alive.push_back(is_alive[i]);
+            new_persons.push_back(persons[i]);
         }
     }
     persons = new_persons;
@@ -845,6 +847,7 @@ void save_player(int idx) {
     file.open(name);
     persons[idx]->write_info(file);
     file.close();
+    cout << persons[idx]->name << ' ' << persons[idx]->number << ' '<< man_idx_by_name[persons[idx]->name] << endl;
 }
 
 void load_player(char* name) {
@@ -854,6 +857,7 @@ void load_player(char* name) {
     
     }
     int idx = man_idx_by_name[name];
+    printf("%s %d\n", name, idx);
     if (idx < 0 or GAME_MAX_MAN_IDX < idx) {
         return;
     }
