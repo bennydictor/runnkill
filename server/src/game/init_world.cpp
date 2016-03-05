@@ -2,6 +2,7 @@
 #include <game/world.h>
 #include <iostream>
 #include <game/man.h>
+#include <game/mob.h>
 #include <game/field.h>
 #include <cstdio>
 #include <fstream>
@@ -42,9 +43,9 @@ void in_skills() {
     string garbage;
     int amount, level;
     char type;
-    default_skills.resize(3);
-    skills_amounts.resize(3);
-    for (int i = 0; i < 3; i++) {
+    default_skills.resize(4);
+    skills_amounts.resize(4);
+    for (int i = 0; i < 4; i++) {
         in >> garbage;
         in >> amount;
         default_skills[i].resize(amount);
@@ -137,7 +138,7 @@ void in_materials() {
 }
 
 int init_world(void) {
-    world_w = world_h = 40;
+    world_w = world_h = 90;
     cout << loglevel(LOG_I) << "world height: " << world_h << endl << "world width: " << world_w << endl << loglevel(LOG_D);
     world_field = gen_field_empty(world_w, world_h);
     gl_light_enable[0] = 1;
@@ -199,6 +200,14 @@ void add_player(man* player) {
     persons.back()->is_alive = 2;
     persons.back()->coords = get_rand_coords();
     persons.back()->speed = vec3<float>(0, 0, 0);
+}
+
+void add_mobs(int amount) {
+    for (int i = 0; i < amount; i++) {
+        persons.push_back(new mob());
+        persons.back()->coords = get_rand_coords();
+        persons.back()->speed = vec3<float>(0, 0, 0);
+    }
 }
 
 

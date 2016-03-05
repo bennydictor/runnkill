@@ -21,18 +21,18 @@ float bp_init_mods[] = {
     0.7, 0.8, 1.3, 1.2, 
     0.8, 1,   1.8, 1.4, 
 };
-int cl_init_hp[] = {1500, 1100, 700};
-int init_mp[] = {10, 20, 70};
-int init_agi[] = {9, 15, 6};
-int init_strength[] = {15, 9, 6};
-int init_int[] = {3, 6, 15};
-int init_speed[] = {4, 6, 5};
-int init_jump_high[] = {7, 9, 8};
-float init_attack_rad[] = {1.8, 1.5, 1.7};
-int atk_strength_mods[] = {4, 2, 1};
-int atk_agi_mods[] = {2, 3, 1};
-int atk_int_mods[] = {0, 1, 5};
-int class_material_idx[] = {6, 7, 8};
+int cl_init_hp[] = {1500, 1100, 700, 750};
+int init_mp[] = {10, 20, 70, 10};
+int init_agi[] = {9, 15, 6, 7};
+int init_strength[] = {15, 9, 6, 7};
+int init_int[] = {3, 6, 15, 7};
+int init_speed[] = {4, 6, 5, 3};
+int init_jump_high[] = {7, 9, 8, 6};
+float init_attack_rad[] = {1.8, 1.5, 1.7, 2};
+int atk_strength_mods[] = {4, 2, 1, 3};
+int atk_agi_mods[] = {2, 3, 1, 3};
+int atk_int_mods[] = {0, 1, 5, 3};
+int class_material_idx[] = {6, 7, 8, 9};
 int exp_to_next_level[] = {25, 40, 80, 160, 320, 640, 1280};
 map<string, int> to_idx;
 map<string, map<string, int>> init_params;

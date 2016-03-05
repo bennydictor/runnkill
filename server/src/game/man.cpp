@@ -45,7 +45,7 @@ man::man() {
 
     exp = level = 0;
     level_exp = exp_to_next_level[0];
-    number = GAME_MAX_MAN_IDX++;
+    number = 0;
     recovery.hp = 0;
     recovery.mp = 3;
 }

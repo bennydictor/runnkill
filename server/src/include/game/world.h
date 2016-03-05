@@ -43,6 +43,7 @@ typedef struct {
 //#include <game/armour.h>
 #include <game/animation.h>
 #include <game/man.h>
+#include <game/mob.h>
 
 extern std::vector<std::vector<abstract_skill_t *>> default_skills;
 extern std::vector<std::vector<int>> skills_amounts;
@@ -92,6 +93,8 @@ void kill_person(int idx);
 void save_player(int idx);
 char load_player(char* name);
 void load_by_idx(int idx);
+void give_exp(int man_idx);
+void is_it_time_to_cast(int man_idx);
 void *get_person_data_begin(int idx);
 void *get_person_data_end(int idx);
 char *get_person_text(int idx);

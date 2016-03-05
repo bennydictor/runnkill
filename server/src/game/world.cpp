@@ -9,6 +9,7 @@
 #include <game/world.h>
 #include <game/init_world.h>
 #include <game/man.h>
+#include <game/mob.h>
 #include <game/field.h>
 #include <game/skills/skill_type.h>
 #include <game/skills/bullet.h>
@@ -30,6 +31,7 @@
 #define INF 10000000
 #define VEC3F vec3<float>()
 #define EXP_CONSTANT 20
+#define MAX_MOBS 10
 #define TST trap_skill_t *
 #define MST melee_skill_t *
 #define RST range_skill_t *
@@ -44,6 +46,7 @@ light_t gl_light[LIGHT_COUNT];
 char gl_light_enable[LIGHT_COUNT];
 draw_obj draw_objs[MAX_DRAW_OBJ];
 int draw_obj_count;
+int amount_of_mobs;
 float last_save;
 float curr_time;
 map<int, man*> get_by_id;
@@ -518,6 +521,18 @@ float get_person_max_business(int idx) {
     return animations[z->skills[z->curr_skill]->animation_idx].events[0].dt;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 void world_callback(void) {
     draw_obj_count = 0;
     for (int i = 0; i < (int)persons.size(); i++) {
@@ -610,6 +625,16 @@ void world_update(float dt) {
     curr_time += dt;
     for (int i = 0; i < (int)persons.size(); i++) {
         get_by_id[persons[i]->number] = persons[i];
+        give_exp(persons[i]->number);
+        is_it_time_to_cast(persons[i]->number);
+        if (persons[i]->cls == 3) {
+            for (int j = 0; j < (int)persons.size(); j++) {
+                if (persons[j]->cls != 3) {
+                    ((mob *)persons[i])->try_to_find(persons[j]);
+                }
+            }
+            ((mob *)persons[i])->what_to_do();
+        }
         persons[i]->get_exp(exp_add[persons[i]->number]);
         exp_add[persons[i]->number] = 0;
         int my_attack = count_attack(*persons[i]);
@@ -647,7 +672,7 @@ void world_update(float dt) {
             persons[i]->is_alive = 1;
             persons[i]->hp = 0;
         }
-        if (persons[i]->is_alive >= 0) {
+        if (persons[i]->is_alive > 0 or (persons[i]->is_alive == 0 and persons[i]->cls != 3)) {
             new_persons.push_back(persons[i]);
         }
     }
@@ -660,12 +685,17 @@ void world_update(float dt) {
         last_save = curr_time;
         for (int i = 0; i < (int)persons.size(); i++) {
             save_player(i);
-            if (!persons[i]->is_alive) {
+            if (!persons[i]->is_alive and persons[i]->cls != 3) {
                 persons[i]->respawn();
                 persons[i]->coords = get_rand_coords();
             }
         }
         cout << "end saving players" << endl;
+        int curr_am_of_mobs =min(MAX_MOBS - amount_of_mobs, get_rand(1, 4));
+        amount_of_mobs += curr_am_of_mobs;
+        add_mobs(curr_am_of_mobs);
+
+        cout << "added some mobs" << endl;
     }
     vector<explosion> nexp = explosions;
     explosions.clear();
@@ -687,13 +717,8 @@ void world_update(float dt) {
     }
 }   
 
-
-void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
+void give_exp(int man_idx) {
     man* z = get_by_id[man_idx];
-    //cout << '!' << man_idx << ' ' << int(z->is_alive) << endl;
-    z->set_orientation(curr_orientation);
-    vec3<float> move_orientation = curr_orientation;
-    //move_orientation.y /= z->abs_speed / 2;
     if (z->is_alive == 1) {
         cout << "take this expp" << endl;
         for (pair<int, float> i : z->damagers) {
@@ -707,8 +732,96 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         z->healers.clear();
         z->is_alive = 0;
         return;
-
     }
+}
+
+void is_it_time_to_cast(int man_idx) {
+    man* z = get_by_id[man_idx];
+    int curr_attack = count_attack(*z);
+    if (z->need_to_cast and z->curr_skill != -1 and z->busy <= z->skills[z->curr_skill]->activate_time) {
+        abstract_skill_t *curr = z->skills[z->curr_skill];
+        z->need_to_cast = false;
+        if (curr->type == 'R') {
+            bullets.push_back(bullet(((RST)curr)->sample));
+            bullets.back().coords = z->coords;
+            bullets.back().speed = vec3<float>(z->orientation);
+            bullets.back().speed.resize(((RST)curr)->sample.speed.x);
+            bullets.back().speed = bullets.back().speed + z->speed;
+            bullets.back().damage *= count_attack(*z);
+            bullets.back().owner = z->number;
+            bullets.back().exp_rad = ((RST)curr)->sample.exp_rad;
+            bullets.back().upgrade(curr_attack);
+            is_bullet_alive.push_back(1);
+            cerr << "You shoot" << endl;
+        } else if (curr->type == 'M') {
+            cerr << "you try to beat" << endl;
+            for (int i = 0; i < (int)persons.size(); i++) {
+                if (persons[i]->number != man_idx) {
+                    vec3<float> to_him(z->coords, persons[i]->coords);
+                    if (sqrt(to_him.sqlen()) > (2 * MAN_RAD + ((MST)curr)->distance)) {
+                        cout << "too far" << endl;
+                    } else {
+                        to_him.resize(1);
+                        float angle = atan2(to_him.x, to_him.z) - atan2(z->orientation.x, z->orientation.z);
+                        while (angle < -M_PI) {
+                            angle += 2 * M_PI;
+                        }
+                        while (angle > M_PI) {
+                            angle -= 2 * M_PI;
+                        }
+                        cout << "angle of attack: " << angle << endl;
+                        if (angle < ((MST)curr)->left_angle or angle > ((MST)curr)->right_angle) {
+                            cout << "miss" << endl;
+                            return;
+                        } else {
+                            cout << "attack succeed" << endl;
+                            vec3<float> point, to_me(persons[i]->coords, z->coords);
+                            int sector;
+                            to_me.resize(MAN_RAD);
+//                            to_me.y += curr->height;
+                            sector = detect_sector(persons[i]->coords, persons[i]->coords + to_me, persons[i]->orientation);
+                            persons[i]->is_alive = !persons[i]->take_damage(
+                                    count_dmg(persons[i]->body_parts[sector], ((MST)curr)->dmg * count_attack(*z)), z->number);
+                            persons[i]->is_alive += 1;
+                            for (int j = 0; j < (int)(curr->effects.size()); j++) {
+                                persons[i]->add_effect(curr->effects[j], z->coords);
+                                persons[i]->effects.back().owner = z->number;
+                                persons[i]->effects.back().upgrade(curr_attack);
+                            }
+                        }
+                    }
+                }
+            }
+        } else if (curr->type == 'T') {
+            if (z->touch_ground) {
+                vec3<float> centre = z->coords;
+                centre.y -= MAN_RAD;
+                traps.push_back(trap(centre, ((TST)curr)->rad, ((TST)curr)->dmg * count_attack(*z), ((TST)curr)->busy_time, ((TST)curr)->material_idx));
+                traps.back().owner = z->number;
+                for (int i = 0; i < (int)curr->effects.size(); i++) {
+                    traps.back().effects.push_back(curr->effects[i]);
+                    traps.back().effects.back().owner = z->number;
+                    traps.back().effects.back().upgrade(curr_attack);
+                }
+                cout << "Охота началась!" << endl;
+            }
+        } else if (curr->type == 'A') {
+            if (!z->my_aura) {
+                z->my_aura = new aura(((AST)curr)->duration, ((AST)curr)->tic, ((AST)curr)->rad, 
+                                      ((AST)curr)->circle_material_idx, ((AST)curr)->effects, ((AST)curr)->my_effects);
+                z->my_aura->set_owner(z->number);
+            }
+        }
+    }
+
+}
+
+void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
+    man* z = get_by_id[man_idx];
+    //cout << '!' << man_idx << ' ' << int(z->is_alive) << endl;
+    z->set_orientation(curr_orientation);
+    vec3<float> move_orientation = curr_orientation;
+    //move_orientation.y /= z->abs_speed / 2;
     z->run(pressed[WORLD_RUN_EVENT]);
     if (pressed[WORLD_BLOCK_UL]) {
         z->fortify(LEFT_FRONT_UP);
@@ -764,79 +877,12 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     if (pressed[WORLD_SYM_5]) {
         attack(man_idx, 4);
     }
-    int curr_attack = count_attack(*z);
-    if (z->need_to_cast and z->curr_skill != -1 and z->busy <= z->skills[z->curr_skill]->activate_time) {
-        abstract_skill_t *curr = z->skills[z->curr_skill];
-        z->need_to_cast = false;
-        if (curr->type == 'R') {
-            bullets.push_back(bullet(((RST)curr)->sample));
-            bullets.back().coords = z->coords;
-            bullets.back().speed = vec3<float>(z->orientation);
-            bullets.back().speed.resize(((RST)curr)->sample.speed.x);
-            bullets.back().speed = bullets.back().speed + z->speed;
-            bullets.back().damage *= count_attack(*z);
-            bullets.back().owner = z->number;
-            bullets.back().exp_rad = ((RST)curr)->sample.exp_rad;
-            bullets.back().upgrade(curr_attack);
-            is_bullet_alive.push_back(1);
-            cerr << "You shoot" << endl;
-        } else if (curr->type == 'M') {
-            cerr << "you try to beat" << endl;
-            for (int i = 0; i < (int)persons.size(); i++) {
-                if (persons[i]->number != man_idx) {
-                    vec3<float> to_him(z->coords, persons[i]->coords);
-                    if (sqrt(to_him.sqlen()) > (2 * MAN_RAD + ((MST)curr)->distance)) {
-                        cout << "too far" << endl;
-                    } else {
-                        to_him.resize(1);
-                        float angle = atan2(to_him.x, to_him.z) - atan2(z->orientation.x, z->orientation.z);
-                        if (angle < ((MST)curr)->left_angle or angle > ((MST)curr)->right_angle) {
-                            cout << "miss" << endl;
-                            return;
-                        } else {
-                            cout << "attack succeed" << endl;
-                            vec3<float> point, to_me(persons[i]->coords, z->coords);
-                            int sector;
-                            to_me.resize(MAN_RAD);
-//                            to_me.y += curr->height;
-                            sector = detect_sector(persons[i]->coords, persons[i]->coords + to_me, persons[i]->orientation);
-                            persons[i]->is_alive = !persons[i]->take_damage(
-                                    count_dmg(persons[i]->body_parts[sector], ((MST)curr)->dmg * count_attack(*z)), z->number);
-                            persons[i]->is_alive *= 2;
-                            for (int j = 0; j < (int)(curr->effects.size()); j++) {
-                                persons[i]->add_effect(curr->effects[j], z->coords);
-                                persons[i]->effects.back().owner = z->number;
-                                persons[i]->effects.back().upgrade(curr_attack);
-                            }
-                        }
-                    }
-                }
-            }
-        } else if (curr->type == 'T') {
-            if (z->touch_ground) {
-                vec3<float> centre = z->coords;
-                centre.y -= MAN_RAD;
-                traps.push_back(trap(centre, ((TST)curr)->rad, ((TST)curr)->dmg * count_attack(*z), ((TST)curr)->busy_time, ((TST)curr)->material_idx));
-                traps.back().owner = z->number;
-                for (int i = 0; i < (int)curr->effects.size(); i++) {
-                    traps.back().effects.push_back(curr->effects[i]);
-                    traps.back().effects.back().owner = z->number;
-                    traps.back().effects.back().upgrade(curr_attack);
-                }
-                cout << "Охота началась!" << endl;
-            }
-        } else if (curr->type == 'A') {
-            if (!z->my_aura) {
-                z->my_aura = new aura(((AST)curr)->duration, ((AST)curr)->tic, ((AST)curr)->rad, 
-                                      ((AST)curr)->circle_material_idx, ((AST)curr)->effects, ((AST)curr)->my_effects);
-                z->my_aura->set_owner(z->number);
-            }
-        }
-
-    }
 }
 
 void save_player(int idx) {
+    if (persons[idx]->cls == 3) {
+        return;
+    }
     ofstream file;
     char name[100];
     sprintf(name, "players/%d", persons[idx]->number);

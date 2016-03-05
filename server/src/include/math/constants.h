@@ -7,5 +7,6 @@
 #define EPS_FOR_SKILLS 10e-3
 #define SMALL_CONSTANT_1 0.1
 #define SMALL_INF 179  
+#define INF 10000000
 
 #endif // MATH_CONSTANTS_H

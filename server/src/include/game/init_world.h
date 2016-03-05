@@ -19,6 +19,7 @@ void in_items();
 //void in_animations();
 int init_world(void);
 char add_player(char *name, int clazz, int* number);
+void add_mobs(int amount);
 void free_world(void);
 
 #ifdef __cplusplus
