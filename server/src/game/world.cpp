@@ -635,7 +635,6 @@ void world_update(float dt) {
         }
         if (is_alive[i] == 2) {
             if (persons[i]->coords.y < -100) {
-                persons[i]->die();
                 is_alive[i] = 1;
                 continue;
             }
