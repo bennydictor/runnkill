@@ -636,12 +636,12 @@ void world_update(float dt) {
         if (is_alive[i] == 2) {
             if (persons[i]->coords.y < -100) {
                 is_alive[i] = 1;
-                continue;
-            }
-            move_man(i, dt);
-            if (int(persons[i]->skills.size()) < skills_amounts[persons[i]->cls][persons[i]->level]) {
-                for (int j = persons[i]->skills.size(); j < skills_amounts[persons[i]->cls][persons[i]->level]; j++) {
-                    persons[i]->skills.push_back(new_skill(default_skills[persons[i]->cls][j]));
+            } else {
+                move_man(i, dt);
+                if (int(persons[i]->skills.size()) < skills_amounts[persons[i]->cls][persons[i]->level]) {
+                    for (int j = persons[i]->skills.size(); j < skills_amounts[persons[i]->cls][persons[i]->level]; j++) {
+                        persons[i]->skills.push_back(new_skill(default_skills[persons[i]->cls][j]));
+                    }
                 }
             }
         }
