@@ -12,7 +12,7 @@ void controller(void) {
     world_callback();
 
     net_update();
-    for (int i = 0; i < client_count; ++i) {
+    for (int i = 0; i < MAX_CLIENTS; ++i) {
         if (clients[i].alive) {
             man_update(i, clients[i].evs, clients[i].orientation);
         }

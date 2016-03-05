@@ -33,26 +33,27 @@ void net_update(void) {
         switch (msg[0]) {
         case MSG_HELLO:
             if (msg_len > 2 && client_count < MAX_CLIENTS) {
-                clients[client_count].tcp = accept(local_tcp_socket, NULL, NULL);
-                if (clients[client_count].tcp == -1) {
-                    printl(LOG_W, "Error while accepting new client: cannot accept tcp connection");
-                    msg[0] = MSG_NOPE;
-                    sendto(local_udp_socket, msg, 1, 0, (struct sockaddr *) &src_addr, addrlen);
-                    break;
-                }
-                clients[client_count].alive = 1;
-                msg[3 + msg[2]] = 0;
                 int number;
+                msg[3 + msg[2]] = 0;
                 char res = add_player(msg + 3, msg[1], &number);
                 if (res) {
-                    printl(LOG_I, "Client %d is online", client_count + 1);
+                    clients[number].tcp = accept(local_tcp_socket, NULL, NULL);
+                    if (clients[number].tcp == -1) {
+                        printl(LOG_W, "Error while accepting new client: cannot accept tcp connection");
+                        msg[0] = MSG_NOPE;
+                        sendto(local_udp_socket, msg, 1, 0, (struct sockaddr *) &src_addr, addrlen);
+                        kill_person(number);
+                        break;
+                    }
+                    printl(LOG_I, "Client %d is online", number + 1);
                     msg[0] = MSG_OK;
                     msg[1] = number;
                     sendto(local_udp_socket, msg, 2, 0, (struct sockaddr *) &src_addr, addrlen);
                     ++client_count;
+                    clients[number].alive = 1;
                 } else {
-                msg[0] = MSG_NOPE;
-                sendto(local_udp_socket, msg, 1, 0, (struct sockaddr *) &src_addr, addrlen);
+                    msg[0] = MSG_NOPE;
+                    sendto(local_udp_socket, msg, 1, 0, (struct sockaddr *) &src_addr, addrlen);
                 }
 
             } else {

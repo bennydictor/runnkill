@@ -20,11 +20,14 @@ void man::die(int v) {
     is_running = false;
     speed = vec3<float>(0, 0, 0);
     hp = 0;
+    damagers.clear();
+    healers.clear();
 }
 
 man::man() {
     cls = 0;
     def_mod = atk_mod = 1; 
+    is_alive = 2;
     can_die = true;
     have_shield = false;
     is_stunned = 0;
@@ -50,6 +53,7 @@ man::man(string _name, int cl) {
     name = _name;
     cls = cl;
     def_mod = atk_mod = 1; 
+    is_alive = 2;
     can_die = true;
     have_shield = false;
     is_stunned = false;
@@ -90,6 +94,7 @@ man::man(istream& file) {
     max_hp = hp;
     max_mp = mp;
     curr_skill = -1;
+    is_alive = 2;
     file >> recovery.hp >> recovery.mp;
     cout << "ok" << endl;
 }

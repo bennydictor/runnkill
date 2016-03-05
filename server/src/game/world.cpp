@@ -388,63 +388,64 @@ bool move_bullet(int b_idx, float time) {
 }
 
 bool move_man(int idx, float time, int depth = 0) {
-        assert(time >= 0 or time <= 0);
+    assert(time >= 0 or time <= 0);
     if (depth > 10) {
         return true;
     }
     if (time < 0)
         return true;
     assert(time >= 0);
+    man* z = get_by_id[idx];
     //cout << persons[idx]->hp << endl;
-    vec3<float> finish = persons[idx]->in_time(time);
-    float beg_dist = dist(persons[idx]->coords, finish);
+    vec3<float> finish = z->in_time(time);
+    float beg_dist = dist(z->coords, finish);
     assert(beg_dist >= 0 or beg_dist <= 0);
     if (beg_dist < EPS_FOR_MOVE) {
-        persons[idx]->speed.y -= (time) * GRAVITATION;
-        persons[idx]->move(time);
+        z->speed.y -= (time) * GRAVITATION;
+        z->move(time);
         return true;
     }
-    persons[idx]->touch_ground = false;
+    z->touch_ground = false;
     vec3<float> touch_point(0, 0, 0);
-    char res = move_sphere(persons[idx]->coords, finish, (float)(MAN_RAD), persons[idx]->number, false, touch_point);
+    char res = move_sphere(z->coords, finish, (float)(MAN_RAD), z->number, false, touch_point);
     if (res == 1) {
-            //cout << persons[idx]->coords << finish << persons[idx]->in_time(time) << endl;   
-            //cout << persons[idx]->speed << endl;
-        persons[idx]->coords = finish;
-        vec3<float> our_plain = vec3<float>(persons[idx]->coords, touch_point);
-        float d = -our_plain.dot(persons[idx]->coords);
-        vec3<float> tmp_point = persons[idx]->coords + persons[idx]->speed, normal = our_plain;
+            //cout << z->coords << finish << persons[idx]->in_time(time) << endl;   
+            //cout << z->speed << endl;
+        z->coords = finish;
+        vec3<float> our_plain = vec3<float>(z->coords, touch_point);
+        float d = -our_plain.dot(z->coords);
+        vec3<float> tmp_point = z->coords + z->speed, normal = our_plain;
         normal.resize(dist_to_plain(our_plain, d, tmp_point) * -2);
         float _res = dist_to_plain(our_plain, d, tmp_point) * dist_to_plain(our_plain, d, tmp_point + normal); 
         if (_res > EPS_FOR_MOVE)
             normal = -1.0f * normal;
 
-        persons[idx]->speed = vec3<float>(persons[idx]->coords, tmp_point + normal);
-        float time_2 =  time * (1 - (dist(persons[idx]->coords, finish) / beg_dist));
+        z->speed = vec3<float>(z->coords, tmp_point + normal);
+        float time_2 =  time * (1 - (dist(z->coords, finish) / beg_dist));
         assert(time_2 >= 0 or time_2 <= 0);
-        persons[idx]->move(time - time_2);
-        vec3<float> rvector(persons[idx]->coords, touch_point);
-        persons[idx]->speed.y -= (time - time_2) * GRAVITATION;
+        z->move(time - time_2);
+        vec3<float> rvector(z->coords, touch_point);
+        z->speed.y -= (time - time_2) * GRAVITATION;
         move_man(idx, time_2, depth + 1);
         rvector.resize(1);
         if (rvector.y - EPS_FOR_SKILLS <= -1)
-            persons[idx]->touch_ground = true;
+            z->touch_ground = true;
     //cout << (rvector.y - EPS_FOR_MOVE <= -1) << endl;
     } else if (res == -1) {
-        persons[idx]->coords.y += get_rand(5, 15);
+        z->coords.y += get_rand(5, 15);
     } else {
-        persons[idx]->coords = (finish);
-        persons[idx]->move(time);
-        persons[idx]->speed.y -= (time) * GRAVITATION;
-        if (persons[idx]->coords.y - get_element(world_field, persons[idx]->coords.x, persons[idx]->coords.z) - MAN_RAD < EPS_FOR_MOVE)
-            persons[idx]->touch_ground = true;
+        z->coords = (finish);
+        z->move(time);
+        z->speed.y -= (time) * GRAVITATION;
+        if (z->coords.y - get_element(world_field, z->coords.x, z->coords.z) - MAN_RAD < EPS_FOR_MOVE)
+            z->touch_ground = true;
     }
 
     return !res;
 }
 
 void attack(int man_idx, int idx) {
-    man* z = persons[man_idx];
+    man* z = get_by_id[man_idx];
     //cout << z->mp << ' ' << z->skills[idx].cost.mp << endl;
     //cout << z->busy << ' ' << z->skills.size() << ' ' << z->skills[idx].to_activate << ' ' << z->skills[idx].between_activate << endl;
     if (!z->can_cast(idx)) {
@@ -490,18 +491,18 @@ void kill_person(int idx) {
 }
 
 void *get_person_data_begin(int idx) {
-    return (void *) (persons[idx]->coords);
+    return (void *) (get_by_id[idx]->coords);
 }
 
 void *get_person_data_end(int idx) {
-    return ((char *)&persons[idx]->number);
+    return ((char *)&get_by_id[idx]->number);
 }
 
 char *get_person_text(int idx) {
-    return (persons[idx]->get_text());
+    return (get_by_id[idx]->get_text());
 }
 float get_person_business(int idx) {
-    man* z = persons[idx];
+    man* z = get_by_id[idx];
     if (z->curr_skill == -1 or (!z->need_to_cast)) {
         return -1;
     }
@@ -634,7 +635,7 @@ void world_update(float dt) {
             if (persons[i]->coords.y < -100) {
                 persons[i]->is_alive = 1;
             } else {
-                move_man(i, dt);
+                move_man(persons[i]->number, dt);
                 if (int(persons[i]->skills.size()) < skills_amounts[persons[i]->cls][persons[i]->level]) {
                     for (int j = persons[i]->skills.size(); j < skills_amounts[persons[i]->cls][persons[i]->level]; j++) {
                         persons[i]->skills.push_back(new_skill(default_skills[persons[i]->cls][j]));
@@ -689,20 +690,21 @@ void world_update(float dt) {
 
 void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
     man* z = get_by_id[man_idx];
+    //cout << '!' << man_idx << ' ' << int(z->is_alive) << endl;
     z->set_orientation(curr_orientation);
     vec3<float> move_orientation = curr_orientation;
     //move_orientation.y /= z->abs_speed / 2;
     if (z->is_alive == 1) {
         cout << "take this expp" << endl;
-        for (pair<int, float> i : persons[man_idx]->damagers) {
-            cout << i.first << ' ' << i.second << ' ' << persons[man_idx]->max_hp << endl;
-            int EP = (EXP_CONSTANT * i.second) / persons[man_idx]->max_hp;
+        for (pair<int, float> i : z->damagers) {
+            cout << i.first << ' ' << i.second << ' ' << z->max_hp << endl;
+            int EP = (EXP_CONSTANT * i.second) / z->max_hp;
             exp_add[i.first] += EP; 
             add_exp(get_by_id[i.first], EP);
         }
-        persons[man_idx]->die();
-        persons[man_idx]->damagers.clear();
-        persons[man_idx]->healers.clear();
+        z->die();
+        z->damagers.clear();
+        z->healers.clear();
         z->is_alive = 0;
         return;
 
@@ -781,7 +783,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         } else if (curr->type == 'M') {
             cerr << "you try to beat" << endl;
             for (int i = 0; i < (int)persons.size(); i++) {
-                if (i != man_idx) {
+                if (persons[i]->number != man_idx) {
                     vec3<float> to_him(z->coords, persons[i]->coords);
                     if (sqrt(to_him.sqlen()) > (2 * MAN_RAD + ((MST)curr)->distance)) {
                         cout << "too far" << endl;
@@ -863,4 +865,13 @@ char load_player(char* name) {
     man* new_man = new man(file);
     add_player(new_man);
     return true;
+}
+
+void load_by_idx(int idx) {
+    char filename[100];
+    sprintf(filename, "players/%d", idx);
+    ifstream file;
+    file.open(filename);
+    man* new_man = new man(file);
+    man_idx_by_name[new_man->name] = idx;
 }

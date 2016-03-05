@@ -154,6 +154,18 @@ int init_world(void) {
     in_animations();
     init_material();
     in_materials();
+    cout <<  "Would you like to load players from the previous session? [yn]" << endl;
+    char c;
+    cin >> c;
+    if (c == 'y' or c == 'Y') {
+        cout << "How many players need to load?" << endl;
+        int amount_of_players;
+        cin >> amount_of_players;
+        for (int i = 0; i < amount_of_players; i++) {
+            load_by_idx(i);
+        }
+        GAME_MAX_MAN_IDX = amount_of_players;
+    }
     cout << "Initialize of world succeed" << endl;
     return 0;
 }
@@ -174,11 +186,11 @@ char add_player(char *name, int clazz, int* number) {
         return false;
     persons.push_back(new man(name, clazz));
     man_idx_by_name[cppname] = persons.back()->number;
-    persons.back()->is_alive = 2;
     persons.back()->coords = get_rand_coords();
     persons.back()->speed = vec3<float>(0, 0, 0);
     number[0] = persons.back()->number;
     get_by_id[number[0]] = persons.back();
+    cout << number[0] << endl;
     return true;
 }
 
