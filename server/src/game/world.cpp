@@ -849,16 +849,16 @@ void save_player(int idx) {
     cout << persons[idx]->name << ' ' << persons[idx]->number << ' '<< man_idx_by_name[persons[idx]->name] << endl;
 }
 
-void load_player(char* name) {
+char load_player(char* name) {
     if (!man_idx_by_name.count(name)) {
         cout << "bad name" << endl;
-        return;
+        return false;
     
     }
     int idx = man_idx_by_name[name];
     printf("%s %d\n", name, idx);
     if (idx < 0 or GAME_MAX_MAN_IDX < idx) {
-        return;
+        return false;
     }
     
     char filename[100];
@@ -867,4 +867,5 @@ void load_player(char* name) {
     file.open(filename);
     man* new_man = new man(file);
     add_player(new_man);
+    return true;
 }
