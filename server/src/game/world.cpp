@@ -51,7 +51,6 @@ map<int, int> exp_add;
 vector<bullet> bullets;
 vector<trap> traps;
 vector<man*> persons;
-vector<char> is_alive;
 vector<bool>is_bullet_alive;
 vector<explosion> explosions;
 vector<vector<abstract_skill_t *> > default_skills;
@@ -270,10 +269,10 @@ void damage_last_explosion() {
         //cout << dist(explosions.back().coords, persons[j]->coords) << ' ' << MAN_RAD << ' ' << explosions.back().rad << endl;
         if (dist(explosions.back().coords, persons[j]->coords) < MAN_RAD + explosions.back().rad) {
             int sector = detect_sector(persons[j]->coords, explosions.back().coords, persons[j]->orientation);
-            is_alive[j] = !persons[j]->take_damage(
+            persons[j]->is_alive = !persons[j]->take_damage(
                         count_dmg(persons[j]->body_parts[sector], explosions.back().damage), explosions.back().owner);
-            is_alive[j]++;
-            if (is_alive[j] == 2) {
+            persons[j]->is_alive++;
+            if (persons[j]->is_alive == 2) {
                man* owner = get_by_id[explosions.back().owner];
                 for (int i = 0; i < (int)explosions.back().effects.size(); i++) {
                     persons[j]->add_effect((explosions.back().effects[i]), owner->coords);
@@ -303,7 +302,7 @@ bool move_sphere(vec3<T> start, vec3<T> &finish, T rad, int owner, bool Flag, ve
     curr_intersection = finish;
     vec3<float> curr_finish = finish;
     for (int i = 0; i < (int)persons.size(); i++) {
-        if (is_alive[i] == 2 && persons[i]->number != owner)
+        if (persons[i]->is_alive == 2 && persons[i]->number != owner)
         {
             if (is_intersected(persons[i]->coords, rad, MAN_RAD, start,
                                curr_finish, curr_intersection)) {
@@ -487,8 +486,7 @@ bool move_trap(int idx, float time) {
 }
 
 void kill_person(int idx) {
-    is_alive[idx] = -1;
-    persons[idx]->die();
+    get_by_id[idx]->die(-1);
 }
 
 void *get_person_data_begin(int idx) {
@@ -512,7 +510,7 @@ float get_person_business(int idx) {
 }
 
 float get_person_max_business(int idx) {
-    man* z = persons[idx];
+    man* z = get_by_id[idx];
     if (z->curr_skill == -1 or (!z->need_to_cast)) {
         return -1;
     }
@@ -522,7 +520,7 @@ float get_person_max_business(int idx) {
 void world_callback(void) {
     draw_obj_count = 0;
     for (int i = 0; i < (int)persons.size(); i++) {
-        if (is_alive[i]) {
+        if (persons[i]->is_alive) {
             draw_objs[draw_obj_count++] = make_draw_sphere(persons[i]->coords, MAN_RAD, fake_materials_idx[class_material_idx[persons[i]->cls]]);
             if (persons[i]->my_aura) {
                 draw_objs[draw_obj_count++] = make_draw_circle(persons[i]->coords - vec3<float>(0, MAN_RAD, 0), persons[i]->my_aura->distance, fake_materials_idx[persons[i]->my_aura->circle_material_idx]);
@@ -596,7 +594,6 @@ void world_update(float dt) {
     assert(dt >= 0 or dt <= 0);
     vector<bullet> new_bullets;
     vector<bool> new_is_bullet_alive;
-    vector<char> new_is_alive;
     vector<man*> new_persons;
 
     for (int i = 0; i < (int)bullets.size(); i++) {
@@ -633,9 +630,9 @@ void world_update(float dt) {
                 }
             }
         }
-        if (is_alive[i] == 2) {
+        if (persons[i]->is_alive == 2) {
             if (persons[i]->coords.y < -100) {
-                is_alive[i] = 1;
+                persons[i]->is_alive = 1;
             } else {
                 move_man(i, dt);
                 if (int(persons[i]->skills.size()) < skills_amounts[persons[i]->cls][persons[i]->level]) {
@@ -645,17 +642,15 @@ void world_update(float dt) {
                 }
             }
         }
-        if (persons[i]->hp < 0 and is_alive[i] == 2) {
-            is_alive[i] = 1;
+        if (persons[i]->hp < 0 and persons[i]->is_alive == 2) {
+            persons[i]->is_alive = 1;
             persons[i]->hp = 0;
         }
-        if (is_alive[i] >= 0) {
-            new_is_alive.push_back(is_alive[i]);
+        if (persons[i]->is_alive >= 0) {
             new_persons.push_back(persons[i]);
         }
     }
     persons = new_persons;
-    is_alive = new_is_alive;
     if (curr_time > 1e9) {
         curr_time = last_save = 0;
     }
@@ -664,10 +659,9 @@ void world_update(float dt) {
         last_save = curr_time;
         for (int i = 0; i < (int)persons.size(); i++) {
             save_player(i);
-            if (!is_alive[i]) {
+            if (!persons[i]->is_alive) {
                 persons[i]->respawn();
                 persons[i]->coords = get_rand_coords();
-                is_alive[i] = 2;
             }
         }
         cout << "end saving players" << endl;
@@ -694,11 +688,11 @@ void world_update(float dt) {
 
 
 void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
-    man* z = persons[man_idx];
+    man* z = get_by_id[man_idx];
     z->set_orientation(curr_orientation);
     vec3<float> move_orientation = curr_orientation;
     //move_orientation.y /= z->abs_speed / 2;
-    if (is_alive[man_idx] == 1) {
+    if (z->is_alive == 1) {
         cout << "take this expp" << endl;
         for (pair<int, float> i : persons[man_idx]->damagers) {
             cout << i.first << ' ' << i.second << ' ' << persons[man_idx]->max_hp << endl;
@@ -709,7 +703,7 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
         persons[man_idx]->die();
         persons[man_idx]->damagers.clear();
         persons[man_idx]->healers.clear();
-        is_alive[man_idx] = 0;
+        z->is_alive = 0;
         return;
 
     }
@@ -804,9 +798,9 @@ void man_update(int man_idx, char* pressed, vec3<float> curr_orientation) {
                             to_me.resize(MAN_RAD);
 //                            to_me.y += curr->height;
                             sector = detect_sector(persons[i]->coords, persons[i]->coords + to_me, persons[i]->orientation);
-                            is_alive[i] = !persons[i]->take_damage(
+                            persons[i]->is_alive = !persons[i]->take_damage(
                                     count_dmg(persons[i]->body_parts[sector], ((MST)curr)->dmg * count_attack(*z)), z->number);
-                            is_alive[i] *= 2;
+                            persons[i]->is_alive *= 2;
                             for (int j = 0; j < (int)(curr->effects.size()); j++) {
                                 persons[i]->add_effect(curr->effects[j], z->coords);
                                 persons[i]->effects.back().owner = z->number;

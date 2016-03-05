@@ -29,6 +29,7 @@ struct man {
     int cls, curr_skill;
     float def_mod, atk_mod, busy, attack_rad, sum_damage;
     bool can_die, have_shield, is_running, touch_ground, need_to_cast;
+    char is_alive;
     int is_stunned;
     char buff[2048];
     mod_t recovery;
@@ -60,7 +61,7 @@ struct man {
     void run(bool must_run);
     void get_exp(int e);
     void respawn();
-    void die();
+    void die(int v = 0);
     void put_on(item_t* item, int idx);
     void new_message(char* s, float t);
     char* get_text();

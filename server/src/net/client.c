@@ -42,11 +42,12 @@ void net_update(void) {
                 }
                 clients[client_count].alive = 1;
                 msg[3 + msg[2]] = 0;
-                char res = add_player(msg + 3, msg[1]);
+                int number;
+                char res = add_player(msg + 3, msg[1], &number);
                 if (res) {
                     printl(LOG_I, "Client %d is online", client_count + 1);
                     msg[0] = MSG_OK;
-                    msg[1] = client_count;
+                    msg[1] = number;
                     sendto(local_udp_socket, msg, 2, 0, (struct sockaddr *) &src_addr, addrlen);
                     ++client_count;
                 } else {

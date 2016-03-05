@@ -158,25 +158,33 @@ int init_world(void) {
     return 0;
 }
 
-char add_player(char *name, int clazz) {
+char add_player(char *name, int clazz, int* number) {
     printf("NEW PLAYER> %s\n", name);
     if (clazz == 3) {
-        return load_player(name);
+        bool ret = load_player(name);
+        if (!ret) {
+            return false;
+        }
+        number[0] = persons.back()->number;
+        get_by_id[number[0]] = persons.back();
+        return true;
     }
     string cppname(name);
     if (man_idx_by_name.count(cppname))
         return false;
     persons.push_back(new man(name, clazz));
     man_idx_by_name[cppname] = persons.back()->number;
-    is_alive.push_back(2);
+    persons.back()->is_alive = 2;
     persons.back()->coords = get_rand_coords();
     persons.back()->speed = vec3<float>(0, 0, 0);
+    number[0] = persons.back()->number;
+    get_by_id[number[0]] = persons.back();
     return true;
 }
 
 void add_player(man* player) {
     persons.push_back(player);
-    is_alive.push_back(2);
+    persons.back()->is_alive = 2;
     persons.back()->coords = get_rand_coords();
     persons.back()->speed = vec3<float>(0, 0, 0);
 }

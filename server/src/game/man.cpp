@@ -8,7 +8,7 @@ int GAME_MAX_MAN_IDX;
 
 using namespace std;
 
-void man::die() {
+void man::die(int v) {
     exp = float(exp) * 0.9;
     for (effect& k : effects) {
         k.time = 0;
@@ -16,6 +16,7 @@ void man::die() {
     move(0);
     touch_ground = false;
     is_stunned = 0;
+    is_alive = v;
     is_running = false;
     speed = vec3<float>(0, 0, 0);
     hp = 0;
@@ -386,6 +387,7 @@ void man::respawn() {
     
     hp = max_hp;
     mp = max_mp;
+    is_alive = 2;
 }
 
 bool man::can_cast(int idx) {
