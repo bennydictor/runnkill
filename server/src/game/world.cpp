@@ -670,6 +670,7 @@ void world_update(float dt) {
                 is_alive[i] = 2;
             }
         }
+        cout << "end saving players" << endl;
     }
     vector<explosion> nexp = explosions;
     explosions.clear();
@@ -846,7 +847,7 @@ void save_player(int idx) {
     file.open(name);
     persons[idx]->write_info(file);
     file.close();
-    cout << persons[idx]->name << ' ' << persons[idx]->number << ' '<< man_idx_by_name[persons[idx]->name] << endl;
+    cout << '"' << persons[idx]->name << '"' << " " << persons[idx]->number << ' '<< man_idx_by_name[persons[idx]->name] << endl;
 }
 
 char load_player(char* name) {
