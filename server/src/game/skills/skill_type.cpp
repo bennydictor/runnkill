@@ -2,6 +2,7 @@
 #include <game/skills/effect.h>
 #include <game/skills/skill_type.h>
 #include <util/logstream.h>
+
 using namespace std;
 
 void abstract_skill_t::abstract_input(istream& stream) {

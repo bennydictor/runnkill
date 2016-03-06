@@ -474,6 +474,7 @@ bool move_trap(int idx, float time) {
     }
     for (int i = 0; i < (int)persons.size(); i++) {
         if (traps[idx].is_intersect(persons[i]->coords, MAN_RAD)) {
+            cout << persons[i]->number << endl;
             vec3<float> to(persons[i]->coords, traps[idx].centre);
             to.resize(MAN_RAD);
             explosions.push_back(explosion(persons[i]->coords + to, EXPLOSION_TIME, EXPLOSION_RADIUS, traps[idx].dmg));
@@ -520,18 +521,6 @@ float get_person_max_business(int idx) {
     }
     return animations[z->skills[z->curr_skill]->animation_idx].events[0].dt;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 void world_callback(void) {
     draw_obj_count = 0;
@@ -674,7 +663,10 @@ void world_update(float dt) {
         }
         if (persons[i]->is_alive > 0 or (persons[i]->is_alive == 0 and persons[i]->cls != 3)) {
             new_persons.push_back(persons[i]);
+        } else if (persons[i]->is_alive == 0 and persons[i]->cls == 3) {
+                amount_of_mobs--;
         }
+
     }
     persons = new_persons;
     if (curr_time > 1e9) {
@@ -722,6 +714,9 @@ void give_exp(int man_idx) {
     if (z->is_alive == 1) {
         cout << "take this expp" << endl;
         for (pair<int, float> i : z->damagers) {
+            if (!(i.second == i.second)) {
+                continue;
+            }
             cout << i.first << ' ' << i.second << ' ' << z->max_hp << endl;
             int EP = (EXP_CONSTANT * i.second) / z->max_hp;
             exp_add[i.first] += EP; 

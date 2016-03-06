@@ -255,8 +255,10 @@ bool man::take_damage(float dmg, int p) {
             healers[p] -= dmg;
             vector<int> to_erase;
             for (auto it = damagers.begin(); it != damagers.end(); it++) {
-                it->second += dmg * (it->second / sum_damage);
-                if (it->second < 0) {
+                if (sum_damage > EPS_FOR_SKILLS) {
+                    it->second += dmg * (it->second / sum_damage);
+                }
+                if (it->second < EPS_FOR_SKILLS) {
                     to_erase.push_back(it->first);
                 }
             }
@@ -268,8 +270,10 @@ bool man::take_damage(float dmg, int p) {
             damagers[p] += dmg;
             vector<int> to_erase;
             for (auto it = healers.begin(); it != healers.end(); it++) {
-                it->second -= dmg * (it->second / sum_damage);
-                if (it->second < 0) {
+                if (sum_damage > EPS_FOR_SKILLS) {
+                    it->second -= dmg * (it->second / sum_damage);
+                }
+                if (it->second < EPS_FOR_SKILLS) {
                     to_erase.push_back(it->first);
                 }
             }

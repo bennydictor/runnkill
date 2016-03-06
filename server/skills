@@ -59,7 +59,7 @@ class_1
     40 0.1 0.2
     9 10
 
-    1 T
+    0 T
     0 10 20
     2 0
 
@@ -71,8 +71,8 @@ class_1
         3
         0
         POISON
-        6 0
-        1 0
+        60 0
+        10 0
         1 1 1 1
         1
         0
@@ -155,7 +155,7 @@ amount of skills
     here must be amount of effects
     for each effect:
         name
-        duration
+        duration and is_stunning(1 or 0)
         damage (in hp and mp)
         modifiers strength, agility, intellect, speed
         here number of material of the ball 

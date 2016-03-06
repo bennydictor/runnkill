@@ -9,6 +9,7 @@ explosion::explosion() {
     time = 0;
     rad = EXPLOSION_RADIUS;
     damage = 0;
+    material_id = 0;
 }
 
 explosion::explosion(vec3<float> centre, float end, float r, float dmg) {
@@ -17,6 +18,7 @@ explosion::explosion(vec3<float> centre, float end, float r, float dmg) {
     time = 0;
     rad = r;
     damage = dmg;
+    material_id = 0;
 }
 
 float explosion::time_c() {
