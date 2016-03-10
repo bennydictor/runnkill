@@ -34,6 +34,7 @@ extern "C" {
 #define DRAW_SPHERE 0
 #define DRAW_SPHERE_SECTOR 1
 #define DRAW_CIRCLE 2
+#define DRAW_RECT 3
 #define MAX_DRAW_OBJ 256
 
 extern int world_w, world_h, render_distance;

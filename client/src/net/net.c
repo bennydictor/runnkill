@@ -46,6 +46,7 @@
 #include <graphics/objects/sphere_sector.h>
 #include <graphics/objects/field.h>
 #include <graphics/objects/circle.h>
+#include <graphics/objects/rect.h>
 
 #define MSG_BUF_LEN (1024 * 1024 * 1024)
 #define PORT 12345
@@ -305,6 +306,8 @@ int net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs) {
             draw_objs[i] = make_draw_circle_ny(pos, rad, materials[mat_id]);
         } else if (type == DRAW_SPHERE_SECTOR) {
             draw_objs[i] = make_draw_sphere_sector3fv2f(pos, rot, rad, s, materials[mat_id]);
+        } else if (type == DRAW_RECT) {
+            draw_objs[i] = make_draw_rect4f1f(pos[0], pos[1], pos[2], rad, 1, rot, materials[mat_id]);
         }
     }
     /* 

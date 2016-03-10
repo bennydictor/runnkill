@@ -19,10 +19,12 @@ struct vec2 {
     T sdot(const vec2<T> &v) const;
     T scrs(const vec2<T> &v) const;
     T sqlen() const;
+    void resize(T a);
 };
 
 typedef vec2<long long int> vec2ll;
 typedef vec2<double> vec2d;
+typedef vec2<float> vec2f;
 typedef std::vector<vec2<long long int>> polygonll;
 typedef std::vector<vec2<double>> polygond;
 
@@ -68,6 +70,15 @@ T vec2<T>::scrs(const vec2<T> &v) const {
 template <class T>
 T vec2<T>::sqlen() const {
     return x * x + y * y;
+}
+
+template <class T> 
+void vec2<T>::resize(T a) {
+    T mylen = sqrt(sqlen());
+    x /= mylen;
+    y /= mylen;
+    x *= a;
+    y *= a;
 }
 
 template <class T>

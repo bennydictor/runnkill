@@ -4,6 +4,7 @@
 #include <math/vecmath.h>
 #include <graphics/material.h>
 
+// Defines DRAW_SPHERE etc are in src/include/world.h
 
 typedef struct {
     mat4f mat_m;

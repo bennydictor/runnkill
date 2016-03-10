@@ -36,6 +36,7 @@
 #define MST melee_skill_t *
 #define RST range_skill_t *
 #define AST aura_skill_t *
+#define BETWEEN_THINKING 0.1
 using namespace std;
 
 const int len = 1;
@@ -48,7 +49,7 @@ draw_obj draw_objs[MAX_DRAW_OBJ];
 int draw_obj_count;
 int amount_of_mobs;
 float last_save;
-float curr_time;
+float curr_time, time_to_think;
 map<int, man*> get_by_id;
 map<int, int> exp_add;
 vector<bullet> bullets;
@@ -105,6 +106,19 @@ draw_obj make_draw_sphere_sector(vec3f pos, float rad, float rot, int s, short i
     ret.material = material;
     return ret;
 }
+
+draw_obj make_draw_rect(vec3f p1, vec3f p2, float rot, short int material) {
+    draw_obj ret;
+    ret.type = DRAW_RECT;
+    memcpy(ret.pos, p1, 2 * sizeof(float));
+    ret.pos[2] = p2[0];
+    ret.rad = p2[1];
+    ret.rot = rot;
+    ret.material = material;
+    return ret;
+
+}
+
 
 template <class T>
 
@@ -526,25 +540,38 @@ void world_callback(void) {
     draw_obj_count = 0;
     for (int i = 0; i < (int)persons.size(); i++) {
         if (persons[i]->is_alive) {
-            draw_objs[draw_obj_count++] = make_draw_sphere(persons[i]->coords, MAN_RAD, fake_materials_idx[class_material_idx[persons[i]->cls]]);
-            if (persons[i]->my_aura) {
-                draw_objs[draw_obj_count++] = make_draw_circle(persons[i]->coords - vec3<float>(0, MAN_RAD, 0), persons[i]->my_aura->distance, fake_materials_idx[persons[i]->my_aura->circle_material_idx]);
+            man* myself = persons[i];
+            draw_objs[draw_obj_count++] = make_draw_sphere(myself->coords, MAN_RAD, fake_materials_idx[class_material_idx[myself->cls]]);
+            float x, z;
+            vec2<float> my_orientation(myself->orientation.x, myself->orientation.z);
+            my_orientation.resize(MAN_RAD);
+            x = myself->coords.x - my_orientation.x + my_orientation.y;
+            z = myself->coords.z - my_orientation.y - my_orientation.x;
+
+            vec3f p1 = new float[3], p2 = new float[3];
+            p1[0] = x;
+            p1[1] = myself->coords.y - MAN_RAD;
+            p2[0] = 2 * MAN_RAD;
+            p2[1] = z;
+            draw_objs[draw_obj_count++] = make_draw_rect(p1, p2, atan2(my_orientation.x, my_orientation.y), 8);
+            if (myself->my_aura) {
+                draw_objs[draw_obj_count++] = make_draw_circle(myself->coords - vec3<float>(0, MAN_RAD, 0), myself->my_aura->distance, fake_materials_idx[myself->my_aura->circle_material_idx]);
             }
-            for (int j = 0; j < (int)persons[i]->effects.size(); j++) {
-                if (persons[i]->effects[j].time > 0) {
-                    vec3<float> centre = persons[i]->coords;
+            for (int j = 0; j < (int)myself->effects.size(); j++) {
+                if (myself->effects[j].time > 0) {
+                    vec3<float> centre = myself->coords;
                     centre.y += 0.6 + j * 0.3;
-                    draw_objs[draw_obj_count++] = (make_draw_sphere(centre, 0.1, fake_materials_idx[persons[i]->effects[j].material_idx]));
+                    draw_objs[draw_obj_count++] = (make_draw_sphere(centre, 0.1, fake_materials_idx[myself->effects[j].material_idx]));
                 }
             }
-            float alpha = atan2(-persons[i]->orientation.z, persons[i]->orientation.x) + M_PI;
+            float alpha = atan2(-myself->orientation.z, myself->orientation.x) + M_PI;
             for (int j = 0; j < BP_AMOUNT; j++) {
-                if (persons[i]->body_parts[j].is_fortified)
-                    draw_objs[draw_obj_count++] = make_draw_sphere_sector(persons[i]->coords, alpha, 1.5 * MAN_RAD, j, shield_material.id);
-                else if (persons[i]->body_parts[j].item)
+                if (myself->body_parts[j].is_fortified)
+                    draw_objs[draw_obj_count++] = make_draw_sphere_sector(myself->coords, alpha, 1.5 * MAN_RAD, j, shield_material.id);
+                else if (myself->body_parts[j].item)
                 {
-                    draw_objs[draw_obj_count++] = make_draw_sphere_sector(persons[i]->coords, alpha, 
-                             1.1 * MAN_RAD, j, fake_materials_idx[persons[i]->body_parts[j].item->material_idx]);
+                    draw_objs[draw_obj_count++] = make_draw_sphere_sector(myself->coords, alpha, 
+                             1.1 * MAN_RAD, j, fake_materials_idx[myself->body_parts[j].item->material_idx]);
                 }
             }
             /*
@@ -618,7 +645,7 @@ void world_update(float dt) {
         is_it_time_to_cast(persons[i]->number);
         if (persons[i]->cls == 3) {
             for (int j = 0; j < (int)persons.size(); j++) {
-                if (persons[j]->cls != 3) {
+                if (persons[j]->cls != 3 and curr_time - time_to_think > BETWEEN_THINKING) {
                     ((mob *)persons[i])->try_to_find(persons[j]);
                 }
             }
@@ -671,6 +698,9 @@ void world_update(float dt) {
     persons = new_persons;
     if (curr_time > 1e9) {
         curr_time = last_save = 0;
+    }
+    if (curr_time - time_to_think > BETWEEN_THINKING) {
+        time_to_think = curr_time;
     }
     if (curr_time - last_save > BETWEEN_SAVING) {
         cout << "begin saving players" << curr_time << endl;
