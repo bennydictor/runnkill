@@ -544,14 +544,14 @@ void world_callback(void) {
             draw_objs[draw_obj_count++] = make_draw_sphere(myself->coords, MAN_RAD, fake_materials_idx[class_material_idx[myself->cls]]);
             float x, z;
             vec2<float> my_orientation(myself->orientation.x, myself->orientation.z);
-            my_orientation.resize(MAN_RAD);
+            my_orientation.resize(MAN_RAD + EPS_FOR_SKILLS);
             x = myself->coords.x - my_orientation.x + my_orientation.y;
             z = myself->coords.z - my_orientation.y - my_orientation.x;
 
             vec3f p1 = new float[3], p2 = new float[3];
             p1[0] = x;
             p1[1] = myself->coords.y - MAN_RAD;
-            p2[0] = 2 * MAN_RAD;
+            p2[0] = 2 * (MAN_RAD + EPS_FOR_SKILLS);
             p2[1] = z;
             draw_objs[draw_obj_count++] = make_draw_rect(p1, p2, atan2(my_orientation.x, my_orientation.y), 8);
             if (myself->my_aura) {
