@@ -36,7 +36,7 @@
 #define MST melee_skill_t *
 #define RST range_skill_t *
 #define AST aura_skill_t *
-#define BETWEEN_THINKING 0.1
+#define BETWEEN_THINKING 0.01
 using namespace std;
 
 const int len = 1;

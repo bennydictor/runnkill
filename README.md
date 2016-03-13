@@ -12,6 +12,8 @@ You have to run server and then client <your ip>
 Multiplayering enabled.
 Try not to kill yourself!
 
+Thank Siriocra for help and support!
+
 Controls:
 
 * WASD - movement

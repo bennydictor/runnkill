@@ -289,9 +289,13 @@ int net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs) {
     int field_x2 = min_int32(world_w, ((int) coords[0]) + render_distance);
     int field_y1 = max_int32(0, ((int) coords[2]) - render_distance);
     int field_y2 = min_int32(world_w, ((int) coords[2]) + render_distance);
-    draw_objs[0] = make_draw_subfield(field_x1, field_y1, field_x2, field_y2, materials[0]);
-    ++*draw_obj_count;
-    for (int i = 1; i < *draw_obj_count; ++i) {
+    int idx = 0;
+    if (DRAWING_FIELD) {
+        draw_objs[0] = make_draw_subfield(field_x1, field_y1, field_x2, field_y2, materials[0]);
+        ++*draw_obj_count;
+        idx = 1;
+    }
+    for (int i = 0; i < *draw_obj_count; ++i) {
         GET(char, type);
         GET(float, pos[0]);
         GET(float, pos[1]);
@@ -301,15 +305,16 @@ int net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs) {
         GET(int, s);
         GET(short int, mat_id);
         if (type == DRAW_SPHERE) {
-            draw_objs[i] = make_draw_sphere3fv1f(pos, rad, materials[mat_id]);
+            draw_objs[idx++] = make_draw_sphere3fv1f(pos, rad, materials[mat_id]);
         } else if (type == DRAW_CIRCLE) {
-            draw_objs[i] = make_draw_circle_ny(pos, rad, materials[mat_id]);
+            draw_objs[idx++] = make_draw_circle_ny(pos, rad, materials[mat_id]);
         } else if (type == DRAW_SPHERE_SECTOR) {
-            draw_objs[i] = make_draw_sphere_sector3fv2f(pos, rot, rad, s, materials[mat_id]);
-        } else if (type == DRAW_RECT) {
-            draw_objs[i] = make_draw_rect4f1f(pos[0], pos[1], pos[2], rad, 1, rot, materials[4]);
+            draw_objs[idx++] = make_draw_sphere_sector3fv2f(pos, rot, rad, s, materials[mat_id]);
+        } else if (DRAWING_RECT && type == DRAW_RECT) {
+            draw_objs[idx++] = make_draw_rect4f1f(pos[0], pos[1], pos[2], rad, 1, rot, materials[4]);
         }
     }
+    *draw_obj_count = idx;
     /* 
     int mes_len = strlen(ptr);
     memcpy(message, ptr, mes_len);

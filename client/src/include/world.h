@@ -1,6 +1,7 @@
 #ifndef GAME_WORLD_H
 #define GAME_WORLD_H
-
+#define false 0
+#define true 1
 #define WORLD_EVENT_COUNT 20
 #define WORLD_MOVE_FORWARD_EVENT 0
 #define WORLD_MOVE_RIGHT_EVENT 1
@@ -35,6 +36,9 @@ extern "C" {
 #define DRAW_SPHERE_SECTOR 1
 #define DRAW_CIRCLE 2
 #define DRAW_RECT 3
+
+#define DRAWING_RECT true
+#define DRAWING_FIELD true
 #define MAX_DRAW_OBJ 256
 
 extern int world_w, world_h, render_distance;
