@@ -8,7 +8,7 @@
 Thank you for playing runnkill!
 
 
-You have to run server and then client <your ip>
+You have to run server and then client (server ip).
 Multiplayering enabled.
 Try not to kill yourself!
 
