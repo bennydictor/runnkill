@@ -9,3 +9,4 @@ client/client
 client/cmakeclient
 client/build/*
 server/players/*
+*.exe

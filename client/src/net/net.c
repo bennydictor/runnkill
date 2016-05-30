@@ -9,6 +9,9 @@
 #ifdef _WIN32
 	#include <winsock2.h>
 	#include <windows.h>
+	#include <time.h>
+	typedef unsigned int in_addr_t;
+	typedef int socklen_t;
     #define SYSTEM_PAUSE system("pause")
 #else
 	#include <sys/types.h>
@@ -18,6 +21,7 @@
 	#include <netinet/in.h>
 	#include <arpa/inet.h>
 	#include <netdb.h>
+	#include <poll.h>
 
 	#define WSAGetLastError() errno 
 	#define closesocket(X) close(X)
@@ -25,14 +29,12 @@
 	#define WSACleanup() ;
 	#define HOSTENT hostent
 	#define SYSTEM_PAUSE system("wait")
-
 	typedef	int SOCKET;
 #endif
 
 #include <net/net.h>
 #include <net/socket.h>
 #include <net/proto.h>
-#include <poll.h>
 #include <util/log.h>
 #include <string.h>
 #include <stdio.h>
@@ -58,7 +60,7 @@ SOCKET local_udp_socket, local_tcp_socket, local_tcp_socket;
 struct sockaddr_in server;
 socklen_t server_addrlen;
 int client_num;
-
+#ifndef _WIN32
 ssize_t recvfrom_timeout() {
     struct pollfd fd;
     fd.fd = local_udp_socket;
@@ -74,15 +76,39 @@ ssize_t recvfrom_timeout() {
     }
     return recv_succ ? recvfrom(local_udp_socket, msg, MSG_BUF_LEN, 0, (struct sockaddr *) &server, &server_addrlen) : -1;
 }
+#else
+ssize_t recvfrom_timeout() {
+    struct pollfd fd;
+    fd.fd = local_udp_socket;
+    fd.events = 1;//POLLIN;
+    
+    fd_set readfds;
+    readfds.fd_count = 1;
+//    readfds.fd_array = (SOCKET *)malloc(readfds.fd_count * sizeof(SOCKET));
+    readfds.fd_array[0] = local_udp_socket;
+    struct timeval timeout;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 500;
 
+    char recv_succ = 0;
+    for (int i = 0; i < 5; ++i) {
+        if (select(local_udp_socket + 1, &readfds, NULL, NULL, &timeout) <= 0) {
+            printl(LOG_W, "Error while receiving datagram: Timed out");
+        } else {
+            recv_succ = 1;
+            break;
+        }
+    }
+    return recv_succ ? recvfrom(local_udp_socket, msg, MSG_BUF_LEN, 0, (struct sockaddr *) &server, &server_addrlen) : -1;
+}
+#endif
 #define GET_TCP(TYPE, VAL) do { \
-    if (recv(local_tcp_socket, &VAL, sizeof(TYPE), MSG_WAITALL) <= 0) { \
+    if (recv(local_tcp_socket, (void *)&VAL, sizeof(TYPE), MSG_WAITALL) <= 0) { \
         printl(LOG_W, "Error while reveiving resources: cannot read from socket (%s)", strerror(errno)); \
         return 1; \
     } \
 } while (0)
-
-int init_net(const char *hostname, uint16_t port) {
+int init_net(const char *hostname, unsigned short port) {
     local_udp_socket = make_local_udp_socket();
     if (local_udp_socket == -1) {
         printl(LOG_W, "Error while initializing network: cannot make local udp socket");

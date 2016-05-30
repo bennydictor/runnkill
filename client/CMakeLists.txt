@@ -33,8 +33,8 @@ set (SRC_LIST src/main.c
 			  src/util/log.c
 			  )
 			  
-set(CMAKE_CXX_FLAGS "-std=c++11 -march=native -pipe -Wall -Wextra -Wshadow -I/usr/include/freetype2 -Bstatic -Bdynamic -ldl -lpthread")
-set(CMAKE_C_FLAGS "-std=c99 -march=native -pipe -Wall -Wextra -Wshadow -I/usr/include/freetype2 -Bstatic  -Bdynamic")
-
+set(CMAKE_CXX_FLAGS "-std=c++11 -march=native -pipe -Wall -Wextra -Wshadow -I/usr/include/freetype2 -Bstatic -lglfw3 -Bdynamic -ldl -lpthread")
+set(CMAKE_C_FLAGS "-std=c99 -march=native -pipe -Wall -Wextra -Wshadow -I/usr/include/freetype2 -Bstatic -lglfw3 -Bdynamic")
+add_definitions(-DFT2_BUILD_LIBRARY)
 add_executable(${PROJECT_NAME} ${SRC_LIST})
-target_link_libraries(${PROJECT_NAME} PUBLIC m GL GLEW glfw freetype X11 Xxf86vm Xrandr pthread Xi dl Xinerama Xcursor)
+target_link_libraries(${PROJECT_NAME} PUBLIC m opengl32 glew32 glfw3 freetype mingw32 ws2_32 ole32)

@@ -18,12 +18,18 @@
 
 #include <net/net.h>
 
+#ifdef _WIN32
+#define printl3(X, Y, Z) printf(Y "\n", Z)
+#define printl(X, Y) printf(Y "\n")
+#else
+#define printl3 printl
+#endif
 
 int main(int argc, char **argv) {
-    lopen("/dev/stderr");
+    lopen("/dev/stdout");
     min_log_level = LOG_D;
     if (argc < 2) {
-        printl(LOG_I, "Usage: %s hostname [port]", argv[0]);
+        print(LOG_I, "Usage: %s hostname [port]", argv[0]);
         return EXIT_FAILURE;
     } else {
         if (init_net(argv[1], argc >= 3 ? atoi(argv[2]) : 0)) {

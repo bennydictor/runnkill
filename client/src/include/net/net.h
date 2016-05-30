@@ -11,6 +11,7 @@
 #ifdef _WIN32
 	#include <winsock2.h>
 	#include <windows.h>
+	#include <time.h>
     #define SYSTEM_PAUSE system("pause")
 #else
 	#include <sys/types.h>
@@ -31,7 +32,18 @@
 	typedef	int SOCKET;
 #endif
 
+#ifdef _WIN32
+struct pollfd {               int   fd;         /* file descriptor */
+               short events;     /* requested events */
+               short revents;    /* returned events */
+           };
 
+/*struct timeval {
+	long tv_sec;
+	long tv_usec;
+};
+*/
+#endif
 #include <graphics/draw_obj.h>
 
 #ifdef __cplusplus
@@ -40,7 +52,7 @@ extern "C" {
 
 extern int local_socket;
 
-int init_net(const char *hostname, uint16_t port);
+int init_net(const char *hostname, unsigned short port);
 int net_update(char *evs, int *draw_obj_count, draw_obj *draw_objs);
 void free_net(void);
 
