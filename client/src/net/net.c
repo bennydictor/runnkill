@@ -83,9 +83,9 @@ ssize_t recvfrom_timeout() {
     fd.events = 1;//POLLIN;
     
     fd_set readfds;
-    readfds.fd_count = 1;
+    FD_ZERO(&readfds);
+    FD_SET(local_udp_socket, &readfds);
 //    readfds.fd_array = (SOCKET *)malloc(readfds.fd_count * sizeof(SOCKET));
-    readfds.fd_array[0] = local_udp_socket;
     struct timeval timeout;
     timeout.tv_sec = 0;
     timeout.tv_usec = 500;
@@ -101,6 +101,7 @@ ssize_t recvfrom_timeout() {
     }
     return recv_succ ? recvfrom(local_udp_socket, msg, MSG_BUF_LEN, 0, (struct sockaddr *) &server, &server_addrlen) : -1;
 }
+        
 #endif
 #define GET_TCP(TYPE, VAL) do { \
     if (recv(local_tcp_socket, (void *)&VAL, sizeof(TYPE), MSG_WAITALL) <= 0) { \

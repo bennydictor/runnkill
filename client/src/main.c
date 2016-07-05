@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     lopen("/dev/stdout");
     min_log_level = LOG_D;
     if (argc < 2) {
-        print(LOG_I, "Usage: %s hostname [port]", argv[0]);
+        printl3(LOG_I, "Usage: %s hostname [port]", argv[0]);
         return EXIT_FAILURE;
     } else {
         if (init_net(argv[1], argc >= 3 ? atoi(argv[2]) : 0)) {
