@@ -205,7 +205,7 @@ void man::move(float time) {
     }
     effects = new_effects;
     for (int i = 0; i < (int)skills.size(); i++) {
-        skills[i]->to_activate_skill -= time; 
+        skills[i]->time_to_activate_skill -= time; 
     }
     for (int i = 0; i < (int)body_parts.size(); i++) {
         body_parts[i].can_changed = max(0.0, body_parts[i].can_changed - time);
@@ -402,7 +402,7 @@ void man::respawn() {
 bool man::can_cast(int idx) {
     return !(busy > 0 or (int)skills.size() <= idx 
     or skills[idx]->cost.mp > mp or 
-    skills[idx]->to_activate_skill > EPS_FOR_SKILLS 
+    skills[idx]->time_to_activate_skill > EPS_FOR_SKILLS 
     or is_stunned or is_running);
 }
 

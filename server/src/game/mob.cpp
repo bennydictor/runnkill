@@ -50,7 +50,7 @@ void mob::what_to_do() {
     man* to_move = NULL;
     for (man* z : visible) {
         float distance = dist(coords, z->coords);
-        if (distance < attack_rad && skills[0]->to_activate_skill <= EPS_FOR_SKILLS) {
+        if (distance < attack_rad && skills[0]->time_to_activate_skill <= EPS_FOR_SKILLS) {
             orientation = vec3<float>(coords, z->coords);
             using_attack = true;
         } else if (z->coords.y > 0 and min_hp > z->hp * distance) {
@@ -61,7 +61,7 @@ void mob::what_to_do() {
     orientation.resize(1);
     if (using_attack) {
         curr_skill = 0;
-        skills[0]->to_activate_skill = skills[0]->between_activate_skill;
+        skills[0]->time_to_activate_skill = skills[0]->between_activate_skill;
         need_to_cast = true;
         mp -= skills[0]->cost.mp;
     } else if (to_move) {

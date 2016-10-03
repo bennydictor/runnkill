@@ -476,7 +476,7 @@ void attack(int man_idx, int idx) {
     z->busy += animations[curr->animation_idx].events[0].dt;
     //cout << z->busy << endl;
     z->curr_skill = idx;
-    z->skills[idx]->to_activate_skill = z->skills[idx]->between_activate_skill;
+    z->skills[idx]->time_to_activate_skill = z->skills[idx]->between_activate_skill;
     z->need_to_cast = true;
 }
 
@@ -553,7 +553,7 @@ void world_callback(void) {
             p1[1] = myself->coords.y - MAN_RAD;
             p2[0] = 2 * (MAN_RAD + EPS_FOR_SKILLS);
             p2[1] = z;
-            draw_objs[draw_obj_count++] = make_draw_rect(p1, p2, atan2(my_orientation.x, my_orientation.y), 8);
+            //draw_objs[draw_obj_count++] = make_draw_rect(p1, p2, atan2(my_orientation.x, my_orientation.y), 8);
             if (myself->my_aura) {
                 draw_objs[draw_obj_count++] = make_draw_circle(myself->coords - vec3<float>(0, MAN_RAD, 0), myself->my_aura->distance, fake_materials_idx[myself->my_aura->circle_material_idx]);
             }
@@ -715,7 +715,7 @@ void world_update(float dt) {
         cout << "end saving players" << endl;
         int curr_am_of_mobs =min(MAX_MOBS - amount_of_mobs, get_rand(1, 4));
         amount_of_mobs += curr_am_of_mobs;
-        add_mobs(curr_am_of_mobs);
+        //add_mobs(curr_am_of_mobs);
 
         cout << "added some mobs" << endl;
     }

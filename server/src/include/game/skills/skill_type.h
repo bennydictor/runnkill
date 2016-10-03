@@ -14,7 +14,7 @@ struct abstract_skill_t {
     mod_t cost;
     char type;
     int animation_idx, material_idx;
-    float to_activate_skill, between_activate_skill, activate_time; // activate_time is time before the end of the animation, when this skill should be activated
+    float time_to_activate_skill, between_activate_skill, activate_time; // activate_time is time before the end of the animation, when this skill should be activated
     abstract_skill_t() = default;
     ~abstract_skill_t() = default;
     void abstract_input(std::istream& stream);

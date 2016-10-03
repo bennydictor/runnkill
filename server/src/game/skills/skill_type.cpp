@@ -17,7 +17,7 @@ void abstract_skill_t::abstract_input(istream& stream) {
         effects.push_back(effect(eff_name));
         effects[i].in(stream);
     }
-    to_activate_skill = 0;
+    time_to_activate_skill = 0;
 }
 
 void melee_skill_t::in_damage(istream& stream) {
@@ -34,7 +34,7 @@ void range_skill_t::in_damage(istream& stream) {
     sample.in(stream);
     sample.damage = dmg;
     sample.effects = effects;
-    to_activate_skill = 0;
+    time_to_activate_skill = 0;
 }
 
 void trap_skill_t::in_damage(istream& stream) {
