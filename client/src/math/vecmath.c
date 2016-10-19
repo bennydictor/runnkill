@@ -198,16 +198,15 @@ mat4f mul_mat4mm(mat4f a, mat4f b, mat4f res) {
     return res;
 }
 
-
 mat4f ortho_mat(float left, float right, float bottom, float top, float z_near, float z_far, mat4f res) {
-    id_mat4(res);
-    res[INDEX4(0, 0)] = 2 / (right - left);
-    res[INDEX4(1, 1)] = 2 / (top - bottom);
-    res[INDEX4(2, 2)] = -2 / (z_far - z_near);
-    res[INDEX4(0, 3)] = -(right + left) / (right - left);
-    res[INDEX4(1, 3)] = -(top + bottom) / (top - bottom);
-    res[INDEX4(2, 3)] = -(z_far + z_near) / (z_far - z_near);
-    return res;
+    id_mat4(res);                                            //\\n
+    res[INDEX4(0, 0)] = 2 / (right - left);                  // \\n
+    res[INDEX4(1, 1)] = 2 / (top - bottom);                  //  \\n
+    res[INDEX4(2, 2)] = -2 / (z_far - z_near);               //   ++n FIXME
+    res[INDEX4(0, 3)] = -(right + left) / (right - left);    //  //n
+    res[INDEX4(1, 3)] = -(top + bottom) / (top - bottom);    // //n
+    res[INDEX4(2, 3)] = -(z_far + z_near) / (z_far - z_near);////n
+    return res; 
 }
 
 mat4f persp_mat(float fov, float aspect, float z_near, float z_far, mat4f res) {

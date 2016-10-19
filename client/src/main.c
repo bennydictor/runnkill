@@ -28,14 +28,13 @@
 int main(int argc, char **argv) {
     lopen("/dev/stdout");
     min_log_level = LOG_D;
-    if (argc < 2) {
-        printl3(LOG_I, "Usage: %s hostname [port]", argv[0]);
+    char *server = "localhost";
+    if (argc >= 2) {
+        server = argv[2];
+    }
+    if (init_net(server, argc >= 3 ? atoi(argv[2]) : 0, 1)) {
+        printl(LOG_E, "Fatal error while initializing network.");
         return EXIT_FAILURE;
-    } else {
-        if (init_net(argv[1], argc >= 3 ? atoi(argv[2]) : 0)) {
-            printl(LOG_E, "Fatal error while initializing network.");
-            return EXIT_FAILURE;
-        }
     }
 
     ft_font_size = 16;

@@ -45,7 +45,7 @@ void render_bars(void) {
     glCullFace(GL_BACK);
 
     glEnableVertexAttribArray(prog_bars_attr_v_coord);
-
+    //health bar
     //draw_obj bar = make_draw_rect(window_width / 2 * (max_hp - hp) / max_hp, 0, window_width / 2, 20, materials[0]);
     draw_obj bar = make_draw_rect(5, window_height - 5, window_width / 4 * (hp) / max_hp + 5, window_height - 20, materials[0]);
     glUniformMatrix4fv(prog_bars_unif_mat_m, 1, GL_FALSE, bar.mat_m);
@@ -54,7 +54,7 @@ void render_bars(void) {
     glVertexAttribPointer(prog_bars_attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
     glDrawArrays(bar.mode, 0, bar.count);
     free_draw_obj(bar);
-
+    //mana bar
     //bar = make_draw_rect(window_width / 2, 0, window_width - window_width / 2 * (max_mp - mp) / max_mp, 20, materials[0]);
     bar = make_draw_rect(5, window_height - 28, window_width / 4 * (mp) / max_mp + 5, window_height - 43, materials[0]);
     glUniformMatrix4fv(prog_bars_unif_mat_m, 1, GL_FALSE, bar.mat_m);
@@ -63,7 +63,7 @@ void render_bars(void) {
     glVertexAttribPointer(prog_bars_attr_v_coord, 3, GL_FLOAT, GL_FALSE, sizeof(vertex3d), (void *) offsetof(vertex3d, coord));
     glDrawArrays(bar.mode, 0, bar.count);
     free_draw_obj(bar);
-   
+    //exp bar
     //bar = make_draw_rect(0, 20, window_width * ((double)EP / level_exp), 27, materials[0]);
     bar = make_draw_rect(5, window_height - 45, window_width / 3 * EP / level_exp + 5, window_height - 50, materials[0]);
    

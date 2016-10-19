@@ -1,4 +1,3 @@
-
 #ifdef _WIN32
 	#pragma comment ( lib, "ws2_32.lib" )
 	#define _WINSOCK_DEPRECATED_NO_WARNINGS
@@ -41,6 +40,9 @@
 #include <unistd.h>
 #include <math.h>
 #include <assert.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #include <world.h>
 #include <graphics/gl.h>
@@ -109,6 +111,7 @@ ssize_t recvfrom_timeout() {
         return 1; \
     } \
 } while (0)
+
 int init_net(const char *hostname, unsigned short port) {
     local_udp_socket = make_local_udp_socket();
     if (local_udp_socket == -1) {
